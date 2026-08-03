@@ -1,16 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cavus Photonics — Option B · Swiss Prospectus</title>
+<title>空芯光子 Cavus Photonics — 空芯光纤 · AI 基础设施</title>
+<meta name="description" content="空芯光子（Cavus Photonics）：立足香港的光学研发公司，专注空芯光纤——光在空气中传输，比玻璃快 32%——面向 AI 基础设施时代。">
 <link rel="icon" type="image/png" href="assets/cavus-favicon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#0A1B2E;--muted:#66788A;--gold:#B8891F;--rule:#0A1B2E;--hair:#D8DEE4;
-    --mono:"IBM Plex Mono",ui-monospace,monospace;--sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;}
+    --mono:"IBM Plex Mono",ui-monospace,monospace;--sans:"Instrument Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",Arial,sans-serif;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:#FFFFFF;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;}
   #fibre3d{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
@@ -133,6 +134,9 @@
     .titleblock{font-size:10px;}
   }
   :focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+  .hero h1{letter-spacing:1px;}
+  h2,.creedrow h3,.kao blockquote{letter-spacing:0;}
+  .tlrow .yr{letter-spacing:0;}
 
   /* ---- motion layer (JS adds .rv; IO adds .in; reduced-motion disables all) ---- */
   #progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--gold);
@@ -168,42 +172,37 @@
       <img src="assets/cavus-mark-trans-forlight.svg" alt="Cavus Photonics mark" class="markimg">
       <span class="words"><span class="zh">空芯光子</span><span class="n">CAVUS</span><span class="s">PHOTONICS</span></span>
     </a>
-    <span class="loc">HONG KONG · EST. 2026 &nbsp;·&nbsp; <a href="zh.html" style="color:var(--gold);text-decoration:none;">简体中文</a></span>
+    <span class="loc">香港 · 始于 2026 &nbsp;·&nbsp; <a href="index.html" style="color:var(--gold);text-decoration:none;">EN</a></span>
   </header>
   <hr class="rule">
 
   <div class="hero" id="s-hero">
-    <span class="kick">Technical prospectus · hollow-core fibre · AI infrastructure</span>
-    <h1>Light is faster in air.<br>We build the fibre<br>that <em>proves it.</em></h1>
+    <span class="kick">技术说明书 · 空芯光纤 · AI 基础设施</span>
+    <h1>光在空气中走得更快。<br>我们建造的光纤，<br>就是<em>证明。</em></h1>
     <div class="sub">
-      <p><b>Cavus Photonics</b> is a Hong Kong optical R&amp;D venture building <b>hollow-core
-      fibre</b> — where light travels through air, <b>32% faster</b> than in glass — and everything
-      needed to connect it to the world's networks. <i>Cavus</i> is Latin for "hollow".
-      The emptiness is the product.</p>
-      <div class="tag">空芯光子有限公司<br>HONG KONG · GREATER BAY AREA<br>IN FORMATION</div>
+      <p><b>空芯光子（Cavus Photonics）</b>是一家立足香港的光学研发公司，专注于<b>空芯光纤</b>——光在空气中传输，比在玻璃中<b>快 32%</b>——以及把它接入全球网络所需的一切。<i>Cavus</i> 源自拉丁文，意为“空”。空，就是产品。</p>
+      <div class="tag">空芯光子有限公司<br>香港 · 粤港澳大湾区<br>筹备中</div>
     </div>
   </div>
 
   <hr class="rule">
   <div class="bignums">
-    <div><div class="v">−32<span>%</span></div><div class="k">Δ latency</div><div class="d">light at 99.7% of c in air, vs 67% in solid silica</div></div>
-    <div><div class="v">0.04</div><div class="k">α · dB/km record</div><div class="d">now below solid silica's theoretical floor</div></div>
-    <div><div class="v">10<span>³</span>×</div><div class="k">χ³ nonlinearity, lower</div><div class="d">more power, longer spans, fewer regenerators</div></div>
+    <div><div class="v">−32<span>%</span></div><div class="k">Δ 时延</div><div class="d">光在空气中以 99.7% 光速传播，玻璃中仅 67%</div></div>
+    <div><div class="v">0.04</div><div class="k">α · dB/km 纪录</div><div class="d">已低于实心石英的理论极限</div></div>
+    <div><div class="v">10<span>³</span>×</div><div class="k">χ³ 非线性，更低</div><div class="d">更高功率、更长跨距、更少中继</div></div>
   </div>
   <hr class="rule">
 
   <section id="s-01">
     <div class="secgrid">
-      <div class="secno">SECTION<b>01</b><br>ATTENUATION RECORD<br>2019 – 2026</div>
+      <div class="secno">章节<b>01</b><br>衰减纪录<br>2019 – 2026</div>
       <div>
-        <h2>The record is falling. Fast.</h2>
-        <p class="lead">For forty years, solid glass had a floor nothing could beat. In 2025,
-        hollow-core fibre went under it — and kept going. This is what a technology looks like
-        right before it matters.</p>
+        <h2>纪录正在坠落，而且很快。</h2>
+        <p class="lead">四十年来，实心玻璃的损耗极限无人能破。2025 年，空芯光纤首次跌破了它——而且还在继续下探。一项技术在真正改变世界之前，就是这个样子。</p>
         <div class="chartbox">
           <svg id="recchart" viewBox="0 0 700 225" role="img" aria-label="Hollow-core fibre loss records falling from 0.65 dB/km in 2019 to 0.04 dB/km in 2026, crossing the solid-silica floor in 2025">
             <line x1="40" y1="109" x2="660" y2="109" stroke="#0A1B2E" stroke-width="1" stroke-dasharray="5 6" opacity="0.45"/>
-            <text x="42" y="101" font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#66788A">solid silica floor ≈ 0.14 dB/km</text>
+            <text x="42" y="101" font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#66788A">实心石英极限 ≈ 0.14 dB/km</text>
             <polyline points="60,34 200,75 340,98 480,130 620,170" fill="none" stroke="#0A1B2E" stroke-width="2"/>
             <g fill="#0A1B2E">
               <circle cx="60" cy="34" r="4"/><circle cx="200" cy="75" r="4"/><circle cx="340" cy="98" r="4"/>
@@ -215,9 +214,9 @@
               <text x="60" y="210">2019</text><text x="200" y="210">2020</text><text x="340" y="210">2022</text>
               <text x="480" y="210">2025</text><text x="620" y="210">2026</text>
             </g>
-            <text x="474" y="148" font-family="IBM Plex Mono,monospace" font-size="10" fill="#66788A" text-anchor="end">← hollow beats solid, first time</text>
+            <text x="474" y="148" font-family="IBM Plex Mono,monospace" font-size="10" fill="#66788A" text-anchor="end">← 空芯首次胜过实心</text>
           </svg>
-          <div class="cap">dB/km at 1550 nm · published records (NANF → DNANF → ST-HCF) · log scale</div>
+          <div class="cap">1550 nm 已发表纪录（NANF → DNANF → ST-HCF）· 对数坐标</div>
         </div>
       </div>
     </div>
@@ -227,16 +226,15 @@
 
   <section id="s-why">
     <div class="secgrid">
-      <div class="secno">SECTION<b>02</b><br>WHY NOW<br>THE CLOSING WINDOW</div>
+      <div class="secno">章节<b>02</b><br>时机<br>正在关闭的窗口</div>
       <div>
-        <h2>The window is open. Briefly.</h2>
-        <p class="lead">Hollow-core fibre just left the laboratory. The layer we work on —
-        connecting it to the world — is still unclaimed.</p>
+        <h2>窗口已经打开，但不会太久。</h2>
+        <p class="lead">空芯光纤刚刚走出实验室。而我们深耕的这一层——把它接入世界——仍然无人认领。</p>
         <div class="tl">
-          <div class="tlrow"><span class="yr">2022</span><p><b>Microsoft acquires Lumenisity</b>, the Southampton hollow-core spin-out. Hyperscalers begin buying the supply chain, not just the fibre.</p></div>
-          <div class="tlrow"><span class="yr">2025</span><p><b>Hollow beats solid for the first time</b> — 0.091 dB/km in Nature Photonics, below silica's forty-year floor. Over 1,200 km already carrying live Azure traffic.</p></div>
-          <div class="tlrow"><span class="yr">2026</span><p><b>The record falls again in China</b> — 0.04 dB/km — and commercial hollow-core links now run between Guangdong and Hong Kong. The Greater Bay Area is a live deployment zone.</p></div>
-          <div class="tlrow"><span class="yr gold">Now</span><p><b>Interconnect, cabling and qualification remain open.</b> The standards are unwritten and the toll booth is unbuilt. We estimate 18–24 months to take a seat at that table.</p></div>
+          <div class="tlrow"><span class="yr">2022</span><p><b>微软收购 Lumenisity</b>——南安普顿大学的空芯光纤公司。超大规模云厂商开始买下的不只是光纤，而是整条供应链。</p></div>
+          <div class="tlrow"><span class="yr">2025</span><p><b>空芯首次胜过实心</b>——Nature Photonics 发表 0.091 dB/km，低于石英四十年的极限。超过 1,200 公里线路已承载 Azure 实时流量。</p></div>
+          <div class="tlrow"><span class="yr">2026</span><p><b>纪录在中国再次刷新</b>——0.04 dB/km——商用空芯链路已贯通广东与香港。大湾区已经是实战部署区。</p></div>
+          <div class="tlrow"><span class="yr gold">现在</span><p><b>互连、成缆与认证仍是空白。</b>标准尚未写就，收费站尚未建起。我们估计，入场窗口还有 18–24 个月。</p></div>
         </div>
       </div>
     </div>
@@ -246,9 +244,9 @@
 
   <section id="s-02">
     <div class="secgrid">
-      <div class="secno">SECTION<b>03</b><br>THE FIBRE<br>NESTED ANTIRESONANT</div>
+      <div class="secno">章节<b>03</b><br>光纤本体<br>嵌套反谐振结构</div>
       <div>
-        <h2>A cross-section of the next decade.</h2>
+        <h2>下一个十年的横截面。</h2>
         <div class="xsec">
           <svg viewBox="0 0 400 360" role="img" aria-label="Line drawing of a nested antiresonant hollow-core fibre cross-section">
             <circle cx="200" cy="180" r="130" fill="none" stroke="#0A1B2E" stroke-width="1.4"/>
@@ -264,15 +262,15 @@
             <circle cx="200" cy="180" r="4" fill="#B8891F"/>
           </svg>
           <div class="notes">
-            <b>hollow core</b> — air · n ≈ 1.0003 <span class="g">●</span><br>
-            <b>six nested tubes</b> — antiresonant confinement<br>
-            <b>membranes</b> — 400–700 nm silica<br>
-            <b>outer diameter</b> — ≈ 200 µm<br>
-            <b>guidance</b> — light never touches glass<br><br>
-            The hardest part isn't the physics.<br>
-            It's joining this to the world's<br>
-            installed glass — and that is<br>
-            exactly where we work.
+            <b>空芯</b> — 空气 · n ≈ 1.0003 <span class="g">●</span><br>
+            <b>反谐振管 ×6</b> — 嵌套结构<br>
+            <b>石英薄膜</b> — 400–700 nm<br>
+            <b>外径</b> — ≈ 200 µm<br>
+            <b>导光机制</b> — 光不接触玻璃<br><br>
+            最难的从来不是物理，<br>
+            而是把它接入世界已铺好的<br>
+            玻璃光纤——那正是<br>
+            我们的主场。
           </div>
         </div>
       </div>
@@ -283,15 +281,14 @@
 
   <section id="s-03">
     <div class="secgrid">
-      <div class="secno">SECTION<b>04</b><br>ONE LINK<br>THREE PROBLEMS</div>
+      <div class="secno">章节<b>04</b><br>一条链路<br>三个难题</div>
       <div>
-        <h2>We work where deployments succeed or fail.</h2>
-        <p class="lead">Every hollow-core deployment must join the world's installed glass on one
-        side and an AI cluster on the other. That link is our laboratory.</p>
+        <h2>部署的成败，就在我们工作的这一层。</h2>
+        <p class="lead">每一次空芯部署，一端要接入全球已铺设的玻璃光纤，另一端要接入 AI 集群。这条链路，就是我们的实验室。</p>
         <div class="tracks">
-          <div class="track"><span class="no">01</span><h3>Join hollow to solid</h3><p>Mode-field adapters, splicing protocols, field-installable connectors between air-core and the installed base — the toll booth every deployment pays.</p></div>
-          <div class="track"><span class="no">02</span><h3>Make it deployable</h3><p>From lab spools to data-centre-ready cable: bend-tolerant designs, standards qualification, pilot manufacturing with industrial partners.</p></div>
-          <div class="track"><span class="no">03</span><h3>Prove where it pays</h3><p>Measure where lower latency actually earns its keep in GPU clusters and inter-DC links — published, then deployed, Greater Bay Area first.</p></div>
+          <div class="track"><span class="no">01</span><h3>空芯接实心</h3><p>Mode-field adapters, splicing protocols, field-installable connectors between air-core and the installed base — the toll booth every deployment pays.</p></div>
+          <div class="track"><span class="no">02</span><h3>让它可部署</h3><p>从实验室线轴到数据中心级线缆：抗弯设计、标准认证、与产业伙伴的中试制造。</p></div>
+          <div class="track"><span class="no">03</span><h3>证明它的价值</h3><p>度量更低时延在 GPU 集群与数据中心互联中真正的回报——先发表，再部署，大湾区先行。</p></div>
         </div>
       </div>
     </div>
@@ -301,11 +298,11 @@
 
   <section id="s-creed">
     <div class="secgrid">
-      <div class="secno">SECTION<b>05</b><br>WHAT WE BELIEVE</div>
+      <div class="secno">章节<b>05</b><br>我们的信念</div>
       <div class="creed">
-        <div class="creedrow"><span class="no">01</span><h3>Integration is the moat. <span>The physics is published; joining hollow to the installed world is not.</span></h3></div>
-        <div class="creedrow"><span class="no">02</span><h3>Every deployment pays the toll. <span>Whoever owns the interconnect owns the economics.</span></h3></div>
-        <div class="creedrow"><span class="no">03</span><h3>Hong Kong is the bridge. <span>The records fall in the Greater Bay Area; the capital, standards and channels meet here.</span></h3></div>
+        <div class="creedrow"><span class="no">01</span><h3>护城河是集成。 <span>物理原理早已发表；把空芯接入现有世界的工艺还没有。</span></h3></div>
+        <div class="creedrow"><span class="no">02</span><h3>每次部署都要过收费站。 <span>谁掌握互连，谁就掌握经济学。</span></h3></div>
+        <div class="creedrow"><span class="no">03</span><h3>香港是那座桥。 <span>纪录在大湾区刷新；资本、标准与渠道在这里交汇。</span></h3></div>
       </div>
     </div>
   </section>
@@ -314,11 +311,10 @@
 
   <div class="kao" id="s-kao">
     <div class="grid">
-      <div class="secno">1966 ——— 2026<b>高錕</b><br>SIR CHARLES KAO<br>NOBEL LAUREATE, PHYSICS</div>
+      <div class="secno">1966 ——— 2026<b>高锟</b><br>光纤之父<br>诺贝尔物理学奖</div>
       <div>
-        <blockquote>"Hong Kong raised the father of fibre optics — and never built the industry his
-        legacy deserved. We think it's <em>Hong Kong's turn</em> to finish what he started."</blockquote>
-        <div class="who">JORDAN WONG 黃智勇 &nbsp;·&nbsp; WILLIAM HUNG 洪偉禮 &nbsp;—&nbsp; FOUNDERS</div>
+        <blockquote>“香港养育了光纤之父——却始终没有建立起配得上他遗产的产业。我们相信，<em>轮到香港</em>完成他开创的事业了。”</blockquote>
+        <div class="who">黄智勇 JORDAN WONG &nbsp;·&nbsp; 洪伟礼 WILLIAM HUNG &nbsp;—&nbsp; 创始人</div>
       </div>
     </div>
   </div>
@@ -328,21 +324,20 @@
   <div class="contact" id="s-contact">
     <div class="grid">
       <div>
-        <h2>In formation. In conversation.</h2>
-        <p>We're building with universities, fibre manufacturers, and data-centre operators across
-        Hong Kong and the Greater Bay Area. If that's your world, we'd like to talk.</p>
+        <h2>正在筹备，欢迎交流。</h2>
+        <p>我们正与香港及大湾区的高校、光纤制造商和数据中心运营商共同推进。如果这也是您的领域，欢迎联系。</p>
       </div>
       <div class="btns">
         <a class="btn solid" href="mailto:hello@cavusphotonics.com">hello@cavusphotonics.com</a>
-        <a class="btn" href="https://www.linkedin.com/in/jordanwongchiyung/">LinkedIn ↗</a>
+        <a class="btn" href="https://www.linkedin.com/in/jordanwongchiyung/">领英 ↗</a>
       </div>
     </div>
   </div>
 
   <hr class="rule thin">
   <footer>
-    <span>© 2026 CAVUS PHOTONICS · HONG KONG</span>
-    <span>CAVUS (LA.) — HOLLOW · 空芯光子</span>
+    <span>© 2026 空芯光子 CAVUS PHOTONICS · 香港</span>
+    <span>CAVUS，拉丁文——“空”。空，就是产品。</span>
   </footer>
 
 </div>
