@@ -3,100 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>空芯光子 Cavus Photonics — 空芯光纤 · AI 基础设施</title>
-<meta name="description" content="空芯光子（Cavus Photonics）：立足香港的光学研发公司，专注空芯光纤——光在空气中传输，比玻璃快 32%——面向 AI 基础设施时代。">
+<title>空芯光子 Cavus Photonics — 以空为芯，为光造路</title>
+<meta name="description" content="空芯光子（Cavus Photonics）立足香港：研发空芯光纤，让光在空气中传输——快 32%，损耗更低——为 AI 算力时代铺设新的底层光路。">
 <link rel="icon" type="image/png" href="assets/cavus-favicon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#0A1B2E;--muted:#66788A;--gold:#B8891F;--rule:#0A1B2E;--hair:#D8DEE4;
-    --mono:"IBM Plex Mono",ui-monospace,monospace;--sans:"Instrument Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",Arial,sans-serif;}
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"Instrument Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",Arial,sans-serif;
+    --serif:"Noto Serif SC","Songti SC",serif;}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:#FFFFFF;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;}
+  body{background:#FFFFFF;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.75;}
   #fibre3d{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
   .wrap{max-width:1120px;margin:0 auto;padding:0 32px;position:relative;z-index:1;}
   a{color:inherit;}
   ::selection{background:var(--ink);color:#fff;}
-  .mono{font-family:var(--mono);}
 
   header{display:flex;align-items:center;justify-content:space-between;padding:26px 0;}
   .lockup{display:flex;align-items:center;gap:14px;text-decoration:none;}
   .markimg{height:64px;width:auto;display:block;}
   .words{display:flex;flex-direction:column;gap:2px;}
-  .words .zh{font-size:12px;font-weight:500;letter-spacing:7px;}
-  .words .n{font-size:16px;font-weight:600;letter-spacing:6px;}
-  .words .s{font-size:9.5px;letter-spacing:5px;color:var(--gold);}
+  .words .zh{font-size:13px;font-weight:700;letter-spacing:8px;}
+  .words .n{font-size:14px;font-weight:600;letter-spacing:5px;}
+  .words .s{font-size:9px;letter-spacing:4px;color:var(--gold);font-family:var(--mono);}
   header .loc{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);}
 
   .rule{border:none;border-top:2px solid var(--rule);}
   .rule.thin{border-top:1px solid var(--hair);}
 
-  .hero{padding:64px 0 56px;}
-  .kick{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
-  .hero h1{font-weight:700;font-size:clamp(40px,5.4vw,76px);line-height:1.04;letter-spacing:-2px;margin-top:22px;}
+  .hero{padding:70px 0 60px;}
+  .kick{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--muted);}
+  .hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(42px,5.8vw,84px);line-height:1.22;letter-spacing:2px;margin-top:26px;}
   .hero h1 em{font-style:normal;color:var(--gold);}
-  .hero .sub{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:44px;align-items:end;}
-  .hero .sub p{color:var(--muted);max-width:48ch;}
+  .hero .sub{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;align-items:end;}
+  .hero .sub p{color:var(--muted);max-width:44ch;}
   .hero .sub p b{color:var(--ink);font-weight:600;}
-  .hero .sub .tag{font-family:var(--mono);font-size:12px;color:var(--ink);text-align:right;line-height:1.9;
+  .hero .sub .tag{font-family:var(--mono);font-size:12px;color:var(--ink);text-align:right;line-height:2;
     justify-self:end;background:rgba(255,255,255,0.92);padding:12px 16px;border:1px solid var(--hair);}
 
   .bignums{display:grid;grid-template-columns:repeat(3,1fr);}
   .bignums>div{padding:44px 32px 40px;border-left:1px solid var(--hair);}
   .bignums>div:first-child{border-left:none;padding-left:0;}
-  .bignums .v{font-weight:700;font-size:clamp(56px,6.5vw,88px);letter-spacing:-3px;line-height:1;}
+  .bignums .v{font-weight:700;font-size:clamp(52px,6vw,80px);letter-spacing:-2px;line-height:1;}
   .bignums .v span{color:var(--gold);}
-  .bignums .k{font-family:var(--mono);font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:14px;}
+  .bignums .k{font-family:var(--mono);font-size:11.5px;letter-spacing:2px;color:var(--muted);margin-top:14px;}
   .bignums .d{font-size:14px;color:var(--muted);margin-top:6px;max-width:30ch;}
 
-  section{padding:72px 0;}
+  section{padding:76px 0;}
   .secgrid{display:grid;grid-template-columns:280px 1fr;gap:48px;}
-  .secno{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--muted);}
-  .secno b{display:block;font-size:44px;font-weight:400;color:var(--ink);letter-spacing:0;margin-top:6px;font-family:var(--sans);font-weight:600;}
-  h2{font-weight:700;font-size:clamp(28px,3.6vw,44px);letter-spacing:-1.2px;line-height:1.1;}
-  .lead{color:var(--muted);margin-top:16px;max-width:58ch;}
+  .secno{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--muted);line-height:2;}
+  .secno b{display:block;font-size:44px;font-weight:600;color:var(--ink);letter-spacing:0;margin-top:6px;font-family:var(--serif);}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(28px,3.4vw,42px);letter-spacing:1px;line-height:1.3;}
+  .lead{color:var(--muted);margin-top:16px;max-width:40em;}
+  .lead b{color:var(--ink);font-weight:600;}
 
-  .chartbox{margin-top:36px;border:1px solid var(--rule);padding:30px 26px 16px;}
+  .prose{margin-top:20px;max-width:38em;font-size:17.5px;line-height:2;}
+  .prose p{margin-bottom:1em;color:#33465A;}
+  .prose p b{color:var(--ink);}
+  .prose .close{font-family:var(--serif);font-weight:700;font-size:21px;color:var(--ink);letter-spacing:1px;}
+  .prose .close em{color:var(--gold);font-style:normal;}
+
+  .chartbox{margin-top:36px;border:1px solid var(--rule);padding:30px 26px 16px;background:rgba(255,255,255,.94);}
   .chartbox svg{width:100%;height:auto;display:block;}
   .cap{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;letter-spacing:0.5px;}
 
-  .tracks{margin-top:36px;border-top:1px solid var(--rule);}
-  .track{display:grid;grid-template-columns:90px 260px 1fr;gap:28px;padding:26px 0;border-bottom:1px solid var(--hair);align-items:baseline;}
-  .track .no{font-family:var(--mono);font-size:13px;color:var(--gold);}
-  .track h3{font-weight:600;font-size:20px;letter-spacing:-0.3px;}
-  .track p{font-size:15px;color:var(--muted);}
-
   .tl{margin-top:32px;border-top:1px solid var(--rule);}
   .tlrow{display:grid;grid-template-columns:110px 1fr;gap:28px;padding:20px 0;border-bottom:1px solid var(--hair);align-items:baseline;}
-  .tlrow .yr{font-weight:700;font-size:26px;letter-spacing:-1px;}
+  .tlrow .yr{font-weight:700;font-size:26px;letter-spacing:0;}
   .tlrow .yr.gold{color:var(--gold);}
-  .tlrow p{font-size:15.5px;color:var(--muted);max-width:62ch;}
+  .tlrow p{font-size:15.5px;color:var(--muted);max-width:40em;}
   .tlrow p b{color:var(--ink);font-weight:600;}
-
-  .creed{margin-top:30px;}
-  .creedrow{display:grid;grid-template-columns:90px 1fr;gap:28px;padding:24px 0;border-top:1px solid var(--hair);align-items:baseline;}
-  .creedrow .no{font-family:var(--mono);font-size:13px;color:var(--gold);}
-  .creedrow h3{font-weight:600;font-size:clamp(20px,2.4vw,27px);letter-spacing:-0.5px;line-height:1.3;max-width:30ch;}
-  .creedrow h3 span{color:var(--muted);font-weight:400;}
-  .who2{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:8px;letter-spacing:0.5px;}
 
   .xsec{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:36px;}
   .xsec svg{width:100%;height:auto;display:block;}
-  .xsec .notes{font-family:var(--mono);font-size:12.5px;line-height:2.1;color:var(--muted);}
+  .xsec .notes{font-family:var(--mono);font-size:13px;line-height:2.3;color:var(--muted);}
   .xsec .notes b{color:var(--ink);font-weight:500;}
   .xsec .notes .g{color:var(--gold);}
 
-  .kao{padding:88px 0;}
-  .kao .grid{display:grid;grid-template-columns:280px 1fr;gap:48px;}
-  .kao blockquote{font-weight:500;font-size:clamp(22px,2.8vw,32px);line-height:1.35;letter-spacing:-0.5px;max-width:26ch;}
-  .kao blockquote em{font-style:normal;color:var(--gold);}
-  .kao .who{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:22px;letter-spacing:1px;}
+  .tracks{margin-top:36px;border-top:1px solid var(--rule);}
+  .track{display:grid;grid-template-columns:120px 220px 1fr;gap:28px;padding:26px 0;border-bottom:1px solid var(--hair);align-items:baseline;}
+  .track .no{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--gold);}
+  .track h3{font-weight:600;font-size:21px;letter-spacing:1px;}
+  .track p{font-size:15px;color:var(--muted);}
 
-  .contact{padding:72px 0 88px;}
+  .creed{margin-top:30px;}
+  .creedrow{display:grid;grid-template-columns:90px 1fr;gap:28px;padding:24px 0;border-top:1px solid var(--hair);align-items:baseline;}
+  .creedrow .no{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--gold);}
+  .creedrow h3{font-family:var(--serif);font-weight:700;font-size:clamp(21px,2.4vw,28px);letter-spacing:1px;line-height:1.6;max-width:30ch;}
+  .creedrow h3 span{font-family:var(--sans);color:var(--muted);font-weight:400;font-size:16px;display:block;letter-spacing:0.3px;}
+
+  .contact{padding:80px 0 88px;}
   .contact .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
-  .contact h2{max-width:14ch;}
-  .contact p{color:var(--muted);margin-top:14px;max-width:44ch;}
+  .contact h2{max-width:16ch;}
+  .contact p{color:var(--muted);margin-top:14px;max-width:40em;}
+  .who{font-family:var(--mono);font-size:12.5px;color:var(--ink);margin-top:22px;letter-spacing:1px;}
   .btns{text-align:right;}
   .btn{display:inline-block;font-family:var(--mono);font-size:14px;padding:16px 28px;text-decoration:none;border:1.5px solid var(--ink);}
   .btn.solid{background:var(--ink);color:#fff;}
@@ -104,54 +106,18 @@
   .btn+.btn{margin-left:12px;}
   .btn:hover{border-color:var(--gold);color:var(--gold);}
 
-  footer{padding:24px 0 44px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--muted);}
+  footer{padding:24px 0 44px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:1px;}
 
-  @media (max-width:860px){
-    .hero .sub{grid-template-columns:1fr;}
-    .hero .sub .tag{text-align:left;}
-    .bignums{grid-template-columns:1fr;}
-    .bignums>div{border-left:none;border-top:1px solid var(--hair);padding-left:0;}
-    .bignums>div:first-child{border-top:none;}
-    .secgrid,.kao .grid,.contact .grid{grid-template-columns:1fr;gap:20px;}
-    .track{grid-template-columns:60px 1fr;grid-template-rows:auto auto;}
-    .track p{grid-column:2;}
-    .xsec{grid-template-columns:1fr;}
-    .btns{text-align:left;}
-  }
-  @media (max-width:640px){
-    .hero h1 br{display:none;}
-    .hero h1{font-size:clamp(30px,9.2vw,46px);letter-spacing:-1.2px;}
-    .bignums .v{font-size:clamp(44px,13vw,64px);}
-  }
-  @media (max-width:520px){
-    body{overflow-x:clip;}
-    .wrap{padding:0 22px;}
-    header{flex-wrap:wrap;gap:8px;}
-    .tlrow{grid-template-columns:1fr;gap:4px;padding:16px 0;}
-    .creedrow{grid-template-columns:1fr;gap:4px;padding:18px 0;}
-    .track{padding:20px 0;}
-    .tlrow:hover,.track:hover,.creedrow:hover{padding-left:0;background:none;}
-    .titleblock{font-size:10px;}
-  }
-  :focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
-  .hero h1{letter-spacing:1px;}
-  h2,.creedrow h3,.kao blockquote{letter-spacing:0;}
-  .tlrow .yr{letter-spacing:0;}
-
-  /* ---- motion layer (JS adds .rv; IO adds .in; reduced-motion disables all) ---- */
-  #progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--gold);
-    transform:scaleX(0);transform-origin:left;z-index:50;}
-  .rv{opacity:0;transform:translateY(26px);
-    transition:opacity .75s cubic-bezier(.2,.65,.25,1), transform .75s cubic-bezier(.2,.65,.25,1);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;z-index:50;}
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.2,.65,.25,1), transform .75s cubic-bezier(.2,.65,.25,1);}
   .rv.in{opacity:1;transform:none;}
-  hr.rule.rv, hr.rule.thin.rv{opacity:1;transform:scaleX(0);transform-origin:left;
-    transition:transform 1s cubic-bezier(.7,0,.2,1);}
+  hr.rule.rv{opacity:1;transform:scaleX(0);transform-origin:left;transition:transform 1s cubic-bezier(.7,0,.2,1);}
   hr.rule.rv.in{transform:scaleX(1);}
   .hl{display:block;overflow:hidden;}
   .hl>span{display:block;transform:translateY(115%);transition:transform .9s cubic-bezier(.2,.65,.2,1);}
   .hl.in>span{transform:none;}
-  .tlrow, .track, .creedrow{transition:background .25s, padding-left .25s;}
-  .tlrow:hover, .track:hover, .creedrow:hover{background:#FAFAF8;padding-left:10px;}
+  .tlrow,.track,.creedrow{transition:background .25s, padding-left .25s;}
+  .tlrow:hover,.track:hover,.creedrow:hover{background:#FAFAF8;padding-left:10px;}
   #recchart polyline{transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);}
   #recchart circle{opacity:0;transition:opacity .4s;}
   #recchart.in circle{opacity:1;}
@@ -160,6 +126,32 @@
     #recchart circle{opacity:1;}
     #progress{display:none;}
   }
+
+  @media (max-width:860px){
+    .hero .sub{grid-template-columns:1fr;}
+    .hero .sub .tag{justify-self:start;text-align:left;}
+    .bignums{grid-template-columns:1fr;}
+    .bignums>div{border-left:none;border-top:1px solid var(--hair);padding-left:0;}
+    .bignums>div:first-child{border-top:none;}
+    .secgrid,.contact .grid{grid-template-columns:1fr;gap:20px;}
+    .track{grid-template-columns:80px 1fr;grid-template-rows:auto auto;}
+    .track p{grid-column:2;}
+    .xsec{grid-template-columns:1fr;}
+    .btns{text-align:left;}
+  }
+  @media (max-width:640px){
+    .hero h1{font-size:clamp(32px,9vw,46px);}
+    .bignums .v{font-size:clamp(44px,13vw,64px);}
+  }
+  @media (max-width:520px){
+    body{overflow-x:clip;}
+    .wrap{padding:0 22px;}
+    header{flex-wrap:wrap;gap:8px;}
+    .tlrow{grid-template-columns:1fr;gap:4px;padding:16px 0;}
+    .creedrow{grid-template-columns:1fr;gap:4px;padding:18px 0;}
+    .tlrow:hover,.track:hover,.creedrow:hover{padding-left:0;background:none;}
+  }
+  :focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
 </style>
 </head>
 <body>
@@ -169,38 +161,58 @@
 
   <header>
     <a class="lockup" href="#">
-      <img src="assets/cavus-mark-trans-forlight.svg" alt="Cavus Photonics mark" class="markimg">
+      <img src="assets/cavus-mark-trans-forlight.svg" alt="空芯光子" class="markimg">
       <span class="words"><span class="zh">空芯光子</span><span class="n">CAVUS</span><span class="s">PHOTONICS</span></span>
     </a>
-    <span class="loc">香港 · 始于 2026 &nbsp;·&nbsp; <a href="index.html" style="color:var(--gold);text-decoration:none;">EN</a></span>
+    <span class="loc">香港 &nbsp;·&nbsp; <a href="index.html" style="color:var(--gold);text-decoration:none;">EN</a></span>
   </header>
   <hr class="rule">
 
   <div class="hero" id="s-hero">
-    <span class="kick">技术说明书 · 空芯光纤 · AI 基础设施</span>
-    <h1>光在空气中走得更快。<br>我们建造的光纤，<br>就是<em>证明。</em></h1>
+    <span class="kick">技术白皮书 · 空芯光纤 · AI 算力时代</span>
+    <h1>光，本可以更快。<br>我们为它<em>造路。</em></h1>
     <div class="sub">
-      <p><b>空芯光子（Cavus Photonics）</b>是一家立足香港的光学研发公司，专注于<b>空芯光纤</b>——光在空气中传输，比在玻璃中<b>快 32%</b>——以及把它接入全球网络所需的一切。<i>Cavus</i> 源自拉丁文，意为“空”。空，就是产品。</p>
+      <p><b>空芯光子</b>研发空芯光纤：让光在空气中传输，而不是玻璃里——快 32%，损耗更低，
+      为 AI 算力时代铺设新的底层光路。<b>以空为芯，以快为道。</b></p>
       <div class="tag">空芯光子有限公司<br>香港 · 粤港澳大湾区<br>筹备中</div>
     </div>
   </div>
 
   <hr class="rule">
   <div class="bignums">
-    <div><div class="v">−32<span>%</span></div><div class="k">Δ 时延</div><div class="d">光在空气中以 99.7% 光速传播，玻璃中仅 67%</div></div>
-    <div><div class="v">0.04</div><div class="k">α · dB/km 纪录</div><div class="d">已低于实心石英的理论极限</div></div>
-    <div><div class="v">10<span>³</span>×</div><div class="k">χ³ 非线性，更低</div><div class="d">更高功率、更长跨距、更少中继</div></div>
+    <div><div class="v">−32<span>%</span></div><div class="k">时延</div><div class="d">空气中光速达 99.7%c，玻璃中仅 67%</div></div>
+    <div><div class="v">0.04</div><div class="k">dB/km · 世界纪录</div><div class="d">已低于实心石英的理论极限</div></div>
+    <div><div class="v">10<span>³</span>×</div><div class="k">非线性 · 更低</div><div class="d">更高功率，更长跨距，更少中继</div></div>
   </div>
   <hr class="rule">
 
-  <section id="s-01">
+  <section id="s-origin">
     <div class="secgrid">
-      <div class="secno">章节<b>01</b><br>衰减纪录<br>2019 – 2026</div>
+      <div class="secno">壹 · 缘起<b>高锟</b>光纤之父<br>1966 ——— 2026</div>
       <div>
-        <h2>纪录正在坠落，而且很快。</h2>
-        <p class="lead">四十年来，实心玻璃的损耗极限无人能破。2025 年，空芯光纤首次跌破了它——而且还在继续下探。一项技术在真正改变世界之前，就是这个样子。</p>
+        <h2>一切，从香港开始。</h2>
+        <div class="prose">
+          <p>一九六六年，高锟先生提出：光，可以在比头发丝还细的玻璃里传递信息。没有人相信。
+          他用了十年，说服全世界把玻璃做纯——于是有了光纤，有了互联网，有了今天的一切。</p>
+          <p>他晚年回到香港，执掌中文大学，二〇〇九年摘得诺贝尔物理学奖。世人称他<b>光纤之父</b>。</p>
+          <p>可是六十年过去，香港始终没有一家真正延续他事业的企业。修了路的人，没有开上自己的车。</p>
+          <p class="close">空芯光子，为补上这一课而生。<em>轮到香港了。</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule thin">
+
+  <section id="s-record">
+    <div class="secgrid">
+      <div class="secno">贰 · 技术<b>纪录</b>衰减世界纪录<br>2019 – 2026</div>
+      <div>
+        <h2>纪录，正在被改写。</h2>
+        <p class="lead">四十年来，实心玻璃的损耗下限无人能破。二〇二五年，空芯光纤第一次跌破了它——
+        此后一路向下。<b>谁先看懂这条曲线，谁就先站上下一个十年。</b></p>
         <div class="chartbox">
-          <svg id="recchart" viewBox="0 0 700 225" role="img" aria-label="Hollow-core fibre loss records falling from 0.65 dB/km in 2019 to 0.04 dB/km in 2026, crossing the solid-silica floor in 2025">
+          <svg id="recchart" viewBox="0 0 700 225" role="img" aria-label="空芯光纤损耗纪录：从 2019 年 0.65 dB/km 降至 2026 年 0.04 dB/km，并于 2025 年跌破实心石英理论极限">
             <line x1="40" y1="109" x2="660" y2="109" stroke="#0A1B2E" stroke-width="1" stroke-dasharray="5 6" opacity="0.45"/>
             <text x="42" y="101" font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#66788A">实心石英极限 ≈ 0.14 dB/km</text>
             <polyline points="60,34 200,75 340,98 480,130 620,170" fill="none" stroke="#0A1B2E" stroke-width="2"/>
@@ -214,7 +226,7 @@
               <text x="60" y="210">2019</text><text x="200" y="210">2020</text><text x="340" y="210">2022</text>
               <text x="480" y="210">2025</text><text x="620" y="210">2026</text>
             </g>
-            <text x="474" y="148" font-family="IBM Plex Mono,monospace" font-size="10" fill="#66788A" text-anchor="end">← 空芯首次胜过实心</text>
+            <text x="474" y="148" font-family="IBM Plex Mono,monospace" font-size="10" fill="#66788A" text-anchor="end">← 空芯首破石英极限</text>
           </svg>
           <div class="cap">1550 nm 已发表纪录（NANF → DNANF → ST-HCF）· 对数坐标</div>
         </div>
@@ -224,17 +236,17 @@
 
   <hr class="rule thin">
 
-  <section id="s-why">
+  <section id="s-window">
     <div class="secgrid">
-      <div class="secno">章节<b>02</b><br>时机<br>正在关闭的窗口</div>
+      <div class="secno">叁 · 时机<b>窗口</b>正在收窄</div>
       <div>
-        <h2>窗口已经打开，但不会太久。</h2>
-        <p class="lead">空芯光纤刚刚走出实验室。而我们深耕的这一层——把它接入世界——仍然无人认领。</p>
+        <h2>窗口已开，时不我待。</h2>
+        <p class="lead">空芯光纤刚刚走出实验室。真正的空白，在把它<b>接入世界</b>的那一层。</p>
         <div class="tl">
-          <div class="tlrow"><span class="yr">2022</span><p><b>微软收购 Lumenisity</b>——南安普顿大学的空芯光纤公司。超大规模云厂商开始买下的不只是光纤，而是整条供应链。</p></div>
-          <div class="tlrow"><span class="yr">2025</span><p><b>空芯首次胜过实心</b>——Nature Photonics 发表 0.091 dB/km，低于石英四十年的极限。超过 1,200 公里线路已承载 Azure 实时流量。</p></div>
-          <div class="tlrow"><span class="yr">2026</span><p><b>纪录在中国再次刷新</b>——0.04 dB/km——商用空芯链路已贯通广东与香港。大湾区已经是实战部署区。</p></div>
-          <div class="tlrow"><span class="yr gold">现在</span><p><b>互连、成缆与认证仍是空白。</b>标准尚未写就，收费站尚未建起。我们估计，入场窗口还有 18–24 个月。</p></div>
+          <div class="tlrow"><span class="yr">2022</span><p><b>微软收购英国 Lumenisity</b>——云巨头开始布局的不只是光纤，而是整条供应链。</p></div>
+          <div class="tlrow"><span class="yr">2025</span><p><b>空芯首破石英极限</b>：0.091 dB/km 发表于 Nature Photonics；微软 Azure 已铺设逾 1,200 公里，承载实时业务。</p></div>
+          <div class="tlrow"><span class="yr">2026</span><p><b>长飞创下 0.04 dB/km 世界纪录</b>；粤港之间开通商用空芯链路。这一次，纪录诞生在大湾区。</p></div>
+          <div class="tlrow"><span class="yr gold">现在</span><p><b>互连、成缆、标准认证——三大环节仍是空白。</b>标准未立，格局未定。留给入场者的时间，约 18 至 24 个月。</p></div>
         </div>
       </div>
     </div>
@@ -242,13 +254,13 @@
 
   <hr class="rule thin">
 
-  <section id="s-02">
+  <section id="s-fibre">
     <div class="secgrid">
-      <div class="secno">章节<b>03</b><br>光纤本体<br>嵌套反谐振结构</div>
+      <div class="secno">肆 · 结构<b>光纤</b>嵌套反谐振<br>NANF</div>
       <div>
-        <h2>下一个十年的横截面。</h2>
+        <h2>看清这一根光纤。</h2>
         <div class="xsec">
-          <svg viewBox="0 0 400 360" role="img" aria-label="Line drawing of a nested antiresonant hollow-core fibre cross-section">
+          <svg viewBox="0 0 400 360" role="img" aria-label="嵌套反谐振空芯光纤横截面线图">
             <circle cx="200" cy="180" r="130" fill="none" stroke="#0A1B2E" stroke-width="1.4"/>
             <g fill="none" stroke="#0A1B2E" stroke-width="1">
               <circle cx="200" cy="108" r="34"/><circle cx="262" cy="144" r="34"/><circle cx="262" cy="216" r="34"/>
@@ -263,14 +275,14 @@
           </svg>
           <div class="notes">
             <b>空芯</b> — 空气 · n ≈ 1.0003 <span class="g">●</span><br>
-            <b>反谐振管 ×6</b> — 嵌套结构<br>
-            <b>石英薄膜</b> — 400–700 nm<br>
-            <b>外径</b> — ≈ 200 µm<br>
-            <b>导光机制</b> — 光不接触玻璃<br><br>
+            <b>反谐振管 ×6</b> — 双层嵌套<br>
+            <b>石英薄膜</b> — 400–700 纳米<br>
+            <b>外径</b> — 约 200 微米<br>
+            <b>导光原理</b> — 光，不碰玻璃<br><br>
             最难的从来不是物理，<br>
-            而是把它接入世界已铺好的<br>
-            玻璃光纤——那正是<br>
-            我们的主场。
+            是把这根光纤，接进<br>
+            全世界已经铺好的玻璃光网。<br>
+            <b>那正是我们的主场。</b>
           </div>
         </div>
       </div>
@@ -279,16 +291,17 @@
 
   <hr class="rule thin">
 
-  <section id="s-03">
+  <section id="s-works">
     <div class="secgrid">
-      <div class="secno">章节<b>04</b><br>一条链路<br>三个难题</div>
+      <div class="secno">伍 · 业务<b>三事</b>一条链路<br>三个咽喉</div>
       <div>
-        <h2>部署的成败，就在我们工作的这一层。</h2>
-        <p class="lead">每一次空芯部署，一端要接入全球已铺设的玻璃光纤，另一端要接入 AI 集群。这条链路，就是我们的实验室。</p>
+        <h2>我们只做三件事。</h2>
+        <p class="lead">空芯光纤要落地：一端连着全球已铺设的玻璃光纤，一端连着 AI 算力集群。
+        这条链路上最难的三件事，就是我们的全部业务。</p>
         <div class="tracks">
-          <div class="track"><span class="no">01</span><h3>空芯接实心</h3><p>Mode-field adapters, splicing protocols, field-installable connectors between air-core and the installed base — the toll booth every deployment pays.</p></div>
-          <div class="track"><span class="no">02</span><h3>让它可部署</h3><p>从实验室线轴到数据中心级线缆：抗弯设计、标准认证、与产业伙伴的中试制造。</p></div>
-          <div class="track"><span class="no">03</span><h3>证明它的价值</h3><p>度量更低时延在 GPU 集群与数据中心互联中真正的回报——先发表，再部署，大湾区先行。</p></div>
+          <div class="track"><span class="no">互连</span><h3>把空接进玻璃</h3><p>模场适配、熔接工艺、现场连接器——每一次部署的必经之路，也是价值的咽喉。</p></div>
+          <div class="track"><span class="no">成缆</span><h3>从实验室到机房</h3><p>抗弯结构、标准认证、中试量产——把纪录变成可以下单的产品。</p></div>
+          <div class="track"><span class="no">系统</span><h3>用数据说话</h3><p>在 GPU 集群与数据中心互联中，量化每一微秒的价值——先发表，再部署，大湾区先行。</p></div>
         </div>
       </div>
     </div>
@@ -298,34 +311,24 @@
 
   <section id="s-creed">
     <div class="secgrid">
-      <div class="secno">章节<b>05</b><br>我们的信念</div>
+      <div class="secno">陆 · 信念<b>三条</b></div>
       <div class="creed">
-        <div class="creedrow"><span class="no">01</span><h3>护城河是集成。 <span>物理原理早已发表；把空芯接入现有世界的工艺还没有。</span></h3></div>
-        <div class="creedrow"><span class="no">02</span><h3>每次部署都要过收费站。 <span>谁掌握互连，谁就掌握经济学。</span></h3></div>
-        <div class="creedrow"><span class="no">03</span><h3>香港是那座桥。 <span>纪录在大湾区刷新；资本、标准与渠道在这里交汇。</span></h3></div>
+        <div class="creedrow"><span class="no">一</span><h3>集成为王。<span>物理早已公开，工程才是壁垒。</span></h3></div>
+        <div class="creedrow"><span class="no">二</span><h3>得互连者得天下。<span>握住链路的咽喉，就握住了价值的分配。</span></h3></div>
+        <div class="creedrow"><span class="no">三</span><h3>香港，是那座桥。<span>纪录在湾区诞生，资本与标准在香港交汇。</span></h3></div>
       </div>
     </div>
   </section>
 
   <hr class="rule">
 
-  <div class="kao" id="s-kao">
-    <div class="grid">
-      <div class="secno">1966 ——— 2026<b>高锟</b><br>光纤之父<br>诺贝尔物理学奖</div>
-      <div>
-        <blockquote>“香港养育了光纤之父——却始终没有建立起配得上他遗产的产业。我们相信，<em>轮到香港</em>完成他开创的事业了。”</blockquote>
-        <div class="who">黄智勇 JORDAN WONG &nbsp;·&nbsp; 洪伟礼 WILLIAM HUNG &nbsp;—&nbsp; 创始人</div>
-      </div>
-    </div>
-  </div>
-
-  <hr class="rule">
-
   <div class="contact" id="s-contact">
     <div class="grid">
       <div>
-        <h2>正在筹备，欢迎交流。</h2>
-        <p>我们正与香港及大湾区的高校、光纤制造商和数据中心运营商共同推进。如果这也是您的领域，欢迎联系。</p>
+        <h2>同路人，请联系。</h2>
+        <p>我们正与高校、光纤厂商、数据中心运营商同行。高校要长期经费与产业化出口，我们有；
+        厂商要下一代产品，我们在做。若您也在这条路上，欢迎来信。</p>
+        <div class="who">黄智勇 JORDAN WONG &nbsp;·&nbsp; 洪伟礼 WILLIAM HUNG &nbsp;—&nbsp; 创始人</div>
       </div>
       <div class="btns">
         <a class="btn solid" href="mailto:hello@cavusphotonics.com">hello@cavusphotonics.com</a>
@@ -337,7 +340,7 @@
   <hr class="rule thin">
   <footer>
     <span>© 2026 空芯光子 CAVUS PHOTONICS · 香港</span>
-    <span>CAVUS，拉丁文——“空”。空，就是产品。</span>
+    <span>以空为芯 · CAVUS，拉丁语——「空」</span>
   </footer>
 
 </div>
@@ -358,7 +361,6 @@ if (THREE) {
   scene.add(new THREE.AmbientLight(0xffffff, 1.4));
   const key = new THREE.DirectionalLight(0xffffff, 0.5); key.position.set(4,6,8); scene.add(key);
 
-  // Swiss ink wireframe: monochrome line-work, no glow, gold reserved for the core
   const fibre = new THREE.Group();
   const L = 5.2, INK = 0x0A1B2E;
   const shellMat = new THREE.MeshBasicMaterial({color:INK, transparent:true, opacity:0.045, side:THREE.DoubleSide});
@@ -369,7 +371,6 @@ if (THREE) {
     const r = new THREE.Mesh(new THREE.TorusGeometry(1.18, 0.014, 10, 80), ringMat);
     r.rotation.x = Math.PI/2; r.position.y = y; fibre.add(r);
   }
-  // longitudinal generatrix lines — the engineering-drawing signature
   const genMat = new THREE.LineBasicMaterial({color:INK, transparent:true, opacity:0.35});
   for (let i=0;i<12;i++){
     const a = i*Math.PI/6;
@@ -396,12 +397,12 @@ if (THREE) {
 
   const KEYS = [
     ['s-hero',    {fx: 0.67, y: 0.05, rx: Math.PI/2, rz: 0.0,  s: 0.86}],
-    ['s-01',      {fx:-0.62, y: 0.0,  rx: 0.45,      rz: 0.9,  s: 0.8 }],
-    ['s-why',     {fx: 0.64, y: 0.0,  rx: 0.85,      rz: 0.55, s: 0.7 }],
-    ['s-02',      {fx:-0.62, y: 0.0,  rx: 1.25,      rz: 0.35, s: 0.72}],
-    ['s-03',      {fx: 0.62, y: 0.0,  rx: 0.15,      rz: 1.45, s: 0.75}],
-    ['s-creed',   {fx:-0.6,  y: 0.0,  rx: 1.4,       rz: 0.2,  s: 0.6 }],
-    ['s-kao',     {fx: 0.0,  y:-2.2,  rx: 0.3,       rz: 1.57, s: 0.5 }],
+    ['s-origin',  {fx:-0.6,  y: 0.0,  rx: 0.5,       rz: 0.8,  s: 0.7 }],
+    ['s-record',  {fx: 0.62, y: 0.0,  rx: 0.45,      rz: 0.9,  s: 0.8 }],
+    ['s-window',  {fx:-0.64, y: 0.0,  rx: 0.85,      rz: 0.55, s: 0.7 }],
+    ['s-fibre',   {fx: 0.62, y: 0.0,  rx: 1.25,      rz: 0.35, s: 0.72}],
+    ['s-works',   {fx:-0.62, y: 0.0,  rx: 0.15,      rz: 1.45, s: 0.75}],
+    ['s-creed',   {fx: 0.6,  y: 0.0,  rx: 1.4,       rz: 0.2,  s: 0.6 }],
     ['s-contact', {fx: 0.0,  y: 3.8,  rx: 0.3,       rz: 1.57, s: 0.4 }],
   ];
   const state = {...KEYS[0][1]}; const target = {...KEYS[0][1]};
@@ -457,12 +458,9 @@ if (THREE) {
 </script>
 
 <script>
-// ---- motion layer: reveals, counters, chart draw, progress bar ----
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) return;
-
-  // scroll progress hairline
   const bar = document.getElementById('progress');
   const prog = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -470,34 +468,27 @@ if (THREE) {
   };
   addEventListener('scroll', prog, {passive:true}); prog();
 
-  // hero headline: split lines into masked slabs that rise in
   const h1 = document.querySelector('.hero h1');
   if (h1) {
     h1.innerHTML = h1.innerHTML.split(/<br\s*\/?>/i)
       .map(l => `<span class="hl"><span>${l}</span></span>`).join('');
   }
-
-  // elements that reveal on approach
   const targets = [
-    ...document.querySelectorAll('.kick, .hero .sub p, .hero .sub .tag, .bignums>div, .secno, h2, .lead, .chartbox, .xsec, .tlrow, .track, .creedrow, .kao blockquote, .kao .who, .kao .who2, .kao .years, .contact h2, .contact p, .btns, hr.rule'),
+    ...document.querySelectorAll('.kick, .hero .sub p, .hero .sub .tag, .bignums>div, .secno, h2, .lead, .prose p, .chartbox, .xsec, .tlrow, .track, .creedrow, .contact h2, .contact p, .who, .btns, hr.rule'),
     ...document.querySelectorAll('.hl'),
   ];
   targets.forEach(el => el.classList.add('rv'));
-
-  // stagger within groups
-  document.querySelectorAll('.tl, .tracks, .creed, .bignums').forEach(group => {
+  document.querySelectorAll('.tl, .tracks, .creed, .bignums, .prose').forEach(group => {
     [...group.children].forEach((el, i) => el.style.transitionDelay = `${i*110}ms`);
   });
   document.querySelectorAll('.hl').forEach((el, i) => {
     el.querySelector('span').style.transitionDelay = `${150 + i*140}ms`;
   });
-
   const io = new IntersectionObserver(entries => {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
   }, {rootMargin: '0px 0px -12% 0px', threshold: 0.05});
   targets.forEach(el => io.observe(el));
 
-  // record chart: line draws itself, floor crossing revealed last
   const chart = document.getElementById('recchart');
   if (chart) {
     const line = chart.querySelector('polyline');
@@ -514,7 +505,6 @@ if (THREE) {
     }, {threshold: 0.4}).observe(chart);
   }
 
-  // big numbers: −32% counts down; 0.04 falls from 0.65 (the record falling, literally)
   function count(el, from, to, dur, fmt) {
     const t0 = performance.now();
     (function tick(now){
@@ -528,7 +518,6 @@ if (THREE) {
   if (nums.length >= 2) {
     new IntersectionObserver((es, o) => {
       for (const e of es) if (e.isIntersecting) {
-        const pct = nums[0].querySelector('span');
         count(nums[0], 0, -32, 1400, v => { nums[0].innerHTML = `${Math.round(v)}<span>%</span>`; });
         count(nums[1], 0.65, 0.04, 1800, v => nums[1].textContent = v.toFixed(2));
         o.disconnect();
