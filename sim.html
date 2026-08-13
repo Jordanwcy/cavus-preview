@@ -62,6 +62,24 @@
   .stat .n{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--gold);}
   .stat .l{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:4px;}
   footer{border-top:1.5px solid var(--ink);padding:18px 0 40px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;}
+  /* spec sheet overlay */
+  #specview{display:none;position:fixed;inset:0;z-index:50;background:rgba(10,27,46,0.5);overflow:auto;padding:30px 14px;}
+  #specview.open{display:block;}
+  .specpaper{background:#fff;max-width:780px;margin:0 auto;padding:34px 30px;font-size:13px;line-height:1.55;box-shadow:0 10px 40px rgba(0,0,0,0.35);}
+  .specpaper h1{font-size:21px;margin:2px 0;} 
+  .specpaper h2{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--gold);margin:20px 0 6px;text-transform:uppercase;border-bottom:1.5px solid var(--ink);padding-bottom:4px;}
+  .specpaper table{width:100%;border-collapse:collapse;margin:6px 0;font-size:12px;}
+  .specpaper td,.specpaper th{border:0.5px solid var(--hair);padding:6px 8px;text-align:left;}
+  .specpaper th{background:#F4F1EA;font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+  .specpaper ol{padding-left:18px;} .specpaper ol li{margin-bottom:5px;}
+  .specbar{max-width:780px;margin:0 auto 10px;display:flex;gap:8px;justify-content:flex-end;}
+  .specbar button{font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:10px 16px;border:none;cursor:pointer;}
+  @media print{
+    body.spec-open>.wrap{display:none;}
+    body.spec-open #specview{position:static;background:#fff;padding:0;overflow:visible;}
+    body.spec-open .specbar{display:none;}
+    body.spec-open .specpaper{box-shadow:none;max-width:none;padding:0;}
+  }
 </style>
 </head>
 <body>
@@ -107,10 +125,18 @@
       <div>
         <div class="big" id="bigbox"><div class="n" id="bign">—</div><div class="u">dB predicted insertion loss</div>
           <div class="verdict" id="bigv">—</div></div>
+        <div style="display:flex;gap:10px;margin:-10px 0 22px;flex-wrap:wrap;">
+          <button id="storybtn" style="flex:1;min-width:220px;font-family:var(--mono);font-size:13px;letter-spacing:1.5px;
+            padding:13px;border:none;background:var(--ink);color:#fff;cursor:pointer;">▶ PLAY THE STORY — 35 s</button>
+          <button id="specbtn" style="flex:1;min-width:220px;font-family:var(--mono);font-size:13px;letter-spacing:1.5px;
+            padding:13px;border:1.5px solid var(--gold);background:#FDF6E4;color:var(--ink);cursor:pointer;">⬇ JUNCTION SPEC + PROCESS RECIPE (PDF)</button>
+        </div>
         <div class="chartbox" style="background:#0A1B2E;border-color:#0A1B2E;position:relative;">
           <h4 style="color:#8FA0B3;">3D junction view — live digital twin <span style="float:right;color:#5A6B7E;">drag to orbit</span></h4>
           <canvas id="c3d" style="width:100%;height:340px;display:block;cursor:grab;"></canvas>
           <div id="leaklabel" style="position:absolute;right:24px;bottom:18px;font-family:var(--mono);font-size:12px;color:#E4B54A;"></div>
+          <div id="storycap" style="display:none;position:absolute;left:24px;right:24px;bottom:44px;background:rgba(10,27,46,0.55);
+            border-left:3px solid #E4B54A;padding:12px 16px;font-family:var(--mono);font-size:14px;line-height:1.55;color:#fff;"></div>
         </div>
         <div class="chartbox"><h4>Loss vs lateral offset — all four strategies</h4><canvas id="c1" width="1200" height="440"></canvas></div>
         <div class="chartbox"><h4>Loss vs angular tilt</h4><canvas id="c2" width="1200" height="440"></canvas></div>
@@ -141,6 +167,14 @@
     Rung 0 of the Cavus prototype ladder → Rung 2 adds AI geometry search (HKUST capstone) → Rung 3 overlays
     measured data from the bench rig.<br>© 2026 Cavus Photonics · 空芯光子 · Hong Kong
   </footer>
+</div>
+
+<div id="specview">
+  <div class="specbar">
+    <button style="background:var(--ink);color:#fff;" onclick="window.print()">PRINT / SAVE AS PDF</button>
+    <button style="background:#fff;border:1.5px solid var(--ink);" onclick="document.getElementById('specview').classList.remove('open');document.body.classList.remove('spec-open')">CLOSE ✕</button>
+  </div>
+  <div class="specpaper" id="specpaper"></div>
 </div>
 
 <script>
@@ -231,6 +265,91 @@ function lat(){const km=+$("km").value;$("vkm").textContent=km+" km";
   $("s3").textContent=Math.round(closer);}
 $("km").addEventListener("input",()=>{document.querySelectorAll("#routes button").forEach(x=>x.classList.remove("on"));lat();});
 draw();lat();
+
+// ═══════════ STORY MODE ═══════════
+let storyOn=false, storyTimers=[];
+const cap=$("storycap"), sbtn=$("storybtn");
+function setStrat(k){document.querySelector(`#strat button[data-k="${k}"]`)?.click();}
+function slideTo(id,target,ms){const el=$(id);const from=+el.value;const t0=performance.now();
+  (function step(now){if(!storyOn)return;const f=Math.min(1,(now-t0)/ms);
+    el.value=(from+(target-from)*f).toFixed(2);draw();
+    if(f<1)requestAnimationFrame(step);})(performance.now());}
+function say(text){cap.style.display="block";cap.innerHTML=text;}
+function storyStop(msg){storyOn=false;storyTimers.forEach(clearTimeout);storyTimers=[];
+  cap.style.display="none";sbtn.textContent="▶ PLAY THE STORY — 35 s";if(msg)say(msg);}
+sbtn.onclick=()=>{
+  if(storyOn){storyStop();return;}
+  storyOn=true;sbtn.textContent="■ STOP";
+  $("fa").value="smf28";$("fb").value="dnanf";$("off").value=0;$("tilt").value=0;$("gap").value=0;setStrat("butt");
+  const steps=[
+    [0,   ()=>say("This is the meeting the whole industry is about to have:<br><b>hollow-core fibre</b> (right) joining <b>the installed world</b> (left).")],
+    [6000,()=>{say("Joined naively — a direct splice — their light doesn't match.<br><b style='color:#E4B54A'>~2 dB simply leaks away. A third of the signal.</b>");}],
+    [12000,()=>{say("And real factories aren't perfect. Add 2 µm of misalignment…");slideTo("off",2,2500);}],
+    [18000,()=>say("<b style='color:#E4B54A'>This is the 1–3 dB problem.</b> At every junction. Both ends. Every deployment on earth.")],
+    [23000,()=>{say("Now the Cavus junction: the small mode is <b>expanded to match</b> before the joint…");setStrat("tec");slideTo("off",0,2500);}],
+    [29000,()=>say("<b style='color:#7FBF7F'>Deployment-grade.</b> Loss down ~87%. Designed in software, certified on the bench.")],
+    [34000,()=>{say("<b>Cavus Photonics owns this layer.</b> Now drag the sliders yourself — or download the manufacturing recipe below.");
+      storyTimers.push(setTimeout(()=>storyStop(),6000));sbtn.textContent="▶ PLAY THE STORY — 35 s";storyOn=false;storyTimers=[];}],
+  ];
+  steps.forEach(([t,fn])=>storyTimers.push(setTimeout(()=>{if(storyOn||t===34000)fn();},t)));
+};
+
+// ═══════════ SPEC SHEET + PROCESS RECIPE ═══════════
+function findMax(fn,limit,lo,hi){for(let i=0;i<40;i++){const m=(lo+hi)/2;fn(m)<=limit?lo=m:hi=m;}return lo;}
+const RECIPES={
+  butt:["⚠ Reference baseline only — NOT RECOMMENDED for deployment.","Strip, clean and flat-cleave both fibres (≤0.5° cleave angle).","Passive V-groove align to spec window; close gap to <5 µm.","Fusion splice at reduced arc power to protect the HCF microstructure.","Measure IL at 1550 nm; expect ~2 dB — baseline for comparison only."],
+  tec:["Strip and flat-cleave both fibres (≤0.5° cleave angle).","Thermally expand the SMF core (repeated low-power arc sweeps) until MFD matches the hollow-core mode (target below); verify expansion by far-field scan.","Active-align to the spec window in this sheet (monitor IL live at 1550 nm).","Fusion splice at reduced arc power; do not let the arc reach the HCF microstructure.","Optional: AR-treat the air interface if link budget requires (<0.05 dB gain).","Recoat, package with strain relief; proceed to qualification (§6)."],
+  grin:["Strip and flat-cleave both fibres; angle-polish SMF side 8° if return loss critical.","Select GRIN lens with magnification M = MFD_B / MFD_A (value below); AR-coat both faces.","Active-align lens between fibres to <0.5 µm lateral tolerance (live IL monitor).","UV-cure bond in alignment jig; verify IL before and after cure.","Package in rigid ferrule with strain relief; proceed to qualification (§6)."],
+  taper:["Fusion splice SMF-28 to intermediate bridge fibre (standard recipe).","Adiabatically taper the bridge until its output MFD matches the hollow-core mode (target below); taper length ≥4 mm to stay adiabatic.","Angle-cleave the bridge output ~4° to suppress back-reflection.","Active-align to HCF within the spec window; bond or splice at low arc power.","Recoat and package; proceed to qualification (§6)."],
+};
+$("specbtn").onclick=()=>{
+  const a=LIB[$("fa").value], b=LIB[$("fb").value], st=cur.st;
+  const d=+$("off").value,t=+$("tilt").value,z=+$("gap").value;
+  const L=loss(a,b,st,d,t,z), Lnom=loss(a,b,st,0,0,0), T=Math.pow(10,-L/10);
+  const SPEC=0.35;
+  const maxOff=findMax(x=>loss(a,b,st,x,0,0),SPEC,0,8);
+  const maxTilt=findMax(x=>loss(a,b,st,0,x,0),SPEC,0,4);
+  const maxGap=findMax(x=>loss(a,b,st,0,0,x),SPEC,0,120);
+  const okNom=Lnom<=SPEC;
+  const rows=[[0.5,0.1],[1.0,0.25],[2.0,0.5]].map(([o,ti])=>
+    `<tr><td>±${o.toFixed(1)} µm · ±${ti}°</td><td>${loss(a,b,st,o,ti,0).toFixed(2)} dB</td><td>${loss(a,b,st,o,ti,0)<=SPEC?"PASS":"FAIL"}</td></tr>`).join("");
+  const dt=new Date(), ref=`CS-${dt.getFullYear()}${String(dt.getMonth()+1).padStart(2,"0")}${String(dt.getDate()).padStart(2,"0")}-${$("fb").value.toUpperCase()}-${st.toUpperCase()}`;
+  const paper=document.getElementById("specpaper");
+  paper.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #0A1B2E;padding-bottom:12px;"><div><div style="font-size:11px;letter-spacing:3px;color:#B8891F;font-weight:600;">CAVUS PHOTONICS · 空芯光子</div>
+      <h1>Junction Specification &amp; Process Recipe</h1>
+      <div class="mono" style="color:#66788A">${ref} · generated ${dt.toISOString().slice(0,10)} · CavusSim v0</div></div>
+      <div style="text-align:right;font-size:11px;color:#66788A;">FOR MANUFACTURING-PARTNER<br>EVALUATION · CONFIDENTIAL</div></div>
+    <h2>1 · Configuration</h2>
+    <table><tr><th>Fibre A (installed side)</th><td>${a.name} — MFD ${a.mfd} µm</td></tr>
+    <tr><th>Fibre B (hollow-core side)</th><td>${b.name} — MFD ${b.mfd} µm</td></tr>
+    <tr><th>Junction strategy</th><td>${STRATS[st]}${st==="tec"||st==="taper"?` — target expanded/bridge MFD ≈ ${(b.mfd*1.04).toFixed(1)} µm`:""}${st==="grin"?` — lens magnification M ≈ ${(b.mfd/a.mfd).toFixed(2)}`:""}</td></tr>
+    <tr><th>Wavelength</th><td>1550 nm (C-band)</td></tr></table>
+    <h2>2 · Predicted performance (nominal alignment)</h2>
+    <div style="font-size:26px;font-weight:700;color:${okNom?'#2E6B34':'#A93226'};">${Lnom.toFixed(2)} dB &nbsp;<span style="font-size:13px;font-weight:400;">insertion loss · ${okNom?"MEETS":"DOES NOT MEET"} deployment spec (≤ ${SPEC} dB) · transmission ${(Math.pow(10,-Lnom/10)*100).toFixed(1)}%</span></div>
+    ${(d||t||z)?`<div class="mono" style="margin-top:4px;color:#66788A">At currently simulated misalignment (${d} µm / ${t}° / ${z} µm gap): ${L.toFixed(2)} dB.</div>`:""}
+    <h2>3 · Manufacturing spec window (each axis alone, ≤ ${SPEC} dB)</h2>
+    <table><tr><th>Lateral offset</th><th>Angular tilt</th><th>Longitudinal gap</th></tr>
+    <tr><td>±${maxOff.toFixed(2)} µm</td><td>±${maxTilt.toFixed(2)}°</td><td>≤ ${maxGap.toFixed(0)} µm</td></tr></table>
+    <div style="font-size:11px;color:#66788A;">Combined errors derate the window — verify combined cases in §4 and qualify per §6.</div>
+    <h2>4 · Combined-tolerance check</h2>
+    <table><tr><th>Offset · tilt (gap 0)</th><th>Predicted IL</th><th>vs spec</th></tr>${rows}</table>
+    <h2>5 · Process recipe — ${STRATS[st]}</h2>
+    <ol>${RECIPES[st].map(x=>`<li>${x}</li>`).join("")}</ol>
+    <h2>6 · Qualification procedure (acceptance)</h2>
+    <ol><li>Insertion loss at 1550 nm: accept ≤ ${SPEC} dB (3 consecutive reads, ±0.02 dB repeatability).</li>
+    <li>Sweep 1530–1565 nm: IL variation ≤ 0.1 dB across band.</li>
+    <li>Return loss ≥ 40 dB (≥ 50 dB if angle-treated).</li>
+    <li>Thermal cycle −5…70 °C ×3: IL drift ≤ 0.05 dB.</li>
+    <li>Record all traces against this sheet's reference number.</li></ol>
+    <div style="margin-top:26px;border-top:1px solid #D8DEE4;padding-top:10px;font-size:10px;color:#66788A;line-height:1.6;"><b>Model basis:</b> CavusSim v0 — first-order Gaussian mode-overlap (Marcuse) + Fresnel + HCF mode-shape term,
+    validated 6/6 against published interconnection anchors (naive butt ≈2 dB in reported 1–3 dB band; adapted 0.16–0.27 dB in reported band; 1.56 µs/km air advantage).
+    Hollow-core MFD values are literature-derived estimates pending vendor data. This document is an engineering evaluation aid for
+    partner discussion — not a production release. Production specs follow bench validation (Rung 3).<br>
+    © ${dt.getFullYear()} Cavus Photonics · Hong Kong · jordanwcy.github.io/cavus-preview</div>`;
+  document.getElementById("specview").classList.add("open");
+  document.body.classList.add("spec-open");
+  document.getElementById("specview").scrollTop=0;
+};
 </script>
 
 <script type="module">
