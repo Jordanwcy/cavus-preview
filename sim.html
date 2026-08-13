@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CavusSim — HCF ↔ SMF Junction Digital Twin</title>
+<meta name="description" content="Cavus Photonics interactive digital twin: predicts insertion loss of hollow-core to solid-core fibre junctions. Rung 0 of the prototype ladder.">
+<link rel="icon" type="image/png" href="assets/cavus-favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0A1B2E;--muted:#66788A;--gold:#B8891F;--flare:#E4B54A;--hair:#D8DEE4;--paper:#FAFAF7;
+    --good:#2E6B34;--warn:#8A6512;--bad:#A93226;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;--sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1.5px solid var(--ink);}
+  .lockup{display:flex;align-items:center;gap:12px;}
+  .lockup img{height:44px;}
+  .lockup .t{font-weight:700;letter-spacing:2px;font-size:15px;}
+  .lockup .s{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:2px;}
+  .vtag{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.5;}
+  h1{font-size:clamp(26px,4.5vw,40px);font-weight:700;letter-spacing:-0.5px;line-height:1.2;margin:34px 0 8px;}
+  h1 em{font-style:normal;color:var(--gold);}
+  .lede{color:var(--muted);font-size:15px;max-width:720px;}
+  .tabs{display:flex;gap:8px;margin:26px 0 0;}
+  .tab{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;padding:10px 18px;border:1.5px solid var(--ink);
+    background:transparent;cursor:pointer;color:var(--ink);}
+  .tab.on{background:var(--ink);color:#fff;}
+  section{display:none;padding:28px 0 60px;}
+  section.on{display:block;}
+  .panel{display:grid;grid-template-columns:340px 1fr;gap:28px;align-items:start;}
+  @media(max-width:820px){.panel{grid-template-columns:1fr;}}
+  .ctrl{border:1px solid var(--hair);background:#fff;padding:20px;}
+  .ctrl h3{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
+  select{width:100%;font-family:var(--mono);font-size:13px;padding:9px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);margin-bottom:14px;}
+  .strat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+  .strat button{font-family:var(--mono);font-size:11px;letter-spacing:0.5px;padding:9px 6px;border:1.5px solid var(--hair);
+    background:#fff;cursor:pointer;color:var(--ink);}
+  .strat button.on{border-color:var(--gold);background:#FDF6E4;font-weight:600;}
+  .sl{margin-bottom:14px;}
+  .sl label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;}
+  .sl label b{color:var(--gold);}
+  input[type=range]{width:100%;accent-color:#B8891F;}
+  .big{border:1.5px solid var(--ink);background:#fff;padding:22px;text-align:center;margin-bottom:22px;}
+  .big .n{font-family:var(--mono);font-size:56px;font-weight:600;letter-spacing:-2px;line-height:1;}
+  .big .u{font-family:var(--mono);font-size:14px;color:var(--muted);}
+  .big .verdict{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;margin-top:8px;}
+  .g .n,.g .verdict{color:var(--good);} .w .n,.w .verdict{color:var(--warn);} .b .n,.b .verdict{color:var(--bad);}
+  .chartbox{border:1px solid var(--hair);background:#fff;padding:16px;margin-bottom:20px;}
+  .chartbox h4{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+  canvas{width:100%;height:auto;display:block;}
+  .note{font-size:12px;color:var(--muted);font-family:var(--mono);line-height:1.6;}
+  .routes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .routes button{font-family:var(--mono);font-size:12px;padding:9px 14px;border:1.5px solid var(--hair);background:#fff;cursor:pointer;}
+  .routes button.on{border-color:var(--gold);background:#FDF6E4;font-weight:600;}
+  .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  @media(max-width:680px){.stats3{grid-template-columns:1fr;}}
+  .stat{border:1px solid var(--hair);background:#fff;padding:18px;text-align:center;}
+  .stat .n{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--gold);}
+  .stat .l{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+  footer{border-top:1.5px solid var(--ink);padding:18px 0 40px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="lockup">
+      <img src="assets/cavus-mark-trans-forlight.svg" alt="Cavus">
+      <div><div class="t">CAVUSSIM</div><div class="s">JUNCTION DIGITAL TWIN · v0</div></div>
+    </div>
+    <div class="vtag">CAVUS PHOTONICS · 空芯光子<br>RUNG 0 · VALIDATED MODEL</div>
+  </header>
+
+  <h1>The junction, <em>before the hardware exists.</em></h1>
+  <p class="lede">Every hollow-core deployment must join the installed solid-fibre world. This digital twin predicts
+  the insertion loss of that junction — for any fibre pair, adapter strategy and misalignment — using a Gaussian
+  mode-overlap model validated against published interconnection results.</p>
+
+  <div class="tabs">
+    <button class="tab on" data-t="designer">JUNCTION DESIGNER</button>
+    <button class="tab" data-t="latency">GBA LATENCY VALUE</button>
+  </div>
+
+  <!-- ══ DESIGNER ══ -->
+  <section id="designer" class="on">
+    <div class="panel">
+      <div class="ctrl">
+        <h3>Fibre A (installed world)</h3>
+        <select id="fa"></select>
+        <h3>Fibre B (hollow-core)</h3>
+        <select id="fb"></select>
+        <h3>Junction strategy</h3>
+        <div class="strat" id="strat"></div>
+        <h3>Manufacturing misalignment</h3>
+        <div class="sl"><label><span>Lateral offset</span><b id="voff">0.0 µm</b></label>
+          <input type="range" id="off" min="0" max="5" step="0.1" value="0"></div>
+        <div class="sl"><label><span>Angular tilt</span><b id="vtilt">0.00°</b></label>
+          <input type="range" id="tilt" min="0" max="2" step="0.05" value="0"></div>
+        <div class="sl"><label><span>Longitudinal gap</span><b id="vgap">0 µm</b></label>
+          <input type="range" id="gap" min="0" max="50" step="1" value="0"></div>
+        <p class="note">Model: Marcuse Gaussian overlap + Fresnel + HCF mode-shape term.
+        Anchors: ~2 dB naive butt · 0.15–0.5 dB adapted · 1.56 µs/km air advantage.</p>
+      </div>
+      <div>
+        <div class="big" id="bigbox"><div class="n" id="bign">—</div><div class="u">dB predicted insertion loss</div>
+          <div class="verdict" id="bigv">—</div></div>
+        <div class="chartbox"><h4>Loss vs lateral offset — all four strategies</h4><canvas id="c1" width="1200" height="440"></canvas></div>
+        <div class="chartbox"><h4>Loss vs angular tilt</h4><canvas id="c2" width="1200" height="440"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ LATENCY ══ -->
+  <section id="latency">
+    <div class="routes" id="routes"></div>
+    <div class="sl" style="max-width:420px;margin-bottom:20px;">
+      <label><span style="font-family:var(--mono);font-size:12px;">Route length</span><b id="vkm" style="font-family:var(--mono);font-size:12px;color:var(--gold);">140 km</b></label>
+      <input type="range" id="km" min="5" max="3000" step="5" value="140">
+    </div>
+    <div class="stats3">
+      <div class="stat"><div class="n" id="s1">—</div><div class="l">µs saved · round trip</div></div>
+      <div class="stat"><div class="n" id="s2">—</div><div class="l">% latency reduction</div></div>
+      <div class="stat"><div class="n" id="s3">—</div><div class="l">equivalent km "closer"</div></div>
+    </div>
+    <p class="lede" style="font-size:14px;">Light in air runs at 99.97% of c; in silica, 68%. Over this route the round-trip saving above is
+    what a trading venue, an AI-inference cluster or a real-time system buys with hollow-core — <b>but only if the
+    junctions don't burn the link budget.</b> That is the layer Cavus owns.</p>
+  </section>
+
+  <footer>
+    CAVUSSIM v0 — first-order Gaussian mode-overlap engineering model (Marcuse), validated against published
+    interconnection anchors. Python research core: <span style="color:var(--ink)">prototype/cavussim/</span> ·
+    Rung 0 of the Cavus prototype ladder → Rung 2 adds AI geometry search (HKUST capstone) → Rung 3 overlays
+    measured data from the bench rig.<br>© 2026 Cavus Photonics · 空芯光子 · Hong Kong
+  </footer>
+</div>
+
+<script>
+// ——— physics (mirror of cavussim/core.py) ———
+const LAM=1.55, N_SI=1.468, N_AIR=1.0003, C=299792.458, SHAPE=0.10, BRIDGE=0.05;
+const LIB={
+  smf28:{name:"Corning SMF-28 — standard solid fibre",mfd:10.4,air:false},
+  nanf5:{name:"NANF 5-tube (Southampton class '20)",mfd:21.0,air:true},
+  dnanf:{name:"DNANF (Microsoft class '25, 0.091 dB/km)",mfd:20.0,air:true},
+  yofc26:{name:"DNANF-type (YOFC class '26, 0.04 dB/km)",mfd:20.5,air:true},
+  pbgf19:{name:"19-cell PBGF (legacy HCF)",mfd:13.0,air:true},
+};
+const STRATS={butt:"DIRECT BUTT",tec:"TEC EXPANDED",grin:"GRIN LENS",taper:"MATCHED TAPER"};
+function wAtGap(w,z,n){if(z<=0)return w;const zr=Math.PI*w*w*n/LAM;return w*Math.sqrt(1+(z/zr)**2);}
+function eta(w1,w2,d,tdeg,z,n){const w2e=wAtGap(w2,z,n);const s=w1*w1+w2e*w2e;
+  let e=(2*w1*w2e/s)**2; e*=Math.exp(-2*d*d/s);
+  const th=tdeg*Math.PI/180, we2=2*w1*w1*w2e*w2e/s;
+  e*=Math.exp(-2*(Math.PI*n*th*Math.sqrt(we2)/LAM)**2); return e;}
+function fres(ar){let r=((N_AIR-N_SI)/(N_AIR+N_SI))**2; if(ar)r=Math.min(r,0.0025); return -10*Math.log10(1-r);}
+function loss(a,b,st,d,t,z){
+  const cross=a.air!==b.air, w1=a.mfd/2, w2=b.mfd/2, sh=cross?SHAPE:0;
+  if(st==="butt")return -10*Math.log10(eta(w1,w2,d,t,z,cross?N_AIR:N_SI))+sh+(cross?fres(false):0);
+  if(st==="tec") return -10*Math.log10(eta(w2*1.05,w2,d,t,z,N_AIR))+sh+(cross?fres(false):0);
+  if(st==="grin")return -10*Math.log10(eta(w2,w2,d,t,z,N_AIR))+0.10+sh+(cross?2*fres(true):0);
+  if(st==="taper")return -10*Math.log10(eta(w2*1.03,w2,d,t,z,N_AIR))+sh+BRIDGE+(cross?fres(true):0);
+}
+// ——— UI ———
+const $=id=>document.getElementById(id);
+let cur={fa:"smf28",fb:"dnanf",st:"tec"};
+for(const[k,f]of Object.entries(LIB)){$("fa").add(new Option(f.name,k));$("fb").add(new Option(f.name,k));}
+$("fa").value=cur.fa;$("fb").value=cur.fb;
+for(const[k,l]of Object.entries(STRATS)){const b=document.createElement("button");b.textContent=l;b.dataset.k=k;
+  if(k===cur.st)b.classList.add("on");
+  b.onclick=()=>{cur.st=k;document.querySelectorAll("#strat button").forEach(x=>x.classList.toggle("on",x.dataset.k===k));draw();};
+  $("strat").appendChild(b);}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===t.dataset.t));});
+const COLORS={butt:"#A93226",tec:"#B8891F",grin:"#3E7FC4",taper:"#2E6B34"};
+function axis(ctx,W,H,pad,xmax,ymax,xlab){
+  ctx.clearRect(0,0,W,H);ctx.strokeStyle="#D8DEE4";ctx.lineWidth=1;ctx.font="20px IBM Plex Mono";ctx.fillStyle="#66788A";
+  for(let i=0;i<=4;i++){const y=pad+ (H-2*pad)*i/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad/2,y);ctx.stroke();
+    ctx.fillText((ymax*(1-i/4)).toFixed(1),8,y+6);}
+  for(let i=0;i<=5;i++){const x=pad+(W-1.5*pad)*i/5;ctx.fillText((xmax*i/5).toFixed(1),x-10,H-8);}
+  ctx.fillText(xlab,W-pad*3.2,H-8);ctx.fillText("dB",8,pad-12);}
+function plot(cv,xmax,fn,marker){
+  const ctx=cv.getContext("2d"),W=cv.width,H=cv.height,pad=70;
+  const a=LIB[cur.fa],b=LIB[cur.fb];
+  let ymax=0;for(const k in STRATS)ymax=Math.max(ymax,fn(a,b,k,xmax));
+  ymax=Math.max(1,Math.ceil(ymax*2)/2);
+  axis(ctx,W,H,pad,xmax,ymax,marker.lab);
+  for(const k in STRATS){ctx.strokeStyle=COLORS[k];ctx.lineWidth=k===cur.st?5:2.5;ctx.beginPath();
+    for(let i=0;i<=120;i++){const x=xmax*i/120,v=Math.min(fn(a,b,k,x),ymax);
+      const px=pad+(W-1.5*pad)*x/xmax,py=pad+(H-2*pad)*(1-v/ymax);i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}
+  // current-point marker on selected strategy
+  const mv=Math.min(fn(a,b,cur.st,marker.x),ymax);
+  const mx=pad+(W-1.5*pad)*marker.x/xmax,my=pad+(H-2*pad)*(1-mv/ymax);
+  ctx.fillStyle="#0A1B2E";ctx.beginPath();ctx.arc(mx,my,9,0,7);ctx.fill();
+  // legend
+  let lx=pad+10;for(const k in STRATS){ctx.fillStyle=COLORS[k];ctx.fillRect(lx,pad+8,26,6);
+    ctx.fillStyle="#66788A";ctx.font="19px IBM Plex Mono";ctx.fillText(STRATS[k],lx+32,pad+16);lx+=STRATS[k].length*12+80;}}
+function draw(){
+  const a=LIB[$("fa").value],b=LIB[$("fb").value];cur.fa=$("fa").value;cur.fb=$("fb").value;
+  const d=+$("off").value,t=+$("tilt").value,z=+$("gap").value;
+  $("voff").textContent=d.toFixed(1)+" µm";$("vtilt").textContent=t.toFixed(2)+"°";$("vgap").textContent=z+" µm";
+  const L=loss(a,b,cur.st,d,t,z);
+  $("bign").textContent=L.toFixed(2);
+  const box=$("bigbox");box.className="big "+(L<0.35?"g":L<1?"w":"b");
+  $("bigv").textContent=L<0.35?"■ DEPLOYMENT-GRADE (< 0.35 dB)":L<1?"■ MARGINAL — BURNS LINK BUDGET":"■ UNACCEPTABLE — THE 1–3 dB PROBLEM";
+  plot($("c1"),5,(A,B,k,x)=>loss(A,B,k,x,t,z),{x:d,lab:"offset µm"});
+  plot($("c2"),2,(A,B,k,x)=>loss(A,B,k,d,x,z),{x:t,lab:"tilt °"});
+}
+["fa","fb","off","tilt","gap"].forEach(id=>$(id).addEventListener("input",draw));
+// latency tab
+const ROUTES=[["HK ↔ Shenzhen",30],["HK ↔ Guangzhou",140],["HK ↔ Shanghai",1450],["HK ↔ Singapore",2600]];
+ROUTES.forEach(([n,km],i)=>{const b=document.createElement("button");b.textContent=n+" · "+km+" km";
+  if(km===140)b.classList.add("on");
+  b.onclick=()=>{$("km").value=km;document.querySelectorAll("#routes button").forEach(x=>x.classList.remove("on"));b.classList.add("on");lat();};
+  $("routes").appendChild(b);});
+function lat(){const km=+$("km").value;$("vkm").textContent=km+" km";
+  const oneWay=(N_SI-N_AIR)/C*1e6;                 // µs per km saved
+  const rtt=2*km*oneWay;
+  const pct=100*(N_SI-N_AIR)/N_SI;
+  const closer=km*(1-N_AIR/N_SI);
+  $("s1").textContent=rtt>=1000?(rtt/1000).toFixed(2)+" ms":Math.round(rtt);
+  $("s2").textContent=pct.toFixed(0)+"%";
+  $("s3").textContent=Math.round(closer);}
+$("km").addEventListener("input",()=>{document.querySelectorAll("#routes button").forEach(x=>x.classList.remove("on"));lat();});
+draw();lat();
+</script>
+</body>
+</html>
