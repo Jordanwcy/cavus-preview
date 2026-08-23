@@ -159,6 +159,10 @@
     <p class="lede" style="font-size:14px;">Light in air runs at 99.97% of c; in silica, 68%. Over this route the round-trip saving above is
     what a trading venue, an AI-inference cluster or a real-time system buys with hollow-core — <b>but only if the
     junctions don't burn the link budget.</b> That is the layer Cavus owns.</p>
+    <p class="note" style="margin-top:14px;max-width:720px;">REALITY CHECK — this is no longer theoretical: China Telecom + YOFC operate the world's
+    longest commercial hollow-core route, 110 km Dongguan ↔ Hong Kong exchange data centres, at a record 0.93 ms round trip
+    (reported 2026). Carriers placed &gt;¥800M of hollow-core cable orders in 2026 — every one of those routes terminates
+    into installed G.654.E / SMF at both ends.</p>
   </section>
 
   <footer>
@@ -182,6 +186,7 @@
 const LAM=1.55, N_SI=1.468, N_AIR=1.0003, C=299792.458, SHAPE=0.10, BRIDGE=0.05;
 const LIB={
   smf28:{name:"Corning SMF-28 — standard solid fibre",mfd:10.4,air:false},
+  g654e:{name:"G.654.E large-area trunk fibre (carrier co-procured)",mfd:12.5,air:false},
   nanf5:{name:"NANF 5-tube (Southampton class '20)",mfd:21.0,air:true},
   dnanf:{name:"DNANF (Microsoft class '25, 0.091 dB/km)",mfd:20.0,air:true},
   yofc26:{name:"DNANF-type (YOFC class '26, 0.04 dB/km)",mfd:20.5,air:true},
@@ -250,7 +255,7 @@ function draw(){
 }
 ["fa","fb","off","tilt","gap"].forEach(id=>$(id).addEventListener("input",draw));
 // latency tab
-const ROUTES=[["HK ↔ Shenzhen",30],["HK ↔ Guangzhou",140],["HK ↔ Shanghai",1450],["HK ↔ Singapore",2600]];
+const ROUTES=[["Dongguan ↔ HKEX · LIVE HCF",110],["HK ↔ Shenzhen",30],["HK ↔ Guangzhou",140],["HK ↔ Shanghai",1450],["HK ↔ Singapore",2600]];
 ROUTES.forEach(([n,km],i)=>{const b=document.createElement("button");b.textContent=n+" · "+km+" km";
   if(km===140)b.classList.add("on");
   b.onclick=()=>{$("km").value=km;document.querySelectorAll("#routes button").forEach(x=>x.classList.remove("on"));b.classList.add("on");lat();};
