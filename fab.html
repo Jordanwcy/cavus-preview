@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CavusFab — Hollow-Core Fibre Design Engine</title>
+<meta name="description" content="Cavus Photonics CavusFab: design anti-resonant hollow-core fibre — geometry → transmission windows, loss, bend limit, preform recipe and draw parameters, with AI optimization.">
+<link rel="icon" type="image/png" href="assets/cavus-favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0A1B2E;--muted:#66788A;--gold:#B8891F;--flare:#E4B54A;--hair:#D8DEE4;--paper:#FAFAF7;
+    --good:#2E6B34;--warn:#8A6512;--bad:#A93226;--mono:"IBM Plex Mono",ui-monospace,monospace;--sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1.5px solid var(--ink);}
+  .lockup{display:flex;align-items:center;gap:12px;} .lockup img{height:44px;}
+  .lockup .t{font-weight:700;letter-spacing:2px;font-size:15px;} .lockup .s{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:2px;}
+  .vtag{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.5;}
+  h1{font-size:clamp(26px,4.5vw,40px);font-weight:700;letter-spacing:-0.5px;line-height:1.2;margin:34px 0 8px;} h1 em{font-style:normal;color:var(--gold);}
+  .lede{color:var(--muted);font-size:15px;max-width:760px;}
+  .panel{display:grid;grid-template-columns:330px 1fr;gap:26px;align-items:start;margin:26px 0 40px;}
+  @media(max-width:860px){.panel{grid-template-columns:1fr;}}
+  .ctrl{border:1px solid var(--hair);background:#fff;padding:18px;}
+  .ctrl h3{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);margin:12px 0 8px;text-transform:uppercase;} .ctrl h3:first-child{margin-top:0;}
+  .sl{margin-bottom:12px;} .sl label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:3px;} .sl label b{color:var(--gold);}
+  input[type=range]{width:100%;accent-color:#B8891F;}
+  .preset{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;}
+  .preset button,.btn{font-family:var(--mono);font-size:11px;letter-spacing:0.5px;padding:9px 6px;border:1.5px solid var(--hair);background:#fff;cursor:pointer;color:var(--ink);}
+  .preset button.on{border-color:var(--gold);background:#FDF6E4;font-weight:600;}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);width:100%;padding:13px;font-size:13px;letter-spacing:1.5px;margin-top:6px;}
+  .btn.gold{background:#FDF6E4;border-color:var(--gold);width:100%;padding:12px;font-size:12px;letter-spacing:1.5px;margin-top:8px;}
+  .top{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:700px){.top{grid-template-columns:1fr;}}
+  .xs{border:1px solid var(--hair);background:#0A1B2E;padding:14px;position:relative;}
+  .xs h4,.chartbox h4{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:#8FA0B3;text-transform:uppercase;margin-bottom:8px;}
+  .chartbox{border:1px solid var(--hair);background:#fff;padding:14px;margin-top:16px;} .chartbox h4{color:var(--muted);}
+  canvas{width:100%;display:block;}
+  .big{border:1.5px solid var(--ink);background:#fff;padding:16px;text-align:center;}
+  .big .n{font-family:var(--mono);font-size:50px;font-weight:600;letter-spacing:-2px;line-height:1;} .big .u{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px;}
+  .big .v{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;margin-top:8px;}
+  .g .n,.g .v{color:var(--good);} .w .n,.w .v{color:var(--warn);} .b .n,.b .v{color:var(--bad);}
+  .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;} @media(max-width:700px){.kv{grid-template-columns:1fr 1fr;}}
+  .kv div{border:1px solid var(--hair);background:#fff;padding:9px 10px;} .kv b{display:block;font-family:var(--mono);font-size:17px;} .kv span{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;} td{padding:5px 8px;border-bottom:0.5px solid var(--hair);vertical-align:top;} td:first-child{color:var(--muted);width:42%;}
+  .note{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;}
+  .storycap{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(10,27,46,0.72);border-left:3px solid var(--flare);padding:10px 14px;font-family:var(--mono);font-size:12.5px;color:#fff;display:none;line-height:1.5;}
+  footer{border-top:1.5px solid var(--ink);padding:18px 0 40px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="lockup"><img src="assets/cavus-mark-trans-forlight.svg" alt="Cavus">
+      <div><div class="t">CAVUSFAB</div><div class="s">HOLLOW-CORE FIBRE DESIGN ENGINE · v0</div></div></div>
+    <div class="vtag">CAVUS PHOTONICS · 空芯光子<br>DESIGN → RECIPE → DRAW</div>
+  </header>
+
+  <h1>Design the fibre. <em>Then make it.</em></h1>
+  <p class="lede">Choose a nested anti-resonant geometry and CavusFab computes where it transmits, how much light it loses, how tightly it bends, the preform you'd stack to draw it, and the draw parameters to start from — then lets an optimizer search the design space for a better fibre than the one you drew.</p>
+
+  <div class="panel">
+    <div class="ctrl">
+      <h3>Start from a published fibre</h3>
+      <div class="preset" id="presets"></div>
+      <h3>Geometry</h3>
+      <div class="sl"><label><span>Outer tubes N</span><b id="vN">5</b></label><input type="range" id="N" min="4" max="8" step="1" value="5"></div>
+      <div class="sl"><label><span>Membrane thickness t</span><b id="vt">0.50 µm</b></label><input type="range" id="t" min="0.25" max="1.20" step="0.01" value="0.50"></div>
+      <div class="sl"><label><span>Core radius R</span><b id="vR">14.8 µm</b></label><input type="range" id="R" min="8" max="30" step="0.1" value="14.75"></div>
+      <div class="sl"><label><span>Tube size d/D</span><b id="vdD">0.62</b></label><input type="range" id="dD" min="0.40" max="0.85" step="0.01" value="0.62"></div>
+      <div class="sl"><label><span>Nested ratio z/R</span><b id="vzR">0.70</b></label><input type="range" id="zR" min="0.20" max="1.20" step="0.01" value="0.70"></div>
+      <h3>Target</h3>
+      <div class="sl"><label><span>Wavelength λ</span><b id="vlam">1550 nm</b></label><input type="range" id="lam" min="0.8" max="2.1" step="0.005" value="1.55"></div>
+      <div class="sl"><label><span>Bend radius cap</span><b id="vbend">10 cm</b></label><input type="range" id="bend" min="3" max="25" step="0.5" value="10"></div>
+      <button class="btn primary" id="opt">🤖 AI OPTIMIZE THIS FIBRE</button>
+      <button class="btn gold" id="story">▶ PLAY THE STORY — 30 s</button>
+      <p class="note">v0 = calibrated scaling model (Poletti 2014 laws + ARROW resonance factor + Fokoua 2023 scattering), anchored to the 0.091 dB/km DNANF. v1 = full-vector FEM (in progress).</p>
+    </div>
+
+    <div>
+      <div class="top">
+        <div class="xs"><h4>Cross-section — as it would appear under SEM</h4><canvas id="cx" width="640" height="640"></canvas><div class="storycap" id="cap"></div></div>
+        <div>
+          <div class="big" id="bigbox"><div class="n" id="bign">—</div><div class="u">dB/km predicted total loss @ <span id="bigl">1550 nm</span></div><div class="v" id="bigv">—</div></div>
+          <div class="kv">
+            <div><b id="kwin">—</b><span>transmission window</span></div>
+            <div><b id="kbend">—</b><span>critical bend radius</span></div>
+            <div><b id="khom">—</b><span>HOM extinction (LP11)</span></div>
+            <div><b id="kcl">—</b><span>confinement dB/km</span></div>
+            <div><b id="kssl">—</b><span>surface scatter dB/km</span></div>
+            <div><b id="kgap">—</b><span>inter-tube gap</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chartbox"><h4>Loss spectrum — where this membrane lets light through</h4><canvas id="spec" width="1200" height="380"></canvas></div>
+
+      <div class="chartbox"><h4>Preform recipe — what to stack, what to draw (mass-conserving ×40 per stage)</h4>
+        <table id="recipe"></table>
+        <p class="note">Draw starting points from the Cavus Fabrication Playbook (Jasion 2019 · Soton 2024 · Nature Photonics 2025). Pressure tolerance assumes ~6 nm of tube diameter per Pa at research yields.</p>
+      </div>
+
+      <div class="chartbox" id="optbox" style="display:none"><h4>Optimizer — 4,000 candidate fibres searched</h4><canvas id="optc" width="1200" height="300"></canvas><p class="note" id="optnote"></p></div>
+    </div>
+  </div>
+
+  <footer>CAVUSFAB v0 — Cavus Photonics fibre-design engine. Research core: prototype/cavusfab/ · Fabrication Playbook: research/FABRICATION_PLAYBOOK_v1.md · Junction module: <a href="sim.html" style="color:var(--ink)">CavusSim</a>.<br>© 2026 Cavus Photonics · 空芯光子 · Hong Kong</footer>
+</div>
+
+<script>
+// ——— physics (mirror of cavusfab/core.py) ———
+const NSI=1.444, A={lam:1.55,R:14.75,t:0.50,dD:0.62,zR:0.70,N:5};
+const PRESETS={
+  "DNANF · Microsoft/Soton '25 (0.091)":{N:5,t:0.50,R:14.75,dD:0.62,zR:0.70},
+  "NANF 6-tube · Sakr '20 (1060 nm)":{N:6,t:0.78,R:12.5,dD:0.60,zR:0.65},
+  "4T-DNANF · Jinan/YOFC '25":{N:4,t:1.10,R:15.0,dD:0.75,zR:0.60},
+  "Tubular 7C · Jasion '19":{N:7,t:0.70,R:13.0,dD:0.55,zR:0.0},
+};
+const resonances=(t,m=12)=>Array.from({length:m},(_,i)=>2*t/(i+1)*Math.sqrt(NSI*NSI-1));
+const phi=(t,l)=>2*Math.PI*t/l*Math.sqrt(NSI*NSI-1);
+const rf=(t,l)=>1/Math.max(Math.sin(phi(t,l))**2,1e-4);
+function gap(dD,N,R){const D=2*R,tube=dD*D,ring=R+tube/2;return 2*Math.PI*ring/N-tube;}
+function gapPen(dD,N,R){const g=gap(dD,N,R);return g>=4?1:1+((4-g)/2)**2;}
+const zf=z=>1+6*(z-0.7)**2, df=d=>1+4*(d-0.65)**2;
+function CL(d){const s=(d.lam/A.lam)**7*(A.R/d.R)**8, r=rf(d.t,d.lam)/rf(A.t,A.lam);
+  const tc=d.N>=4?(5/d.N)**2:4; return 0.030*s*r*(zf(d.zR)/zf(A.zR))*(df(d.dD)/df(A.dD))*gapPen(d.dD,d.N,d.R)*tc;}
+const SSL=d=>0.045*(A.lam/d.lam)**3*(A.R/d.R)**3;
+const MB=d=>0.016*(d.R/A.R)**2;
+const TOT=d=>CL(d)+SSL(d)+MB(d);
+function bendCR(d){const f=x=>x*x/Math.max(1-x,0.05);return 4.2*(d.R/A.R)**2*f(d.dD)/f(A.dD);}
+function hom(d){const p=Math.max(Math.exp(-(((d.zR-0.25)/0.12)**2)),Math.exp(-(((d.zR-1.05)/0.15)**2)));return 60+540*p;}
+function windowFor(t,l){const res=resonances(t);let edges=[Infinity,...res];for(let m=1;m<edges.length;m++){if(res[m-1]<l&&l<=edges[m-1])return{m,lo:res[m-1],hi:edges[m-1]};}return null;}
+
+// ——— UI state ———
+const $=id=>document.getElementById(id);
+const ids=["N","t","R","dD","zR","lam","bend"];
+function read(){return{N:+$("N").value,t:+$("t").value,R:+$("R").value,dD:+$("dD").value,zR:+$("zR").value,lam:+$("lam").value,bend:+$("bend").value};}
+function set(p){for(const k in p)if($(k))$(k).value=p[k];}
+for(const [name,p] of Object.entries(PRESETS)){const b=document.createElement("button");b.textContent=name;b.onclick=()=>{set(p);document.querySelectorAll("#presets button").forEach(x=>x.classList.toggle("on",x===b));draw();};$("presets").appendChild(b);}
+document.querySelector("#presets button").classList.add("on");
+
+// ——— cross-section renderer ———
+function drawXS(d,cv=$("cx")){
+  const ctx=cv.getContext("2d"),W=cv.width,H=cv.height,c=W/2;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle="#0A1B2E"; ctx.fillRect(0,0,W,H);
+  const D=2*d.R, tube=d.dD*D, ringR=d.R+tube/2, jacketIn=ringR+tube/2, jacketOut=jacketIn*1.18;
+  const px=(W*0.46)/jacketOut;                              // µm → px
+  // glass jacket (annulus)
+  ctx.fillStyle="#C9D2DC"; ctx.beginPath(); ctx.arc(c,c,jacketOut*px,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#0A1B2E"; ctx.beginPath(); ctx.arc(c,c,jacketIn*px,0,Math.PI*2); ctx.fill();
+  // tubes
+  const tPx=Math.max(1.2,d.t*px);
+  for(let i=0;i<d.N;i++){const a=i/d.N*Math.PI*2-Math.PI/2, x=c+Math.cos(a)*ringR*px, y=c+Math.sin(a)*ringR*px;
+    ctx.strokeStyle="#E4B54A"; ctx.lineWidth=tPx; ctx.beginPath(); ctx.arc(x,y,tube/2*px-tPx/2,0,7); ctx.stroke();
+    if(d.zR>0.15){const nr=d.zR*tube/2, nx=x+Math.cos(a)*(tube/2-nr), ny=y+Math.sin(a)*(tube/2-nr);   // nested tube tangent at outer wall
+      ctx.strokeStyle="#F0D48A"; ctx.lineWidth=tPx*0.9; ctx.beginPath(); ctx.arc(nx,ny,nr*px-tPx/2,0,7); ctx.stroke();}}
+  // core guide + scale bar
+  ctx.strokeStyle="rgba(255,255,255,0.18)"; ctx.setLineDash([4,5]); ctx.lineWidth=1; ctx.beginPath(); ctx.arc(c,c,d.R*px,0,7); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle="#8FA0B3"; ctx.font="13px IBM Plex Mono"; ctx.fillText(`core Ø ${D.toFixed(1)} µm · t ${d.t.toFixed(2)} µm · ${d.N} tubes`,16,H-40);
+  ctx.fillStyle="#E4B54A"; ctx.fillRect(16,H-24,10*px,3); ctx.fillStyle="#8FA0B3"; ctx.fillText("10 µm",16+10*px+8,H-18);
+}
+
+// ——— spectrum chart ———
+function drawSpec(d){
+  const cv=$("spec"),ctx=cv.getContext("2d"),W=cv.width,H=cv.height,pad=64;
+  ctx.clearRect(0,0,W,H);
+  const l0=0.7,l1=2.2; const ymin=-2,ymax=2.5; // log10 dB/km
+  const X=l=>pad+(W-pad-20)*(l-l0)/(l1-l0), Y=v=>pad*0.3+(H-pad*0.3-40)*(1-(Math.log10(v)-ymin)/(ymax-ymin));
+  ctx.strokeStyle="#D8DEE4"; ctx.font="18px IBM Plex Mono"; ctx.fillStyle="#66788A";
+  for(const v of [0.01,0.1,1,10,100]){ctx.beginPath();ctx.moveTo(pad,Y(v));ctx.lineTo(W-20,Y(v));ctx.stroke();ctx.fillText(v+"",8,Y(v)+6);}
+  for(let l=0.8;l<=2.1;l+=0.2){ctx.fillText(Math.round(l*1000)+"",X(l)-18,H-10);}
+  ctx.fillText("nm",W-42,H-10); ctx.fillText("dB/km",8,20);
+  // resonance bands
+  for(const r of resonances(d.t)){if(r>l0&&r<l1){ctx.fillStyle="rgba(169,50,38,0.12)";ctx.fillRect(X(r)-6,pad*0.3,12,H-pad*0.3-40);}}
+  // silica floor
+  ctx.strokeStyle="#B8891F"; ctx.setLineDash([6,5]); ctx.beginPath(); ctx.moveTo(pad,Y(0.14)); ctx.lineTo(W-20,Y(0.14)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle="#8A6512"; ctx.fillText("solid-silica floor 0.14",pad+8,Y(0.14)-6);
+  // curve
+  ctx.strokeStyle="#0A1B2E"; ctx.lineWidth=3; ctx.beginPath(); let first=true;
+  for(let l=l0;l<=l1;l+=0.004){const v=Math.min(300,TOT({...d,lam:l}));const x=X(l),y=Y(Math.max(v,0.01));first?ctx.moveTo(x,y):ctx.lineTo(x,y);first=false;}
+  ctx.stroke();
+  const v=TOT(d); ctx.fillStyle="#B8891F"; ctx.beginPath(); ctx.arc(X(d.lam),Y(Math.max(v,0.01)),8,0,7); ctx.fill();
+}
+
+// ——— recipe ———
+function recipe(d){
+  const D=2*d.R,tOD=d.dD*D,tID=tOD-2*d.t,nOD=d.zR*tOD,dd=40;
+  const g=gap(d.dD,d.N,d.R);
+  const dp=(20*(14.75/d.R)**0.8).toFixed(1);
+  const rows=[
+   ["FIBRE  · glass OD / core Ø",`200 µm / ${D.toFixed(1)} µm`],
+   ["FIBRE  · tube OD / ID · membrane",`${tOD.toFixed(1)} / ${tID.toFixed(1)} µm · t ${d.t.toFixed(2)} µm`],
+   ["FIBRE  · nested tube OD",d.zR>0.15?`${nOD.toFixed(1)} µm (z/R ${d.zR.toFixed(2)})`:"— (tubular, no nesting)"],
+   ["CANE   · OD · tube OD / wall",`${(200*dd/1000).toFixed(1)} mm · ${(tOD*dd/1000).toFixed(2)} mm / ${(d.t*dd).toFixed(0)} µm`],
+   ["STACK  · jacket · capillary OD / wall",`25 mm · ${(tOD*dd*dd/1000).toFixed(1)} mm / ${(d.t*dd*dd/1000).toFixed(2)} mm`],
+   ["STACK  · nested capillary OD",d.zR>0.15?`${(nOD*dd*dd/1000).toFixed(1)} mm — tack at same azimuth as parent`:"—"],
+   ["DRAW   · furnace / feed / speed","1900–1950 °C · 18–35 mm/min · 40–90 m/min"],
+   ["DRAW   · tension / regions","360–690 g · "+(d.zR>0.15?"4 pressure regions (core + 3 tube classes)":"2 regions (core + tubes)")],
+   ["DRAW   · differential pressure (start)",`≈ ${dp} kPa · hold to ±0.08 kPa for ±0.5 µm tubes`],
+   ["RISK   · inter-tube gap",`${g.toFixed(1)} µm — ${g<4?"⚠ mid-draw contact risk: raise tension or shrink d/D":"ok (≥4 µm)"}`],
+   ["GLASS  · membranes / jacket","Suprasil F310 (low-Cl) near core · F300 jacket · purge preform (HCl/H₂O lines)"],
+  ];
+  $("recipe").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
+}
+
+// ——— main draw ———
+function draw(){
+  const d=read();
+  $("vN").textContent=d.N; $("vt").textContent=d.t.toFixed(2)+" µm"; $("vR").textContent=d.R.toFixed(1)+" µm"; $("vdD").textContent=d.dD.toFixed(2); $("vzR").textContent=d.zR.toFixed(2);
+  $("vlam").textContent=Math.round(d.lam*1000)+" nm"; $("vbend").textContent=d.bend+" cm";
+  const tot=TOT(d), w=windowFor(d.t,d.lam);
+  $("bign").textContent=tot<10?tot.toFixed(3):tot.toFixed(1); $("bigl").textContent=Math.round(d.lam*1000)+" nm";
+  const box=$("bigbox"); box.className="big "+(tot<0.14?"g":tot<1?"w":"b");
+  $("bigv").textContent=tot<0.14?"■ BELOW THE SOLID-SILICA FLOOR":tot<1?"■ COMPETITIVE — ABOVE SILICA FLOOR":"■ NEAR A RESONANCE — REDESIGN t";
+  $("kwin").textContent=w?`m=${w.m}: ${Math.round(w.lo*1000)}–${w.hi===Infinity?"∞":Math.round(w.hi*1000)} nm`:"on resonance";
+  $("kbend").textContent=bendCR(d).toFixed(1)+" cm"; $("khom").textContent="~"+Math.round(hom(d))+"×";
+  $("kcl").textContent=CL(d).toFixed(3); $("kssl").textContent=SSL(d).toFixed(3); $("kgap").textContent=gap(d.dD,d.N,d.R).toFixed(1)+" µm";
+  drawXS(d); drawSpec(d); recipe(d);
+}
+ids.forEach(id=>$(id).addEventListener("input",()=>{document.querySelectorAll("#presets button").forEach(x=>x.classList.remove("on"));draw();}));
+
+// ——— optimizer (random-restart local search, fabricability constraints) ———
+function objective(d,cap){let v=TOT(d);const b=bendCR(d);if(b>cap)v*=1+(b-cap);if(d.t<0.3)v*=5;return v;}
+$("opt").onclick=()=>{
+  const base=read(),cap=base.bend,lam=base.lam; let best=null,bestV=1e9; const trace=[];
+  for(let r=0;r<8;r++){
+    let d={N:[4,5,6,7][Math.floor(Math.random()*4)],t:0.35+Math.random()*0.45,R:10+Math.random()*15,dD:0.45+Math.random()*0.35,zR:0.3+Math.random()*0.8,lam,bend:cap};
+    let cur=objective(d,cap);
+    for(let i=0;i<500;i++){const c={...d};const k=["N","t","R","dD","zR"][Math.floor(Math.random()*5)];
+      if(k==="N")c.N=Math.max(4,Math.min(8,c.N+(Math.random()<0.5?-1:1)));
+      else if(k==="t")c.t=Math.min(0.9,Math.max(0.3,c.t+(Math.random()-0.5)*0.06));
+      else if(k==="R")c.R=Math.min(30,Math.max(8,c.R+(Math.random()-0.5)*1.6));
+      else if(k==="dD")c.dD=Math.min(0.85,Math.max(0.4,c.dD+(Math.random()-0.5)*0.06));
+      else c.zR=Math.min(1.2,Math.max(0.2,c.zR+(Math.random()-0.5)*0.1));
+      const v=objective(c,cap); if(v<cur||Math.random()<0.02){d=c;cur=v;} trace.push(Math.min(cur,50));}
+    if(cur<bestV){bestV=cur;best=d;}
+  }
+  const before=TOT(base);
+  set({N:best.N,t:best.t.toFixed(2),R:best.R.toFixed(1),dD:best.dD.toFixed(2),zR:best.zR.toFixed(2)});
+  document.querySelectorAll("#presets button").forEach(x=>x.classList.remove("on")); draw();
+  // trace chart
+  const cv=$("optc"),ctx=cv.getContext("2d"),W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle="#B8891F";ctx.lineWidth=2;ctx.beginPath();
+  trace.forEach((v,i)=>{const x=40+(W-60)*i/trace.length,y=20+(H-50)*(Math.log10(Math.max(v,0.01))+2)/3.7;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+  ctx.fillStyle="#66788A";ctx.font="16px IBM Plex Mono";ctx.fillText("loss (log) ↓ over 4,000 evaluations, 8 restarts",40,H-14);
+  $("optbox").style.display="block";
+  $("optnote").textContent=`Your design: ${before.toFixed(3)} dB/km → optimized: ${TOT(best).toFixed(3)} dB/km at ${Math.round(lam*1000)} nm under a ${cap} cm bend cap (gap ≥ 4 µm, t ≥ 0.30 µm). N=${best.N}, t=${best.t.toFixed(2)} µm, R=${best.R.toFixed(1)} µm, d/D=${best.dD.toFixed(2)}, z/R=${best.zR.toFixed(2)}. v0 search — the Fable-5 Bayesian layer over the FEM solver is v1.`;
+  $("optbox").scrollIntoView({behavior:"smooth",block:"nearest"});
+};
+
+// ——— story ———
+let sOn=false,timers=[];
+function say(t){$("cap").style.display="block";$("cap").innerHTML=t;}
+function stop(){sOn=false;timers.forEach(clearTimeout);timers=[];$("cap").style.display="none";$("story").textContent="▶ PLAY THE STORY — 30 s";}
+function glide(id,to,ms){const el=$(id),from=+el.value,t0=performance.now();(function s(n){if(!sOn)return;const f=Math.min(1,(n-t0)/ms);el.value=(from+(to-from)*f);draw();if(f<1)requestAnimationFrame(s);})(t0);}
+$("story").onclick=()=>{if(sOn){stop();return;}sOn=true;$("story").textContent="■ STOP";set(PRESETS["DNANF · Microsoft/Soton '25 (0.091)"]);set({lam:1.55});draw();
+  const S=[[0,()=>say("This is the record-holding hollow-core fibre: five tubes, each with a tube nested inside, membranes just <b>500 nanometres</b> thick. Light travels in the air core.")],
+   [6000,()=>{say("The membrane thickness decides <b>where</b> the fibre transmits. Thicken it…");glide("t",1.05,3000);}],
+   [10500,()=>say("…and a <b>resonance</b> slides into 1550 nm — the membrane turns transparent to the light it should reflect, and loss explodes. Fabrication must hold t to tens of nanometres.")],
+   [15500,()=>{say("Restore t. Now widen the core —");glide("t",0.50,1500);setTimeout(()=>glide("R",22,2500),1600);}],
+   [20500,()=>say("Loss falls fast (∝ 1/R⁸) — but the <b>critical bend radius</b> grows. Every fibre is a trade between loss and how tightly it can be cabled.")],
+   [25500,()=>say("Below: the <b>preform recipe</b> this geometry implies — what to stack at 25 mm, what the cane must measure, what pressure to hold during the draw. <b>Design → recipe → draw.</b> That's what Cavus builds.")],
+   [31000,()=>stop()]];
+  S.forEach(([t,f])=>timers.push(setTimeout(()=>{if(sOn)f();},t)));
+};
+draw();
+</script>
+</body>
+</html>
