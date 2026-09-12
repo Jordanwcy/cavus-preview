@@ -40,7 +40,7 @@
 <div id="view"><canvas id="c3d"></canvas>
 <div id="hud"><div class="m" data-k="step"><small>每步时间 ⓘ</small><b id="hStep">—</b></div><div class="m" data-k="util"><small>GPU 利用率 ⓘ</small><b id="hUtil">—</b></div><div class="m" data-k="gain" style="border-color:#B8891F"><small>有效算力 vs 基准 ⓘ</small><b id="hGain">—</b></div><div class="m" data-k="pow"><small>机房 A 电力 ⓘ</small><b id="hPow">—</b></div><div class="m" id="hSaveBox" data-k="save" style="border-color:#B8891F"><small>相对基准，每年节省 ⓘ</small><b id="hSave">—</b></div></div>
 <div id="bd"><div id="bdh"><b id="bdt"></b><button id="bdx">关闭</button></div><div id="bdb"></div></div>
-<div id="ctl"><label>远端机房距离：<span id="dv">100</span> km</label><input id="dist" type="range" min="10" max="200" step="10" value="100">
+<div id="ctl"><label>远端机房距离：<span id="dv">100</span> km</label><input id="dist" type="range" min="10" max="500" step="10" value="100">
 <label>光纤</label><div class="tg"><button id="bG" class="on">玻璃 4.9 µs/km</button><button id="bH">空芯 3.4 µs/km</button></div>
 <label>光模块等级（每端固定时延）</label><div class="tg"><button data-tx="15" class="on">标准相干 15 µs</button><button data-tx="3">低时延 3 µs</button><button data-tx="1">CPO 1 µs</button></div>
 <label>每步跨机房同步轮次：<span id="rv">2</span></label><input id="rounds" type="range" min="1" max="4" step="1" value="2">
@@ -86,7 +86,24 @@ const CH=[
 <p style="font-size:12.5px;color:#5a6a7a">设计引擎：<a href="fab.html" style="color:#1a5276">CavusFab</a> · 接头模型：<a href="sim.html" style="color:#1a5276">CavusSim</a> · 联系：jordan@excelunit.com.hk</p>`,
 `<h2>五 · Scale-across 省多少电、多少钱</h2>
 <p>同一个集群跨两个机房运行，叫 scale-across。收益来自三处，全部按上面的滑杆实时计算，基准是"玻璃光纤 + 标准相干光模块"。</p>
-<div class="eco"><label>集群规模 <input id="eMW" type="number" value="100" min="10" step="10"> MW</label><label>GPU 数量 <input id="eN" type="number" value="62500" min="1000" step="500"></label><label>城市电价 HK$<input id="eCity" type="number" value="1.2" step="0.1">/kWh</label><label>绿电电价 HK$<input id="eRem" type="number" value="0.5" step="0.1">/kWh</label><label>GPU 租金 HK$<input id="eRent" type="number" value="20" step="1">/小时</label></div>
+<label style="font-size:12.5px;color:#5a6a7a">选一个案例城市对（自动填入距离和电价）</label>
+<select id="eCase" style="width:100%;margin:4px 0 6px;padding:5px;border:1px solid #d8dee4;border-radius:5px;font-size:12.5px"><option value="">自定义</option>
+<optgroup label="中国「东数西算」枢纽对">
+<option value="bj-zjk">北京 ↔ 张家口（京津冀枢纽 · 张北风电）· 200 km</option>
+<option value="sz-sg">深圳 ↔ 韶关（大湾区枢纽集群）· 230 km</option>
+<option value="gz-sg">广州 ↔ 韶关（大湾区枢纽集群）· 200 km</option>
+<option value="sh-wh">上海 ↔ 芜湖（长三角枢纽）· 300 km</option>
+<option value="cd-cq">成都 ↔ 重庆（成渝枢纽）· 300 km</option>
+<option value="bj-nm">北京 ↔ 和林格尔（内蒙古枢纽）· 430 km</option>
+<option value="sz-hk">深圳/东莞 ↔ 香港（港交所线路）· 110 km</option>
+</optgroup>
+<optgroup label="海外">
+<option value="sg-jb">新加坡 ↔ 柔佛 · 40 km</option>
+<option value="ry-sol">利雅得 ↔ 沙漠太阳能园区 · 100 km</option>
+<option value="tk-hk">东京 ↔ 北海道苫小牧 · 800 km</option>
+</optgroup></select>
+<div id="eNote" class="q" style="display:none;margin:4px 0 8px;font-size:12px"></div>
+<div class="eco"><label>集群规模 <input id="eMW" type="number" value="100" min="10" step="10"> MW</label><label>GPU 数量 <input id="eN" type="number" value="62500" min="1000" step="500"></label><label>城市电价 <span class="cur">HK$</span><input id="eCity" type="number" value="1.2" step="0.05">/kWh</label><label>绿电电价 <span class="cur">HK$</span><input id="eRem" type="number" value="0.5" step="0.05">/kWh</label><label>GPU 租金 <span class="cur">HK$</span><input id="eRent" type="number" value="20" step="1">/小时</label></div>
 <table class="et"><tr><th></th><th>基准</th><th>当前配置</th></tr>
 <tr><td>GPU 利用率</td><td id="eUg">—</td><td id="eUh">—</td></tr>
 <tr><td>空等的电力（浪费）</td><td id="eWg">—</td><td id="eWh">—</td></tr>
@@ -146,10 +163,22 @@ document.getElementById('comp').oninput=e=>{comp=+e.target.value;document.getEle
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setStage(+b.dataset.s));
 document.getElementById('next').onclick=()=>setStage((stage+1)%5);document.getElementById('prev').onclick=()=>setStage(Math.max(0,stage-1));
 
-const E={MW:100,N:62500,city:1.2,rem:0.5,rent:20};
-function bindEcon(){[['eMW','MW'],['eN','N'],['eCity','city'],['eRem','rem'],['eRent','rent']].forEach(([id,k])=>{const el=document.getElementById(id);if(!el)return;el.value=E[k];el.oninput=()=>{E[k]=+el.value||0;};});}
+const E={MW:100,N:62500,city:1.2,rem:0.5,rent:20,cur:'HK$'};
+const CASES={
+ 'bj-zjk':{km:200,city:0.75,rem:0.33,cur:'¥',rent:18,note:'北京城市工业电价约 ¥0.75/kWh；张北风电基地绿电约 ¥0.33/kWh。200 km 在空芯的同步范围边缘：玻璃光纤基本不可行，空芯勉强可行。'},
+ 'sz-sg':{km:230,city:0.80,rem:0.45,cur:'¥',rent:18,note:'深圳数据中心用电约 ¥0.80/kWh；韶关为大湾区枢纽集群所在地，绿电约 ¥0.45/kWh。230 km 超出玻璃同步范围，空芯可把它拉回可用区。'},
+ 'gz-sg':{km:200,city:0.78,rem:0.45,cur:'¥',rent:18,note:'广州 ↔ 韶关约 200 km，同上；这是国家规划的"城市前置 + 枢纽算力"组合。'},
+ 'sh-wh':{km:300,city:0.72,rem:0.55,cur:'¥',rent:18,note:'上海 ↔ 芜湖约 300 km：即使空芯，同步训练也吃力；收益主要来自推理与数据搬运。电价差较小。'},
+ 'cd-cq':{km:300,city:0.65,rem:0.55,cur:'¥',rent:18,note:'成渝枢纽双核相距约 300 km，水电为主，电价差小；此案例主要展示距离对利用率的影响。'},
+ 'bj-nm':{km:430,city:0.75,rem:0.30,cur:'¥',rent:18,note:'北京 ↔ 和林格尔 430 km：电价差最大（¥0.75 → ¥0.30），但距离超出任何光纤的同步范围。此处的①②接近零，③选址收益仍成立，前提是该机房只做推理或异步训练。'},
+ 'sz-hk':{km:110,city:1.2,rem:0.76,cur:'HK$',rent:20,note:'东莞 ↔ 港交所 110 km 空芯商用线路已开通（长飞 + 中国电信，往返 0.93 ms）。香港电价约 HK$1.2/kWh，东莞约 ¥0.7 ≈ HK$0.76。'},
+ 'sg-jb':{km:40,city:1.75,rem:0.66,cur:'HK$',rent:20,note:'新加坡限电，柔佛空置率 0.7%。新加坡工业电价约 S$0.30 ≈ HK$1.75/kWh，柔佛约 RM0.40 ≈ HK$0.66/kWh。40 km 是教科书级的 scale-across 距离。'},
+ 'ry-sol':{km:100,city:0.37,rem:0.10,cur:'HK$',rent:20,note:'沙特工业电价约 SAR 0.18 ≈ HK$0.37/kWh；沙漠光伏 PPA 约 SAR 0.05 ≈ HK$0.10/kWh。HUMAIN、DataVolt 的吉瓦级园区均建在城市之外。'},
+ 'tk-hk':{km:800,city:1.4,rem:0.9,cur:'HK$',rent:20,note:'东京 ↔ 北海道 800 km：任何光纤都无法同步训练；北海道绿电机房只适合训练与推理分离的架构。此案例展示极限。'}};
+function applyCase(k){const c=CASES[k];const note=document.getElementById('eNote');if(!c){if(note)note.style.display='none';return;}km=c.km;document.getElementById('dist').value=Math.min(500,c.km);document.getElementById('dv').textContent=c.km;E.city=c.city;E.rem=c.rem;E.cur=c.cur;E.rent=c.rent;bindEcon();if(note){note.textContent=c.note+' 电价为工业/数据中心用电大致水平（2025–26），仅作示意。';note.style.display='block';}}
+function bindEcon(){[['eMW','MW'],['eN','N'],['eCity','city'],['eRem','rem'],['eRent','rent']].forEach(([id,k])=>{const el=document.getElementById(id);if(!el)return;el.value=E[k];el.oninput=()=>{E[k]=+el.value||0;};});const sel=document.getElementById('eCase');if(sel&&!sel.onchange){sel.onchange=()=>applyCase(sel.value);}document.querySelectorAll('.cur').forEach(el=>el.textContent=E.cur);}
 const fmtN=x=>Math.round(x).toLocaleString();
-const fmtM=x=>x>=1e8?'HK$'+(x/1e8).toFixed(2)+' 亿':x>=1e4?'HK$'+fmtN(x/1e4)+' 万':'HK$'+fmtN(x);
+const fmtM=x=>x>=1e8?E.cur+(x/1e8).toFixed(2)+' 亿':x>=1e4?E.cur+fmtN(x/1e4)+' 万':E.cur+fmtN(x);
 const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
 function econ(){const remote=stage>0;const uB=comp/(comp+rtBase()),uC=remote?comp/(comp+rt()):comp/(comp+3);const dU=Math.max(uC-uB,0);const gain=uC/uB-1;
  const kwh=E.MW*1000*8760*dU,kwhM=kwh*E.city,gh=E.N*8760*dU,ghM=gh*E.rent,MWb=Math.round(E.MW*2/3),site=MWb*1000*8760*(E.city-E.rem);
@@ -168,7 +197,7 @@ function breakdown(){if(!bdKey)return;const remote=stage>0;const R=rt(),RB=rtBas
  T.gain=['有效算力提升 = 当前利用率 ÷ 基准利用率 − 1',`<div class="f">基准（玻璃 4.9 µs/km + 标准相干 15 µs）\n  同步 = ${rounds} × (${fmtN(propB)} + 30 + ${SWITCH}) = ${fmtN(RB)} µs\n  利用率 = ${comp} ÷ (${comp} + ${fmtN(RB)}) = ${Math.round(uB*100)}%\n当前配置利用率 = ${Math.round(uC*100)}%\n提升 = ${Math.round(uC*100)} ÷ ${Math.round(uB*100)} − 1 = ${(uC/uB-1>=0?'+':'')}${Math.round((uC/uB-1)*100)}%</div><p>意思：同一批 GPU、同一度电，多出这么多可用算力。这是对运营商最有意义的数字。</p>`];
  T.pow=['机房 A 的电力约束',`<p>一个机房能用的电由电网接入点决定，示例设为 100 MW 上限。第 1 章需求 300 MW，超出上限，所以必须把三分之二的 GPU 建到别处，也就是有电的地方（示例：太阳能电站旁的 B 机房，200 MW）。</p><p class="n">这一格不是计算结果，是场景设定。真实项目里这个数字来自供电局的接入批复。</p>`];
  const MWb=Math.round(E.MW*2/3);
- T.save=['每年节省 = 少浪费的电 + 多出的算力（相对基准）',`<div class="f">利用率差 ΔU = ${Math.round(uC*100)}% − ${Math.round(uB*100)}% = ${(dU*100).toFixed(1)} 个百分点\n① 电 = ${E.MW} MW × 1000 × 8760 h × ΔU × HK$${E.city}/kWh\n     = ${fmtM(E.MW*1000*8760*dU*E.city)}\n② 算力 = ${fmtN(E.N)} 颗 × 8760 h × ΔU × HK$${E.rent}/h\n     = ${fmtM(E.N*8760*dU*E.rent)}\n合计 = ${fmtM(E.MW*1000*8760*dU*E.city+E.N*8760*dU*E.rent)}</div><p class="n">③ 选址节省（${MWb} MW 用绿电，每年 ${fmtM(MWb*1000*8760*(E.city-E.rem))}）不在这一格里，因为它来自"能不能跨机房"这个选项本身，与玻璃或空芯的差值无关；见第 5 章。所有参数可在第 5 章修改。</p>`];
+ T.save=['每年节省 = 少浪费的电 + 多出的算力（相对基准）',`<div class="f">利用率差 ΔU = ${Math.round(uC*100)}% − ${Math.round(uB*100)}% = ${(dU*100).toFixed(1)} 个百分点\n① 电 = ${E.MW} MW × 1000 × 8760 h × ΔU × ${E.cur}${E.city}/kWh\n     = ${fmtM(E.MW*1000*8760*dU*E.city)}\n② 算力 = ${fmtN(E.N)} 颗 × 8760 h × ΔU × ${E.cur}${E.rent}/h\n     = ${fmtM(E.N*8760*dU*E.rent)}\n合计 = ${fmtM(E.MW*1000*8760*dU*E.city+E.N*8760*dU*E.rent)}</div><p class="n">③ 选址节省（${MWb} MW 用绿电，每年 ${fmtM(MWb*1000*8760*(E.city-E.rem))}）不在这一格里，因为它来自"能不能跨机房"这个选项本身，与玻璃或空芯的差值无关；见第 5 章。所有参数可在第 5 章修改。</p>`];
  const [t,h]=T[bdKey];document.getElementById('bdt').textContent=t;document.getElementById('bdb').innerHTML=h;}
 function paint(list,m){list.forEach(c=>c.material.color.set(m));}
 const clock=new THREE.Clock();
@@ -187,6 +216,6 @@ function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta()
  if(camGoal){camera.position.lerp(camGoal.p,.04);ctrl.target.lerp(camGoal.t,.04);if(camera.position.distanceTo(camGoal.p)<.5)camGoal=null;}
  ctrl.update();resize();renderer.render(scene,camera);}
 function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(canvas.width!==Math.floor(w*renderer.getPixelRatio())){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
-setStage(Math.min(4,Math.max(0,+(new URLSearchParams(location.search).get('s')||0))));{const b=new URLSearchParams(location.search).get('bd');if(b){bdKey=b;document.getElementById('bd').style.display='block';}}frame();
+setStage(Math.min(4,Math.max(0,+(new URLSearchParams(location.search).get('s')||0))));{const q=new URLSearchParams(location.search);const b=q.get('bd');if(b){bdKey=b;document.getElementById('bd').style.display='block';}const c=q.get('case');if(c&&CASES[c]){const sel=document.getElementById('eCase');if(sel)sel.value=c;applyCase(c);}}frame();
 </script>
 </body></html>
