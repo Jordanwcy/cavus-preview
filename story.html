@@ -9,6 +9,10 @@
 #c3d{width:100%;height:100%;display:block}
 #hud{position:absolute;left:14px;top:14px;display:flex;gap:10px;flex-wrap:wrap;max-width:calc(100% - 300px)}
 .m{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:118px}
+.m{cursor:pointer}.m:hover{border-color:var(--navy)}
+#bd{display:none;position:absolute;left:14px;top:150px;width:440px;max-width:calc(100% - 28px);background:#fff;border:1px solid var(--navy);border-radius:8px;padding:10px 14px;font-size:12.5px;line-height:1.6;box-shadow:0 4px 14px rgba(10,27,46,.12)}
+#bdh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}#bdh b{color:var(--navy);font-size:13.5px}#bdx{border:1px solid var(--line);background:#fff;border-radius:5px;padding:2px 8px;font-size:11px;cursor:pointer}
+#bdb .f{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--paper);border-radius:5px;padding:6px 8px;margin:4px 0;white-space:pre-wrap}#bdb p{margin:4px 0}#bdb .n{color:var(--mut)}
 .m small{display:block;font-size:11px;color:var(--mut);letter-spacing:.5px}.m b{font-size:20px;font-weight:600;color:var(--navy)}
 #legend{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--mut);display:flex;gap:14px;flex-wrap:wrap}
 .sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
@@ -34,12 +38,13 @@
 </style></head><body>
 <div id="app">
 <div id="view"><canvas id="c3d"></canvas>
-<div id="hud"><div class="m"><small>每步时间</small><b id="hStep">—</b></div><div class="m"><small>GPU 利用率</small><b id="hUtil">—</b></div><div class="m" style="border-color:#B8891F"><small>有效算力 vs 基准</small><b id="hGain">—</b></div><div class="m"><small>机房 A 电力</small><b id="hPow">—</b></div><div class="m" id="hSaveBox" style="border-color:#B8891F"><small>相对基准，每年节省</small><b id="hSave">—</b></div></div>
+<div id="hud"><div class="m" data-k="step"><small>每步时间 ⓘ</small><b id="hStep">—</b></div><div class="m" data-k="util"><small>GPU 利用率 ⓘ</small><b id="hUtil">—</b></div><div class="m" data-k="gain" style="border-color:#B8891F"><small>有效算力 vs 基准 ⓘ</small><b id="hGain">—</b></div><div class="m" data-k="pow"><small>机房 A 电力 ⓘ</small><b id="hPow">—</b></div><div class="m" id="hSaveBox" data-k="save" style="border-color:#B8891F"><small>相对基准，每年节省 ⓘ</small><b id="hSave">—</b></div></div>
+<div id="bd"><div id="bdh"><b id="bdt"></b><button id="bdx">关闭</button></div><div id="bdb"></div></div>
 <div id="ctl"><label>远端机房距离：<span id="dv">100</span> km</label><input id="dist" type="range" min="10" max="200" step="10" value="100">
 <label>光纤</label><div class="tg"><button id="bG" class="on">玻璃 4.9 µs/km</button><button id="bH">空芯 3.4 µs/km</button></div>
 <label>光模块等级（每端固定时延）</label><div class="tg"><button data-tx="15" class="on">标准相干 15 µs</button><button data-tx="3">低时延 3 µs</button><button data-tx="1">CPO 1 µs</button></div>
 <label>每步跨机房同步轮次：<span id="rv">2</span></label><input id="rounds" type="range" min="1" max="4" step="1" value="2">
-<label>每步计算时间：<span id="cv">500</span> µs</label><input id="comp" type="range" min="100" max="1000" step="50" value="500">
+<label>每步计算时间：<span id="cv">1500</span> µs</label><input id="comp" type="range" min="100" max="5000" step="100" value="1500">
 <button id="preset">Cavus 方案：空芯 + 低时延光模块</button>
 <label style="margin-top:6px">拖动旋转 · 滚轮缩放 · 基准 = 玻璃 + 标准相干</label></div>
 <div id="legend"><span><i class="sw" style="background:#2e86de"></i>计算中</span><span><i class="sw" style="background:#D9A21B"></i>传送梯度</span><span><i class="sw" style="background:#c9d1d9"></i>等待最慢链路</span><span><i class="sw" style="background:#8a96a3"></i>玻璃光纤</span><span><i class="sw" style="background:#E3C070"></i>空芯光纤</span></div>
@@ -67,7 +72,7 @@ const CH=[
 <p>现在第二个机房建在了太阳能电站旁边。两个机房要当一个集群使用，每一步都要通过这条光纤交换梯度。玻璃光纤的折射率是 1.47，光在其中每公里单程需要 4.9 微秒，一百公里往返接近一毫秒。</p>
 <p>但链路时延不只是光在路上的时间。每一端的光模块要做编码、纠错和数字信号处理，标准相干模块每端约 15 微秒；而一次跨机房的集体通信通常不止一个往返，先做 reduce-scatter 再做 all-gather，至少两轮。这些都要乘起来。</p>
 <p>看左边机房：蓝色 GPU 算完之后变灰，坐着等右边的梯度回来。超过某个距离，两个机房就无法再当一个同步集群使用。<b>换句话说，今天 AI 数据中心能建多大、能建在哪里，是由光在玻璃中的速度和链路两端的电子时延共同划定的。</b></p>
-<div class="q">试试把距离拉到 200 km、同步轮次拉到 4、计算时间拉到 100 µs：利用率会跌到个位数。你买的每一颗 GPU，大部分时间在等一条线。</div>`,
+<div class="q">GPU 利用率越高越好：它是 GPU 真正在计算的时间比例，其余时间在通电空等。点任一数字格可看计算过程。试试把距离拉到 200 km、同步轮次拉到 4、计算时间拉到 100 µs：利用率会跌到个位数。你买的每一颗 GPU，大部分时间在等一条线。</div>`,
 `<h2>三 · 空芯光纤：把介质从玻璃换成空气</h2>
 <p>空芯光纤的核心是一根直径几十微米的空气管，外面用一圈薄壁毛细管以"反谐振"原理把光困住（看光纤中间悬浮的那个横截面）。光在空气中的速度接近真空，比玻璃快 31%，所以同一个时延预算下机房可以拉远 46%。微软正是用这一点把 Azure 区域的跨度拉大一倍，建在有电的地方。</p>
 <p>空气的光学非线性比玻璃低约一千倍，可以注入更高功率、塞入更多波长，每根光纤容量更大；色散也低得多，所以链路两端可以用<b>更简单、时延更低的光模块</b>，DSP 负担更轻、更省电。这两件事叠加：光纤缩短路上的时间，光模块缩短两端的时间。</p>
@@ -121,7 +126,7 @@ const twin=new THREE.Group();{const core=new THREE.Mesh(new THREE.RingGeometry(3
   const n=new THREE.Mesh(new THREE.RingGeometry(.8,1.05,24),new THREE.MeshBasicMaterial({color:GOLD,side:THREE.DoubleSide}));n.position.set(Math.cos(a)*6.4,Math.sin(a)*6.4,0);twin.add(n);}
  twin.position.set(0,16,6);twin.visible=false;scene.add(twin);}
 
-let km=100,us=4.9,tx=15,rounds=2,comp=500,stage=0,phase='c',pt=0;
+let km=100,us=4.9,tx=15,rounds=2,comp=1500,stage=0,phase='c',pt=0;
 const SCALE=250,SWITCH=5,BASE_US=4.9,BASE_TX=15;
 const rtOf=(u,t)=>rounds*(2*km*u+2*t+SWITCH);
 const rt=()=>rtOf(us,tx),rtBase=()=>rtOf(BASE_US,BASE_TX);
@@ -152,6 +157,19 @@ function econ(){const remote=stage>0;const uB=comp/(comp+rtBase()),uC=remote?com
  set('eKwh',fmtN(kwh));set('eKwhM',fmtM(kwhM));set('eGh',fmtN(gh));set('eGhM',fmtM(ghM));set('eMWb',MWb);set('eSite',fmtM(site));
  set('hGain',remote?(gain>=0?'+':'')+Math.round(gain*100)+'%':'—');set('hSave',fmtM(kwhM+ghM));document.getElementById('hSaveBox').style.display=remote?'':'none';return uC;}
 
+
+let bdKey=null;
+document.querySelectorAll('#hud .m').forEach(el=>el.onclick=()=>{bdKey=el.dataset.k;document.getElementById('bd').style.display='block';});
+document.getElementById('bdx').onclick=()=>{bdKey=null;document.getElementById('bd').style.display='none';};
+function breakdown(){if(!bdKey)return;const remote=stage>0;const R=rt(),RB=rtBase();const uB=comp/(comp+RB),uC=remote?comp/(comp+R):comp/(comp+3);const dU=Math.max(uC-uB,0);
+ const prop=2*km*us,propB=2*km*BASE_US;const T={};
+ T.step=['每步时间 = 计算时间 + 同步时间',`<div class="f">同步时间 = 轮次 × (往返传播 + 两端光模块 + 交换机)\n  往返传播 = 2 × ${km} km × ${us} µs/km = ${fmtN(prop)} µs\n  两端光模块 = 2 × ${tx} µs = ${2*tx} µs\n  交换机 = ${SWITCH} µs\n  = ${rounds} × ${fmtN(prop+2*tx+SWITCH)} = ${fmtN(R)} µs\n每步时间 = ${comp} + ${fmtN(R)} = ${fmtN(comp+R)} µs</div><p class="n">同一集群内（第 1 章）同步只需约 3 µs，所以每步 ≈ 计算时间。</p>`];
+ T.util=['GPU 利用率 = 计算时间 ÷ 每步时间',`<div class="f">= ${comp} ÷ (${comp} + ${fmtN(R)}) = ${Math.round(uC*100)}%</div><p><b>越高越好。</b>利用率就是 GPU 真正在算的时间比例；其余时间它们通电空等，电照付、租金照付。</p><p class="n">为什么这里不高：这个演示把"每步计算时间"设得很短（${comp} µs），好让等待看得见。真实训练一步通常几十毫秒，而且系统会把通信和计算部分重叠，所以真实利用率多在 60–90%。把计算滑杆拉高，利用率就上去；但只要跨机房同步存在，玻璃光纤永远比空芯少一截。</p>`];
+ T.gain=['有效算力提升 = 当前利用率 ÷ 基准利用率 − 1',`<div class="f">基准（玻璃 4.9 µs/km + 标准相干 15 µs）\n  同步 = ${rounds} × (${fmtN(propB)} + 30 + ${SWITCH}) = ${fmtN(RB)} µs\n  利用率 = ${comp} ÷ (${comp} + ${fmtN(RB)}) = ${Math.round(uB*100)}%\n当前配置利用率 = ${Math.round(uC*100)}%\n提升 = ${Math.round(uC*100)} ÷ ${Math.round(uB*100)} − 1 = ${(uC/uB-1>=0?'+':'')}${Math.round((uC/uB-1)*100)}%</div><p>意思：同一批 GPU、同一度电，多出这么多可用算力。这是对运营商最有意义的数字。</p>`];
+ T.pow=['机房 A 的电力约束',`<p>一个机房能用的电由电网接入点决定，示例设为 100 MW 上限。第 1 章需求 300 MW，超出上限，所以必须把三分之二的 GPU 建到别处，也就是有电的地方（示例：太阳能电站旁的 B 机房，200 MW）。</p><p class="n">这一格不是计算结果，是场景设定。真实项目里这个数字来自供电局的接入批复。</p>`];
+ const MWb=Math.round(E.MW*2/3);
+ T.save=['每年节省 = 少浪费的电 + 多出的算力（相对基准）',`<div class="f">利用率差 ΔU = ${Math.round(uC*100)}% − ${Math.round(uB*100)}% = ${(dU*100).toFixed(1)} 个百分点\n① 电 = ${E.MW} MW × 1000 × 8760 h × ΔU × HK$${E.city}/kWh\n     = ${fmtM(E.MW*1000*8760*dU*E.city)}\n② 算力 = ${fmtN(E.N)} 颗 × 8760 h × ΔU × HK$${E.rent}/h\n     = ${fmtM(E.N*8760*dU*E.rent)}\n合计 = ${fmtM(E.MW*1000*8760*dU*E.city+E.N*8760*dU*E.rent)}</div><p class="n">③ 选址节省（${MWb} MW 用绿电，每年 ${fmtM(MWb*1000*8760*(E.city-E.rem))}）不在这一格里，因为它来自"能不能跨机房"这个选项本身，与玻璃或空芯的差值无关；见第 5 章。所有参数可在第 5 章修改。</p>`];
+ const [t,h]=T[bdKey];document.getElementById('bdt').textContent=t;document.getElementById('bdb').innerHTML=h;}
 function paint(list,m){list.forEach(c=>c.material.color.set(m));}
 const clock=new THREE.Clock();
 function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta(),.05);const sim=dt*SCALE;const remote=stage>0;const R=rt();pt+=sim;
@@ -161,7 +179,7 @@ function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta()
   pulses.forEach((p,i)=>{const u=(f*2*rounds+i*0.09)%1;const out=Math.floor(f*2*rounds+i*0.09)%2===0;p.visible=true;p.position.copy(path.getPoint(out?u:1-u));p.material.color.set(us<4?AIR:GLASS);});
   if(pt>=R){phase='c';pt=0;pulses.forEach(p=>p.visible=false);}}
  if(!remote)pulses.forEach(p=>p.visible=false);
- const uC=econ();
+ const uC=econ();breakdown();
  set('hStep',fmtN(remote?comp+R:comp+3)+' µs');set('hUtil',Math.round(uC*100)+'%');
  const pow=document.getElementById('hPow');pow.textContent=stage===0?'需求 300 MW / 上限 100 MW':'A 100 MW · B 200 MW（太阳能）';pow.style.color=stage===0?'#c0392b':'#0A1B2E';
  const blink=(Math.sin(performance.now()/200)+1)/2;A.userData.panel.material.color.set(stage===3?new THREE.Color(GOLD).lerp(new THREE.Color(NAVY),blink):NAVY);B.userData.panel.material.color.copy(A.userData.panel.material.color);
@@ -169,6 +187,6 @@ function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta()
  if(camGoal){camera.position.lerp(camGoal.p,.04);ctrl.target.lerp(camGoal.t,.04);if(camera.position.distanceTo(camGoal.p)<.5)camGoal=null;}
  ctrl.update();resize();renderer.render(scene,camera);}
 function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(canvas.width!==Math.floor(w*renderer.getPixelRatio())){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
-setStage(Math.min(4,Math.max(0,+(new URLSearchParams(location.search).get('s')||0))));frame();
+setStage(Math.min(4,Math.max(0,+(new URLSearchParams(location.search).get('s')||0))));{const b=new URLSearchParams(location.search).get('bd');if(b){bdKey=b;document.getElementById('bd').style.display='block';}}frame();
 </script>
 </body></html>
