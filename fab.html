@@ -34,7 +34,7 @@
   .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);width:100%;padding:13px;font-size:13px;letter-spacing:1.5px;margin-top:6px;}
   .btn.gold{background:#FDF6E4;border-color:var(--gold);width:100%;padding:12px;font-size:12px;letter-spacing:1.5px;margin-top:8px;}
   .top{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:700px){.top{grid-template-columns:1fr;}}
-  .xs{border:1px solid var(--hair);background:#0A1B2E;padding:14px;position:relative;}
+  .xs{border:1px solid var(--hair);background:#0A1B2E;padding:14px;position:relative;} .xs canvas{aspect-ratio:1/1;} .jxs canvas{aspect-ratio:900/420;}
   .xs h4,.chartbox h4{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:#8FA0B3;text-transform:uppercase;margin-bottom:8px;}
   .chartbox{border:1px solid var(--hair);background:#fff;padding:14px;margin-top:16px;} .chartbox h4{color:var(--muted);}
   canvas{width:100%;display:block;}
@@ -52,6 +52,7 @@
   .jxs{background:#0A1B2E;border:1px solid var(--hair);padding:10px;} .jxs canvas{width:100%;display:block;}
   table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;} td{padding:5px 8px;border-bottom:0.5px solid var(--hair);vertical-align:top;} td:first-child{color:var(--muted);width:42%;}
   .note{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;}
+  .ov{position:absolute;left:24px;top:40px;font-family:var(--mono);font-size:12px;color:#8FA0B3;pointer-events:none;line-height:1.4;} .ov.warn{color:#E06B5A;font-weight:700;font-size:14px;top:62px;} .ov.hint{left:auto;right:24px;top:auto;bottom:22px;font-size:10px;color:#5F7186;} .jxs .ov.hint{right:12px;bottom:10px;}
   .storycap{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(10,27,46,0.72);border-left:3px solid var(--flare);padding:10px 14px;font-family:var(--mono);font-size:12.5px;color:#fff;display:none;line-height:1.5;}
   details{border:1px solid var(--hair);background:#fff;margin-top:16px;} summary{cursor:pointer;padding:12px 14px;font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;} details>div{padding:0 14px 14px;font-size:13.5px;line-height:1.6;} details code{font-family:var(--mono);font-size:12px;background:#F3F1EA;padding:1px 4px;}
   details ul{padding-left:18px;} details li{margin-bottom:4px;}
@@ -91,7 +92,7 @@
 
     <div>
       <div class="top">
-        <div class="xs"><h4 data-i="hXS">Cross-section — as it would appear under SEM</h4><canvas id="cx" width="640" height="640"></canvas><div class="storycap" id="cap"></div></div>
+        <div class="xs"><h4 data-i="hXS">Cross-section — 3D digital twin of the drawn fibre</h4><canvas id="cx" width="640" height="640"></canvas><div class="ov" id="xsCap"></div><div class="ov warn" id="xsWarn"></div><div class="ov hint" data-i="hint3d">drag to orbit · scroll to zoom</div><div class="storycap" id="cap"></div></div>
         <div>
           <div class="big" id="bigbox"><div class="n" id="bign">—</div><div class="u"><span data-i="uLoss">dB/km predicted total loss @</span> <span id="bigl">1550 nm</span></div><div class="v" id="bigv">—</div></div>
           <div class="kv">
@@ -127,7 +128,7 @@
             <div class="checks" style="margin-top:4px"><h5 data-i="hJchk">Junction checks</h5><div id="jchecks"></div></div>
           </div>
           <div>
-            <div class="jxs"><canvas id="jcx" width="900" height="420"></canvas></div>
+            <div class="jxs" style="position:relative"><canvas id="jcx" width="900" height="420"></canvas><div class="ov" id="jL" style="left:12px;top:10px;max-width:46%;font-size:11px"></div><div class="ov" id="jR" style="right:12px;top:10px;left:auto;max-width:46%;text-align:right;font-size:11px;color:#E4B54A"></div><div class="ov" id="jB" style="left:12px;bottom:10px;top:auto;color:#E4B54A;font-weight:600"></div><div class="ov hint" data-i="hint3d">drag to orbit · scroll to zoom</div></div>
             <table id="jspec" style="margin-top:12px"></table>
             <p class="note" data-i="juncNote">Junction model = CavusSim v0 (Marcuse Gaussian overlap + Fresnel + 0.10 dB hollow-core mode-shape term), validated against the 1–3 dB naive-butt and 0.15–0.5 dB adapted-junction anchors. The hollow-core mode-field diameter is derived from this design as MFD ≈ 1.36 × R (fits the DNANF literature estimate of 20 µm at R = 14.75 µm); a vector mode solver replaces this in v1.</p>
           </div>
@@ -151,7 +152,7 @@ en:{sub:"HOLLOW-CORE FIBRE + JUNCTION DESIGN ENGINE · v0.3",vtag:"DESIGN → RE
  hPreset:"Start from a published fibre",hGeom:"Geometry",lN:"Outer tubes N",lt:"Membrane thickness t",lR:"Core radius R",ldD:"Tube size d/D",lzR:"Nested ratio z/R",hTarget:"Target",llam:"Wavelength λ",lbend:"Bend radius cap",
  bOpt:"🤖 AI OPTIMIZE THIS FIBRE",bStory:"▶ PLAY THE STORY — 30 s",bStop:"■ STOP",
  ctrlNote:"v0.2 = calibrated scaling model (Poletti 2014 laws + ARROW resonance factor + Fokoua 2023 scattering), anchored to the 0.091 dB/km DNANF. v1 = full-vector FEM (in progress). Every assumption is listed under \"Model and assumptions\" below.",
- hXS:"Cross-section — as it would appear under SEM",uLoss:"dB/km predicted total loss @",kWin:"transmission window",kBend:"critical bend radius",kHom:"HOM extinction (LP11)",kCL:"confinement dB/km",kSSL:"surface scatter dB/km",kGap:"inter-tube gap",hChecks:"Manufacturability checks",
+ hXS:"Cross-section — 3D digital twin of the drawn fibre",uLoss:"dB/km predicted total loss @",kWin:"transmission window",kBend:"critical bend radius",kHom:"HOM extinction (LP11)",kCL:"confinement dB/km",kSSL:"surface scatter dB/km",kGap:"inter-tube gap",hChecks:"Manufacturability checks",
  hSpec:"Loss spectrum — where this membrane lets light through",hRecipe:"Preform recipe — what to stack, what to draw",
  recipeNote:"Two draw stages sized from real preform dimensions: 25 mm stack → 3 mm cane → fibre OD 200 µm (×8.3 then ×15, aspect-preserving). Draw starting points from the Cavus Fabrication Playbook (Jasion 2019 · Southampton 2024 · Nature Photonics 2025). Pressure sensitivity assumes ~6 nm of tube diameter per Pa at research yields; the playbook's field figure is ±0.25 kPa, which is a point for a reviewer.",
  hOpt:"Optimizer — 4,000 candidate fibres searched",hModel:"Model and assumptions — for reviewers",
@@ -169,6 +170,7 @@ en:{sub:"HOLLOW-CORE FIBRE + JUNCTION DESIGN ENGINE · v0.3",vtag:"DESIGN → RE
   "Restore t. Now widen the core —",
   "Loss falls fast (∝ 1/R⁸) but the <b>critical bend radius</b> grows. Every fibre is a trade between loss and how tightly it can be cabled.",
   "Below: the <b>preform recipe</b> this geometry implies — what to stack at 25 mm, what the cane must measure, what pressure to hold during the draw. <b>Design → recipe → draw.</b> That is what Cavus builds."],
+ hint3d:"drag to orbit · scroll to zoom",
  hJunc:"Junction — connect this hollow-core fibre to the installed solid-fibre world",hSolid:"Solid fibre on the other side",hStrat:"Junction strategy",lOff:"Lateral offset",lTilt:"Angular tilt",lGap:"Longitudinal gap",hJchk:"Junction checks",
  juncNote:"Junction model = CavusSim v0 (Marcuse Gaussian overlap + Fresnel + 0.10 dB hollow-core mode-shape term), validated against the 1–3 dB naive-butt and 0.15–0.5 dB adapted-junction anchors. The hollow-core mode-field diameter is derived from this design as MFD ≈ 1.36 × R (fits the DNANF literature estimate of 20 µm at R = 14.75 µm); a vector mode solver replaces this in v1.",
  solid:{smf28:"SMF-28 · G.652.D (MFD 10.4)",g657:"G.657.A2 bend-insensitive (MFD 9.2)",g654e:"G.654.E large-area trunk (MFD 12.5)",tec2:"TEC-expanded SMF (MFD 18)"},
@@ -195,7 +197,7 @@ zh:{sub:"空芯光纤 + 接头设计引擎 · v0.3",vtag:"设计 → 配方 → 
  hPreset:"从已发表的光纤开始",hGeom:"几何参数",lN:"外圈管数 N",lt:"膜厚 t",lR:"纤芯半径 R",ldD:"管径比 d/D",lzR:"嵌套比 z/R",hTarget:"目标",llam:"波长 λ",lbend:"弯曲半径上限",
  bOpt:"🤖 AI 优化这根光纤",bStory:"▶ 播放讲解 — 30 秒",bStop:"■ 停止",
  ctrlNote:"v0.2 = 经校准的标度模型（Poletti 2014 标度律 + ARROW 谐振因子 + Fokoua 2023 散射），锚定于 0.091 dB/km 的 DNANF。v1 = 全矢量有限元（开发中）。所有假设列于下方「模型与假设」。",
- hXS:"横截面 — 相当于 SEM 视角",uLoss:"dB/km 预测总损耗 @",kWin:"传输窗口",kBend:"临界弯曲半径",kHom:"高阶模抑制 (LP11)",kCL:"限制损耗 dB/km",kSSL:"表面散射 dB/km",kGap:"管间间隙",hChecks:"可制造性检查",
+ hXS:"横截面 — 拉出光纤的 3D 数字孪生",uLoss:"dB/km 预测总损耗 @",kWin:"传输窗口",kBend:"临界弯曲半径",kHom:"高阶模抑制 (LP11)",kCL:"限制损耗 dB/km",kSSL:"表面散射 dB/km",kGap:"管间间隙",hChecks:"可制造性检查",
  hSpec:"损耗谱 — 这层膜让哪些波长通过",hRecipe:"预制棒配方 — 叠什么、拉什么",
  recipeNote:"两级拉丝按真实预制棒尺寸设定：25 mm 叠棒 → 3 mm 芯棒 → 光纤外径 200 µm（×8.3 再 ×15，保持比例）。拉丝起始参数来自 Cavus 制造手册（Jasion 2019 · Southampton 2024 · Nature Photonics 2025）。气压灵敏度按研究级良率约 6 nm/Pa 假设；手册中的现场经验值为 ±0.25 kPa，此处欢迎评审指正。",
  hOpt:"优化器 — 搜索了 4,000 个候选结构",hModel:"模型与假设 — 供评审",
@@ -213,6 +215,7 @@ zh:{sub:"空芯光纤 + 接头设计引擎 · v0.3",vtag:"设计 → 配方 → 
   "恢复 t。现在把纤芯扩大——",
   "损耗快速下降（∝ 1/R⁸），但<b>临界弯曲半径</b>随之增大。每一根光纤都是损耗与可成缆弯曲度之间的权衡。",
   "下方：这个几何结构对应的<b>预制棒配方</b>——25 mm 叠棒里叠什么、芯棒尺寸多少、拉丝时保持多大气压。<b>设计 → 配方 → 拉丝。</b>这就是 Cavus 在做的事。"],
+ hint3d:"拖动旋转 · 滚轮缩放",
  hJunc:"接头 — 把这根空芯光纤接到现有实心光纤世界",hSolid:"另一端的实心光纤",hStrat:"接头方案",lOff:"横向偏移",lTilt:"角度倾斜",lGap:"纵向间隙",hJchk:"接头检查",
  juncNote:"接头模型 = CavusSim v0（Marcuse 高斯模场重叠 + 菲涅尔反射 + 0.10 dB 空芯模场形状项），已对照 1–3 dB 直接对接和 0.15–0.5 dB 适配接头的文献锚点验证。空芯模场直径由本设计推导：MFD ≈ 1.36 × R（在 R = 14.75 µm 时与 DNANF 文献估计的 20 µm 吻合）；v1 将以矢量模式求解器取代。",
  solid:{smf28:"SMF-28 · G.652.D（MFD 10.4）",g657:"G.657.A2 抗弯光纤（MFD 9.2）",g654e:"G.654.E 大有效面积干线（MFD 12.5）",tec2:"热扩芯 SMF（MFD 18）"},
@@ -284,21 +287,11 @@ for(const [name,p] of Object.entries(PRESETS)){const b=document.createElement("b
 document.querySelector("#presets button").classList.add("on");
 
 // ——— cross-section renderer ———
-function drawXS(d,cv=$("cx")){
-  const ctx=cv.getContext("2d"),W=cv.width,H=cv.height,c=W/2;
-  ctx.clearRect(0,0,W,H); ctx.fillStyle="#0A1B2E"; ctx.fillRect(0,0,W,H);
-  const D=2*d.R, tube=d.dD*D, ringR=d.R+tube/2, jacketIn=ringR+tube/2, jacketOut=jacketIn*1.18;
-  const px=(W*0.46)/jacketOut;
-  ctx.fillStyle="#C9D2DC"; ctx.beginPath(); ctx.arc(c,c,jacketOut*px,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#0A1B2E"; ctx.beginPath(); ctx.arc(c,c,jacketIn*px,0,Math.PI*2); ctx.fill();
-  const tPx=Math.max(1.2,d.t*px), g=gap(d.dD,d.N,d.R), overlap=g<0;
-  for(let i=0;i<d.N;i++){const a=i/d.N*Math.PI*2-Math.PI/2, x=c+Math.cos(a)*ringR*px, y=c+Math.sin(a)*ringR*px;
-    ctx.strokeStyle=overlap?"#E06B5A":"#E4B54A"; ctx.lineWidth=tPx; ctx.beginPath(); ctx.arc(x,y,tube/2*px-tPx/2,0,7); ctx.stroke();
-    if(d.zR>0.15){const nr=d.zR*tube/2, nx=x+Math.cos(a)*(tube/2-nr), ny=y+Math.sin(a)*(tube/2-nr);
-      ctx.strokeStyle=overlap?"#F0A090":"#F0D48A"; ctx.lineWidth=tPx*0.9; ctx.beginPath(); ctx.arc(nx,ny,nr*px-tPx/2,0,7); ctx.stroke();}}
-  ctx.strokeStyle="rgba(255,255,255,0.18)"; ctx.setLineDash([4,5]); ctx.lineWidth=1; ctx.beginPath(); ctx.arc(c,c,d.R*px,0,7); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle="#8FA0B3"; ctx.font="13px IBM Plex Mono, PingFang SC"; ctx.fillText(tr('xsCap')(D.toFixed(1),d.t.toFixed(2),d.N),16,H-40);
-  if(overlap){ctx.fillStyle="#E06B5A"; ctx.font="bold 15px IBM Plex Mono, PingFang SC"; ctx.fillText(tr('xsOverlap'),16,34);}
-  ctx.fillStyle="#E4B54A"; ctx.fillRect(16,H-24,10*px,3); ctx.fillStyle="#8FA0B3"; ctx.font="13px IBM Plex Mono"; ctx.fillText("10 µm",16+10*px+8,H-18);
+function drawXS(d){
+  const g=gap(d.dD,d.N,d.R), overlap=g<0, D=2*d.R;
+  $("xsCap").textContent=tr('xsCap')(D.toFixed(1),d.t.toFixed(2),d.N);
+  $("xsWarn").textContent=overlap?tr('xsOverlap'):"";
+  if(window.fab3d)window.fab3d.updateXS(d,overlap);
 }
 
 // ——— spectrum chart ———
@@ -374,26 +367,11 @@ function drawJunction(d){
   const J=tr('js');const tolO=(0.15*Math.sqrt(wS*wS+wH*wH)).toFixed(1), tolT=(0.10*lam/(Math.PI*Math.sqrt(2*wS*wS*wH*wH/(wS*wS+wH*wH)))*180/Math.PI).toFixed(2);
   const rows=[[J.mfdh,`${mfdH.toFixed(1)} µm  (R ${d.R.toFixed(1)} µm × ${J_MFD_K})`],[J.mfds,`${mfdS.toFixed(1)} µm`],[J.il,`${il.toFixed(2)} dB  (${J.off} ${off} µm · ${J.tilt} ${tilt}° · ${J.gap} ${gapUm} µm)`],[J.all,STRATS.map(k=>IL[k].toFixed(2)).join(" / ")+" dB"],[J.rl,`${rl.toFixed(0)} dB`],[J.ferr,J.ferrV[jStrat]],[J.seal,J.sealV],[J.tol,J.tolV(tolO,tolT)],[J.rec,J.recV(T[best])]];
   $("jspec").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
-  // diagram
-  const cv=$("jcx"),ctx=cv.getContext("2d"),W=cv.width,H=cv.height,cy=H/2;ctx.clearRect(0,0,W,H);ctx.fillStyle="#0A1B2E";ctx.fillRect(0,0,W,H);
-  const S=6.0; // px per µm
-  const xJ=W*0.52, gapPx=Math.max(4,gapUm*S*0.4);
-  // solid fibre (left): cladding 125 um shown scaled down, core = MFD
-  ctx.fillStyle="#3B4B5E";ctx.fillRect(0,cy-62*S/6,xJ-gapPx/2,124*S/6);
-  ctx.fillStyle="#7FB3E6";ctx.fillRect(0,cy-wS*S,xJ-gapPx/2-(jStrat==="taper"?70:0),2*wS*S);
-  if(jStrat==="tec"){ctx.beginPath();ctx.moveTo(xJ-gapPx/2-160,cy-wS*S);ctx.lineTo(xJ-gapPx/2,cy-wH*S);ctx.lineTo(xJ-gapPx/2,cy+wH*S);ctx.lineTo(xJ-gapPx/2-160,cy+wS*S);ctx.closePath();ctx.fillStyle="#9CC8F0";ctx.fill();}
-  if(jStrat==="taper"){ctx.beginPath();ctx.moveTo(xJ-gapPx/2-70,cy-wS*S);ctx.lineTo(xJ-gapPx/2,cy-wH*S);ctx.lineTo(xJ-gapPx/2,cy+wH*S);ctx.lineTo(xJ-gapPx/2-70,cy+wS*S);ctx.closePath();ctx.fillStyle="#E4B54A";ctx.fill();}
-  if(jStrat==="grin"){ctx.fillStyle="#3E7FC4";ctx.fillRect(xJ-gapPx/2-90,cy-62*S/6,80,124*S/6);ctx.fillStyle="#9CC8F0";ctx.beginPath();ctx.moveTo(xJ-gapPx/2-90,cy-wS*S);ctx.quadraticCurveTo(xJ-gapPx/2-50,cy,xJ-gapPx/2-10,cy-wH*S);ctx.lineTo(xJ-gapPx/2-10,cy+wH*S);ctx.quadraticCurveTo(xJ-gapPx/2-50,cy,xJ-gapPx/2-90,cy+wS*S);ctx.closePath();ctx.fill();}
-  // hollow-core fibre (right): jacket + tubes + air core (mode)
-  ctx.fillStyle="#C9D2DC";ctx.fillRect(xJ+gapPx/2,cy-62*S/6,W-xJ-gapPx/2,124*S/6);
-  ctx.fillStyle="#0A1B2E";ctx.fillRect(xJ+gapPx/2,cy-(d.R+d.dD*2*d.R)*S,W-xJ-gapPx/2,2*(d.R+d.dD*2*d.R)*S);
-  ctx.strokeStyle="#E4B54A";ctx.lineWidth=2;for(const sgn of [-1,1]){const y=cy+sgn*(d.R+d.dD*d.R)*S;ctx.strokeRect(xJ+gapPx/2,y-d.dD*d.R*S,W-xJ-gapPx/2,2*d.dD*d.R*S);}
-  ctx.fillStyle="rgba(228,181,74,0.35)";ctx.fillRect(xJ+gapPx/2,cy-wH*S,W-xJ-gapPx/2,2*wH*S);
-  // faces
-  ctx.strokeStyle="#E06B5A";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xJ-gapPx/2,cy-70*S/6);ctx.lineTo(xJ-gapPx/2,cy+70*S/6);ctx.moveTo(xJ+gapPx/2,cy-70*S/6);ctx.lineTo(xJ+gapPx/2,cy+70*S/6);ctx.stroke();
-  ctx.fillStyle="#8FA0B3";ctx.font="14px IBM Plex Mono, PingFang SC";ctx.fillText(tr('solid')[jSolid],14,26);ctx.fillText(tr('js').hcf,xJ+gapPx/2+14,26);
-  ctx.fillStyle="#E4B54A";ctx.font="bold 15px IBM Plex Mono, PingFang SC";ctx.fillText(`${tr('strat')[jStrat]} · ${il.toFixed(2)} dB`,xJ-90,H-16);
-  ctx.fillStyle="#8FA0B3";ctx.font="12px IBM Plex Mono";ctx.fillText(`MFD ${mfdS.toFixed(1)} µm`,14,H-16);ctx.fillText(`MFD ${mfdH.toFixed(1)} µm`,W-140,H-16);
+  // 3D diagram
+  $("jL").textContent=`${tr('solid')[jSolid]} · MFD ${mfdS.toFixed(1)} µm`;
+  $("jR").textContent=`${tr('js').hcf} · MFD ${mfdH.toFixed(1)} µm`;
+  $("jB").textContent=`${tr('strat')[jStrat]} · ${il.toFixed(2)} dB`;
+  if(window.fab3d)window.fab3d.updateJunction({d,wS,wH,strat:jStrat,gapUm,off,tilt});
 }
 ["joff","jtilt","jgap"].forEach(id=>$(id).addEventListener("input",draw));
 
@@ -459,6 +437,86 @@ $("story").onclick=()=>{if(sOn){stop();return;}sOn=true;$("story").textContent=t
 };
 $("lEN").onclick=()=>applyLang('en');$("lZH").onclick=()=>applyLang('zh');
 {let l='en';try{const q=new URLSearchParams(location.search).get('lang');l=q||localStorage.getItem('cavusfab-lang')||'en';}catch(e){}applyLang(l==='zh'?'zh':'en');}
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const NAVY=0x0A1B2E, GLASS=0xC9D2DC, GOLD=0xE4B54A, GOLD2=0xF0D48A, RED=0xE06B5A, BLUE=0x7FB3E6, BLUE2=0x3E7FC4;
+function mkScene(canvas,camPos,target){
+  const r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc=new THREE.Scene();sc.background=new THREE.Color(NAVY);
+  const cam=new THREE.PerspectiveCamera(38,1,0.1,5000);cam.position.copy(camPos);
+  const ctl=new OrbitControls(cam,canvas);ctl.target.copy(target);ctl.enableDamping=true;ctl.enablePan=false;
+  sc.add(new THREE.HemisphereLight(0xffffff,0x223044,1.0));const dl=new THREE.DirectionalLight(0xffffff,1.3);dl.position.set(3,4,5);sc.add(dl);const dl2=new THREE.DirectionalLight(0xE4B54A,0.5);dl2.position.set(-4,-2,-3);sc.add(dl2);
+  const grp=new THREE.Group();sc.add(grp);
+  return {r,sc,cam,ctl,grp,canvas};}
+function clear(grp){while(grp.children.length){const o=grp.children.pop();o.traverse?.(m=>{m.geometry?.dispose?.();if(m.material){(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>x.dispose?.());}});}}
+function tube(rOut,rIn,len,color,opacity,segs=64){
+  // thin-walled tube along z with visible cut faces: outer shell + inner shell + front/back rings
+  const g=new THREE.Group();
+  const mat=new THREE.MeshPhysicalMaterial({color,transparent:opacity<1,opacity,roughness:0.35,metalness:0.05,side:THREE.DoubleSide,clearcoat:0.4});
+  const outer=new THREE.Mesh(new THREE.CylinderGeometry(rOut,rOut,len,segs,1,true),mat);outer.rotation.x=Math.PI/2;g.add(outer);
+  const inner=new THREE.Mesh(new THREE.CylinderGeometry(rIn,rIn,len,segs,1,true),mat);inner.rotation.x=Math.PI/2;g.add(inner);
+  const ringMat=new THREE.MeshPhysicalMaterial({color,roughness:0.3,side:THREE.DoubleSide});
+  for(const z of [len/2,-len/2]){const ring=new THREE.Mesh(new THREE.RingGeometry(rIn,rOut,segs),ringMat);ring.position.z=z;g.add(ring);}
+  return g;}
+function glow(radius,len,color=GOLD,opacity=0.16){const m=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,len,48,1,false),new THREE.MeshBasicMaterial({color,transparent:true,opacity,blending:THREE.AdditiveBlending,depthWrite:false}));m.rotation.x=Math.PI/2;return m;}
+
+// ---------- cross-section twin ----------
+const XS=mkScene(document.getElementById('cx'),new THREE.Vector3(70,55,120),new THREE.Vector3(0,0,10));
+function buildXS(d,overlap){
+  const g=XS.grp;clear(g);
+  const D=2*d.R,tOD=d.dD*D,ringR=d.R+tOD/2,jIn=ringR+tOD/2,jOut=jIn*1.18,L=jOut*2.2;
+  const zOff=-L/2;                       // front cut face at z=0
+  const jacket=tube(jOut,jIn,L,GLASS,0.28);jacket.position.z=zOff;g.add(jacket);
+  const tubeColor=overlap?RED:GOLD, nestColor=overlap?0xF0A090:GOLD2;
+  for(let i=0;i<d.N;i++){const a=i/d.N*Math.PI*2-Math.PI/2,x=Math.cos(a)*ringR,y=Math.sin(a)*ringR;
+    const t=tube(tOD/2,Math.max(tOD/2-d.t,0.05),L,tubeColor,0.92);t.position.set(x,y,zOff);g.add(t);
+    if(d.zR>0.15){const nr=d.zR*tOD/2,nx=x+Math.cos(a)*(tOD/2-nr),ny=y+Math.sin(a)*(tOD/2-nr);const n=tube(nr,Math.max(nr-d.t,0.05),L,nestColor,0.9);n.position.set(nx,ny,zOff);g.add(n);}}
+  const core=glow(0.68*d.R,L*1.15);core.position.z=zOff+L*0.05;g.add(core);
+  const beam=glow(0.35*d.R,L*1.6,0xFFF2C8,0.22);beam.position.z=zOff+L*0.2;g.add(beam);
+  // scale ring: 10 µm bar as a thin torus on the cut face
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(10,0.6,0.6),new THREE.MeshBasicMaterial({color:GOLD}));bar.position.set(-jOut*0.72,-jOut*0.86,0.6);g.add(bar);
+  const fit=jOut*3.1;XS.cam.position.set(fit*0.55,fit*0.42,fit*0.95);XS.ctl.target.set(0,0,-jOut*0.3);
+}
+// ---------- junction twin ----------
+const JX=mkScene(document.getElementById('jcx'),new THREE.Vector3(80,120,340),new THREE.Vector3(0,0,0));
+function buildJunction(p){
+  const g=JX.grp;clear(g);
+  const CL=62.5, LEN=220, gapPx=Math.max(1,p.gapUm);
+  const xL=-gapPx/2, xR=gapPx/2;
+  // solid fibre: cladding + core
+  const clad=new THREE.Mesh(new THREE.CylinderGeometry(CL,CL,LEN,64,1,false),new THREE.MeshPhysicalMaterial({color:0x3B4B5E,transparent:true,opacity:0.32,roughness:0.4,side:THREE.DoubleSide}));clad.rotation.z=Math.PI/2;clad.position.x=xL-LEN/2;g.add(clad);
+  const coreLen=p.strat==='taper'?LEN-70:(p.strat==='grin'?LEN-90:LEN);
+  const core=new THREE.Mesh(new THREE.CylinderGeometry(p.wS,p.wS,coreLen,32,1,false),new THREE.MeshPhysicalMaterial({color:BLUE,emissive:BLUE,emissiveIntensity:0.9,transparent:true,opacity:0.95}));core.rotation.z=Math.PI/2;core.position.x=xL-LEN+coreLen/2;g.add(core);const cg=glow(p.wS*2.2,coreLen,BLUE,0.12);cg.rotation.z=Math.PI/2;cg.rotation.x=0;cg.position.x=xL-LEN+coreLen/2;g.add(cg);
+  if(p.strat==='taper'){const cone=new THREE.Mesh(new THREE.CylinderGeometry(p.wH,p.wS,70,32,1,false),new THREE.MeshPhysicalMaterial({color:GOLD,emissive:GOLD,emissiveIntensity:0.25,transparent:true,opacity:0.9}));cone.rotation.z=-Math.PI/2;cone.position.x=xL-35;g.add(cone);}
+  if(p.strat==='tec'){const cone=new THREE.Mesh(new THREE.CylinderGeometry(p.wH,p.wS,120,32,1,false),new THREE.MeshPhysicalMaterial({color:0x9CC8F0,emissive:0x9CC8F0,emissiveIntensity:0.3,transparent:true,opacity:0.9}));cone.rotation.z=-Math.PI/2;cone.position.x=xL-60;g.add(cone);}
+  if(p.strat==='grin'){const lens=new THREE.Mesh(new THREE.CylinderGeometry(CL*1.04,CL*1.04,80,64,1,false),new THREE.MeshPhysicalMaterial({color:BLUE2,transparent:true,opacity:0.7,roughness:0.15,clearcoat:1}));lens.rotation.z=Math.PI/2;lens.position.x=xL-45;g.add(lens);
+    const relay=new THREE.Mesh(new THREE.CylinderGeometry(p.wH,p.wS,80,32,1,false),new THREE.MeshPhysicalMaterial({color:0x9CC8F0,emissive:0x9CC8F0,emissiveIntensity:0.4,transparent:true,opacity:0.9}));relay.rotation.z=-Math.PI/2;relay.position.x=xL-45;g.add(relay);}
+  // gap beam (diffracting)
+  const wEnd=p.wH*(1+p.gapUm/60);const beam=new THREE.Mesh(new THREE.CylinderGeometry(wEnd,p.wH,gapPx,24,1,false),new THREE.MeshBasicMaterial({color:0xFFF2C8,transparent:true,opacity:0.5,blending:THREE.AdditiveBlending,depthWrite:false}));beam.rotation.z=-Math.PI/2;beam.position.x=0;g.add(beam);
+  // hollow-core fibre: jacket + tubes + core glow (cut so tubes are visible)
+  const d=p.d,D=2*d.R,tOD=d.dD*D,ringR=d.R+tOD/2,jIn=ringR+tOD/2,jOut=Math.max(jIn*1.18,CL);
+  const hcJ=tube(jOut,jIn,LEN,GLASS,0.22);hcJ.rotation.y=Math.PI/2;hcJ.position.x=xR+LEN/2;g.add(hcJ);
+  for(let i=0;i<d.N;i++){const a=i/d.N*Math.PI*2-Math.PI/2,y=Math.sin(a)*ringR,z=Math.cos(a)*ringR;const t=tube(tOD/2,Math.max(tOD/2-d.t,0.05),LEN,GOLD,0.9,40);t.rotation.y=Math.PI/2;t.position.set(xR+LEN/2,y,z);g.add(t);
+    if(d.zR>0.15){const nr=d.zR*tOD/2;const n=tube(nr,Math.max(nr-d.t,0.05),LEN,GOLD2,0.9,32);n.rotation.y=Math.PI/2;n.position.set(xR+LEN/2,y+Math.sin(a)*(tOD/2-nr),z+Math.cos(a)*(tOD/2-nr));g.add(n);}}
+  const hcCore=glow(p.wH,LEN,GOLD,0.18);hcCore.rotation.z=Math.PI/2;hcCore.rotation.x=0;hcCore.position.x=xR+LEN/2;g.add(hcCore);
+  // faces
+  for(const x of [xL,xR]){const f=new THREE.Mesh(new THREE.RingGeometry(0.5,CL*1.05,64),new THREE.MeshBasicMaterial({color:RED,transparent:true,opacity:0.25,side:THREE.DoubleSide}));f.rotation.y=Math.PI/2;f.position.x=x;g.add(f);}
+  // tilt / offset visualised on the hollow-core side
+  g.children.forEach(o=>{});
+  JX.cam.position.set(30,120,330);JX.ctl.target.set(-10,0,0);
+}
+function resize(S){const c=S.canvas,w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;if(c.width!==Math.floor(w*S.r.getPixelRatio())||c.height!==Math.floor(h*S.r.getPixelRatio())){S.r.setSize(w,h,false);S.cam.aspect=w/h;S.cam.updateProjectionMatrix();}}
+let lastXS=null,lastJ=null,spin=0;
+window.fab3d={updateXS:(d,ov)=>{lastXS=[d,ov];buildXS(d,ov);},updateJunction:(p)=>{lastJ=p;buildJunction(p);}};
+function loop(){requestAnimationFrame(loop);spin+=0.0025;
+  resize(XS);XS.grp.rotation.y=Math.sin(spin)*0.35;XS.grp.rotation.x=Math.cos(spin*0.7)*0.12;XS.ctl.update();XS.r.render(XS.sc,XS.cam);
+  resize(JX);JX.ctl.update();JX.r.render(JX.sc,JX.cam);}
+loop();
+if(typeof draw==='function')draw();
 </script>
 </body>
 </html>
