@@ -46,6 +46,10 @@
   .kv div{border:1px solid var(--hair);background:#fff;padding:9px 10px;} .kv b{display:block;font-family:var(--mono);font-size:17px;} .kv span{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
   .checks{margin-top:12px;border:1px solid var(--hair);background:#fff;padding:10px 12px;} .checks h5{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
   .chk{display:flex;gap:8px;font-family:var(--mono);font-size:11.5px;padding:3px 0;border-bottom:0.5px solid var(--hair);} .chk:last-child{border:0;} .chk i{font-style:normal;width:16px;} .chk.ok i{color:var(--good);} .chk.bad i{color:var(--bad);} .chk.bad{color:var(--bad);} .chk span{flex:1;} .chk em{font-style:normal;color:var(--muted);}
+  .jgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;} @media(max-width:760px){.jgrid{grid-template-columns:1fr;}}
+  .jctl .sl{margin-bottom:10px;} .jsel{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;} .jsel button{font-family:var(--mono);font-size:11px;padding:8px 6px;border:1.5px solid var(--hair);background:#fff;cursor:pointer;color:var(--ink);} .jsel button.on{border-color:var(--gold);background:#FDF6E4;font-weight:600;}
+  .jres{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 10px;} @media(max-width:700px){.jres{grid-template-columns:1fr 1fr;}} .jres div{border:1px solid var(--hair);background:#fff;padding:8px 9px;text-align:center;} .jres b{display:block;font-family:var(--mono);font-size:19px;} .jres span{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;} .jres div.on{border:1.5px solid var(--gold);background:#FDF6E4;}
+  .jxs{background:#0A1B2E;border:1px solid var(--hair);padding:10px;} .jxs canvas{width:100%;display:block;}
   table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;} td{padding:5px 8px;border-bottom:0.5px solid var(--hair);vertical-align:top;} td:first-child{color:var(--muted);width:42%;}
   .note{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;}
   .storycap{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(10,27,46,0.72);border-left:3px solid var(--flare);padding:10px 14px;font-family:var(--mono);font-size:12.5px;color:#fff;display:none;line-height:1.5;}
@@ -59,7 +63,7 @@
 <div class="wrap">
   <header>
     <div class="lockup"><img src="assets/cavus-mark-trans-forlight.svg" alt="Cavus">
-      <div><div class="t">CAVUSFAB</div><div class="s" data-i="sub">HOLLOW-CORE FIBRE DESIGN ENGINE · v0.2</div></div></div>
+      <div><div class="t">CAVUSFAB</div><div class="s" data-i="sub">HOLLOW-CORE FIBRE + JUNCTION DESIGN ENGINE · v0.3</div></div></div>
     <div class="hr"><div class="vtag">CAVUS PHOTONICS · 空芯光子<br><span data-i="vtag">DESIGN → RECIPE → DRAW</span></div>
       <div class="lang"><button id="lEN" class="on">EN</button><button id="lZH">中文</button></div></div>
   </header>
@@ -109,6 +113,27 @@
         <p class="note" data-i="recipeNote">Two draw stages sized from real preform dimensions: 25 mm stack → 3 mm cane → fibre OD 200 µm (×8.3 then ×15, aspect-preserving). Draw starting points from the Cavus Fabrication Playbook (Jasion 2019 · Southampton 2024 · Nature Photonics 2025). Pressure sensitivity assumes ~6 nm of tube diameter per Pa at research yields; the playbook's field figure is ±0.25 kPa, which is a point for a reviewer.</p>
       </div>
 
+      <div class="chartbox" id="junc"><h4 data-i="hJunc">Junction — connect this hollow-core fibre to the installed solid-fibre world</h4>
+        <div class="jgrid">
+          <div class="jctl">
+            <h3 style="font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);margin:4px 0 8px;text-transform:uppercase" data-i="hSolid">Solid fibre on the other side</h3>
+            <div class="jsel" id="jsolid"></div>
+            <h3 style="font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);margin:10px 0 8px;text-transform:uppercase" data-i="hStrat">Junction strategy</h3>
+            <div class="jsel" id="jstrat"></div>
+            <div class="sl"><label><span data-i="lOff">Lateral offset</span><b id="vjoff">0.5 µm</b></label><input type="range" id="joff" min="0" max="5" step="0.1" value="0.5"></div>
+            <div class="sl"><label><span data-i="lTilt">Angular tilt</span><b id="vjtilt">0.3°</b></label><input type="range" id="jtilt" min="0" max="3" step="0.1" value="0.3"></div>
+            <div class="sl"><label><span data-i="lGap">Longitudinal gap</span><b id="vjgap">2 µm</b></label><input type="range" id="jgap" min="0" max="60" step="1" value="2"></div>
+            <div class="jres" id="jres"></div>
+            <div class="checks" style="margin-top:4px"><h5 data-i="hJchk">Junction checks</h5><div id="jchecks"></div></div>
+          </div>
+          <div>
+            <div class="jxs"><canvas id="jcx" width="900" height="420"></canvas></div>
+            <table id="jspec" style="margin-top:12px"></table>
+            <p class="note" data-i="juncNote">Junction model = CavusSim v0 (Marcuse Gaussian overlap + Fresnel + 0.10 dB hollow-core mode-shape term), validated against the 1–3 dB naive-butt and 0.15–0.5 dB adapted-junction anchors. The hollow-core mode-field diameter is derived from this design as MFD ≈ 1.36 × R (fits the DNANF literature estimate of 20 µm at R = 14.75 µm); a vector mode solver replaces this in v1.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="chartbox" id="optbox" style="display:none"><h4 data-i="hOpt">Optimizer — 4,000 candidate fibres searched</h4><canvas id="optc" width="1200" height="300"></canvas><p class="note" id="optnote"></p></div>
 
       <details><summary data-i="hModel">Model and assumptions — for reviewers</summary><div id="model"></div></details>
@@ -121,8 +146,8 @@
 <script>
 // ——— i18n ———
 const I18N={
-en:{sub:"HOLLOW-CORE FIBRE DESIGN ENGINE · v0.2",vtag:"DESIGN → RECIPE → DRAW",h1:"Design the fibre. <em>Then make it.</em>",
- lede:"Choose a nested anti-resonant geometry and CavusFab computes where it transmits, how much light it loses, how tightly it bends, the preform you would stack to draw it, and the draw parameters to start from. Then an optimizer searches the design space for a better fibre than the one you drew.",
+en:{sub:"HOLLOW-CORE FIBRE + JUNCTION DESIGN ENGINE · v0.3",vtag:"DESIGN → RECIPE → DRAW",h1:"Design the fibre. <em>Then make it.</em>",
+ lede:"Choose a nested anti-resonant geometry and CavusFab computes where it transmits, how much light it loses, how tightly it bends, the preform you would stack to draw it, and the draw parameters to start from. Then an optimizer searches the design space for a better fibre than the one you drew, and the junction module designs the connector that joins it to the installed solid-fibre world.",
  hPreset:"Start from a published fibre",hGeom:"Geometry",lN:"Outer tubes N",lt:"Membrane thickness t",lR:"Core radius R",ldD:"Tube size d/D",lzR:"Nested ratio z/R",hTarget:"Target",llam:"Wavelength λ",lbend:"Bend radius cap",
  bOpt:"🤖 AI OPTIMIZE THIS FIBRE",bStory:"▶ PLAY THE STORY — 30 s",bStop:"■ STOP",
  ctrlNote:"v0.2 = calibrated scaling model (Poletti 2014 laws + ARROW resonance factor + Fokoua 2023 scattering), anchored to the 0.091 dB/km DNANF. v1 = full-vector FEM (in progress). Every assumption is listed under \"Model and assumptions\" below.",
@@ -144,6 +169,13 @@ en:{sub:"HOLLOW-CORE FIBRE DESIGN ENGINE · v0.2",vtag:"DESIGN → RECIPE → DR
   "Restore t. Now widen the core —",
   "Loss falls fast (∝ 1/R⁸) but the <b>critical bend radius</b> grows. Every fibre is a trade between loss and how tightly it can be cabled.",
   "Below: the <b>preform recipe</b> this geometry implies — what to stack at 25 mm, what the cane must measure, what pressure to hold during the draw. <b>Design → recipe → draw.</b> That is what Cavus builds."],
+ hJunc:"Junction — connect this hollow-core fibre to the installed solid-fibre world",hSolid:"Solid fibre on the other side",hStrat:"Junction strategy",lOff:"Lateral offset",lTilt:"Angular tilt",lGap:"Longitudinal gap",hJchk:"Junction checks",
+ juncNote:"Junction model = CavusSim v0 (Marcuse Gaussian overlap + Fresnel + 0.10 dB hollow-core mode-shape term), validated against the 1–3 dB naive-butt and 0.15–0.5 dB adapted-junction anchors. The hollow-core mode-field diameter is derived from this design as MFD ≈ 1.36 × R (fits the DNANF literature estimate of 20 µm at R = 14.75 µm); a vector mode solver replaces this in v1.",
+ solid:{smf28:"SMF-28 · G.652.D (MFD 10.4)",g657:"G.657.A2 bend-insensitive (MFD 9.2)",g654e:"G.654.E large-area trunk (MFD 12.5)",tec2:"TEC-expanded SMF (MFD 18)"},
+ strat:{butt:"Direct butt",tec:"TEC expanded core",grin:"GRIN lens adapter",taper:"Matched taper / bridge"},
+ jres:{il:"insertion loss",rl:"return loss",mm:"MFD mismatch",best:"best strategy"},
+ jchk:{mm:"MFD ratio > 1.5 without adapter",gap:"Gap > 20 µm (diffraction)",tilt:"Tilt > 1° (APC needs 8° both sides)",off:"Offset > 1 µm (needs active alignment)",rl:"Return loss < 40 dB (uncoated air/glass face)"},jchkOk:"No flags at this junction.",
+ js:{hcf:"HOLLOW-CORE SIDE · this design",mfdh:"hollow-core MFD",mfds:"solid-fibre MFD",il:"predicted IL (this strategy)",all:"IL by strategy · butt / TEC / GRIN / taper",rl:"return loss · faces",ferr:"connector · ferrule and face",ferrV:{butt:"LC/MPO ceramic ferrule · PC face NOT recommended (air/glass reflection) · use APC 8° both sides",tec:"LC ferrule · TEC section fusion-spliced 20 mm behind face · APC 8° · no index gel (air core)",grin:"LC or MPO ferrule with pigtailed GRIN relay · AR-coated both faces · magnification M = MFD_hcf / MFD_smf",taper:"Bridge fibre spliced to SMF, tapered ≥ 4 mm, angle-cleaved 4°, bonded to HCF in rigid ferrule"},seal:"sealing · contamination",sealV:"Hermetic or epoxy-sealed air interface; dust cap mandatory; no gel; inspect with 400× scope before mating",tol:"alignment window (0.1 dB)",tolV:(o,t)=>`offset ≤ ${o} µm · tilt ≤ ${t}° · gap ≤ 5 µm`,rec:"recommended for data-centre links",recV:(b)=>`${b} — lowest predicted IL for this hollow-core geometry`,off:"offset",tilt:"tilt",gap:"gap"},
  model:`<p><b>What this engine is.</b> A calibrated scaling model, not a Maxwell solver. It reproduces published trends and is anchored to one measured fibre. It is meant to rank geometries and produce a starting recipe; absolute loss numbers carry ±30–50% uncertainty until the FEM solver (v1) replaces the confinement term.</p>
 <ul>
 <li><b>Resonances (exact):</b> <code>λ_m = (2t/m)·√(n²−1)</code>, n = 1.444. Transmission windows lie between successive resonances.</li>
@@ -158,8 +190,8 @@ en:{sub:"HOLLOW-CORE FIBRE DESIGN ENGINE · v0.2",vtag:"DESIGN → RECIPE → DR
 <li><b>Not modelled:</b> tube-wall thickness variation, azimuthal asymmetry, coating stress, wavelength-dependent glass absorption above 2 µm, mode-field overlap with the jacket, multi-nesting.</li>
 </ul>
 <p><b>Questions we want a reviewer to answer:</b> is the (5/N)² term defensible; is 6 nm/Pa or ±0.25 kPa the right pressure sensitivity; what stack capillary wall is actually drawable below 60 µm; which anchor fibre would you calibrate to instead.</p>`},
-zh:{sub:"空芯光纤设计引擎 · v0.2",vtag:"设计 → 配方 → 拉丝",h1:"先设计光纤，<em>再把它做出来。</em>",
- lede:"选定一个嵌套反谐振几何结构，CavusFab 即计算它在哪些波段传输、损耗多少、能弯多紧、拉丝所需的预制棒如何叠放、拉丝参数从何起步；再由优化器在设计空间中寻找比你手动设定更好的光纤。",
+zh:{sub:"空芯光纤 + 接头设计引擎 · v0.3",vtag:"设计 → 配方 → 拉丝",h1:"先设计光纤，<em>再把它做出来。</em>",
+ lede:"选定一个嵌套反谐振几何结构，CavusFab 即计算它在哪些波段传输、损耗多少、能弯多紧、拉丝所需的预制棒如何叠放、拉丝参数从何起步；再由优化器在设计空间中寻找比你手动设定更好的光纤；接头模块则设计把它接入现有实心光纤世界的连接器。",
  hPreset:"从已发表的光纤开始",hGeom:"几何参数",lN:"外圈管数 N",lt:"膜厚 t",lR:"纤芯半径 R",ldD:"管径比 d/D",lzR:"嵌套比 z/R",hTarget:"目标",llam:"波长 λ",lbend:"弯曲半径上限",
  bOpt:"🤖 AI 优化这根光纤",bStory:"▶ 播放讲解 — 30 秒",bStop:"■ 停止",
  ctrlNote:"v0.2 = 经校准的标度模型（Poletti 2014 标度律 + ARROW 谐振因子 + Fokoua 2023 散射），锚定于 0.091 dB/km 的 DNANF。v1 = 全矢量有限元（开发中）。所有假设列于下方「模型与假设」。",
@@ -181,6 +213,13 @@ zh:{sub:"空芯光纤设计引擎 · v0.2",vtag:"设计 → 配方 → 拉丝",h
   "恢复 t。现在把纤芯扩大——",
   "损耗快速下降（∝ 1/R⁸），但<b>临界弯曲半径</b>随之增大。每一根光纤都是损耗与可成缆弯曲度之间的权衡。",
   "下方：这个几何结构对应的<b>预制棒配方</b>——25 mm 叠棒里叠什么、芯棒尺寸多少、拉丝时保持多大气压。<b>设计 → 配方 → 拉丝。</b>这就是 Cavus 在做的事。"],
+ hJunc:"接头 — 把这根空芯光纤接到现有实心光纤世界",hSolid:"另一端的实心光纤",hStrat:"接头方案",lOff:"横向偏移",lTilt:"角度倾斜",lGap:"纵向间隙",hJchk:"接头检查",
+ juncNote:"接头模型 = CavusSim v0（Marcuse 高斯模场重叠 + 菲涅尔反射 + 0.10 dB 空芯模场形状项），已对照 1–3 dB 直接对接和 0.15–0.5 dB 适配接头的文献锚点验证。空芯模场直径由本设计推导：MFD ≈ 1.36 × R（在 R = 14.75 µm 时与 DNANF 文献估计的 20 µm 吻合）；v1 将以矢量模式求解器取代。",
+ solid:{smf28:"SMF-28 · G.652.D（MFD 10.4）",g657:"G.657.A2 抗弯光纤（MFD 9.2）",g654e:"G.654.E 大有效面积干线（MFD 12.5）",tec2:"热扩芯 SMF（MFD 18）"},
+ strat:{butt:"直接对接",tec:"热扩芯 TEC",grin:"GRIN 透镜适配",taper:"匹配锥形 / 过渡光纤"},
+ jres:{il:"插入损耗",rl:"回波损耗",mm:"模场失配比",best:"最优方案"},
+ jchk:{mm:"无适配时模场比 > 1.5",gap:"间隙 > 20 µm（衍射）",tilt:"倾斜 > 1°（APC 两端需 8°）",off:"偏移 > 1 µm（需主动对准）",rl:"回波损耗 < 40 dB（未镀膜空气/玻璃端面）"},jchkOk:"此接头无警示。",
+ js:{hcf:"空芯侧 · 本设计",mfdh:"空芯模场直径",mfds:"实心光纤模场直径",il:"预测插损（当前方案）",all:"各方案插损 · 对接 / TEC / GRIN / 锥形",rl:"回波损耗 · 端面",ferr:"连接器 · 插芯与端面",ferrV:{butt:"LC/MPO 陶瓷插芯 · 不建议 PC 端面（空气/玻璃反射）· 两端 APC 8°",tec:"LC 插芯 · TEC 段在端面后 20 mm 处熔接 · APC 8° · 不用匹配液（空气纤芯）",grin:"LC 或 MPO 插芯 + 尾纤 GRIN 中继 · 两端镀增透膜 · 放大率 M = MFD_空芯 / MFD_实心",taper:"过渡光纤熔接至 SMF，拉锥 ≥ 4 mm，4° 斜切，在刚性插芯内与空芯粘接"},seal:"密封 · 污染",sealV:"空气界面气密或环氧密封；必须带防尘帽；不用匹配液；对接前用 400× 显微镜检查",tol:"对准窗口（0.1 dB）",tolV:(o,t)=>`偏移 ≤ ${o} µm · 倾斜 ≤ ${t}° · 间隙 ≤ 5 µm`,rec:"数据中心链路推荐",recV:(b)=>`${b} — 对本空芯几何结构预测插损最低`,off:"偏移",tilt:"倾斜",gap:"间隙"},
  model:`<p><b>这个引擎是什么。</b>一个经校准的标度模型，不是麦克斯韦方程求解器。它复现已发表的趋势，并锚定于一根实测光纤。用途是对几何结构排序并给出起始配方；在有限元求解器（v1）取代限制损耗项之前，绝对损耗数值有 ±30–50% 的不确定度。</p>
 <ul>
 <li><b>谐振（精确）：</b><code>λ_m = (2t/m)·√(n²−1)</code>，n = 1.444。传输窗口位于相邻谐振之间。</li>
@@ -201,6 +240,7 @@ function applyLang(l){L=l;document.documentElement.lang=l==='zh'?'zh-Hans':'en';
  document.querySelectorAll('[data-i]').forEach(el=>{const v=I18N[l][el.dataset.i];if(typeof v==='string')el.innerHTML=v;});
  document.getElementById('lEN').classList.toggle('on',l==='en');document.getElementById('lZH').classList.toggle('on',l==='zh');
  document.getElementById('model').innerHTML=I18N[l].model;
+ buildJuncUI();
  if(!sOn)$("story").textContent=tr('bStory');
  try{localStorage.setItem('cavusfab-lang',l);}catch(e){}
  draw();}
@@ -302,6 +342,61 @@ function recipe(d){
 function drawChecks(d){const C=tr('chk');const rows=checks(d);const flagged=rows.filter(r=>r[1]);
   $("checks").innerHTML=(flagged.length?flagged:[]).map(r=>`<div class="chk bad"><i>✕</i><span>${C[r[0]]}</span><em>${r[2]}</em></div>`).join("")+(flagged.length?"":`<div class="chk ok"><i>✓</i><span>${tr('chkOkAll')}</span></div>`);}
 
+
+// ——— junction (mirror of cavussim/core.py) ———
+const JN_SI=1.468, JN_AIR=1.0003, J_SHAPE=0.10, J_BRIDGE=0.05, J_MFD_K=1.36;
+const SOLID={smf28:{mfd:10.4},g657:{mfd:9.2},g654e:{mfd:12.5},tec2:{mfd:18.0}};
+const STRATS=["butt","tec","grin","taper"];
+let jSolid="smf28", jStrat="grin";
+function gaussW(w,z,n,lam){if(z<=0)return w;const zr=Math.PI*w*w*n/lam;return w*Math.sqrt(1+(z/zr)**2);}
+function eta(w1,w2,off,tiltDeg,gapUm,n,lam){const w2e=gaussW(w2,gapUm,n,lam);const s=w1*w1+w2e*w2e;let e=(2*w1*w2e/s)**2;e*=Math.exp(-2*off*off/s);const th=tiltDeg*Math.PI/180;const we2=2*w1*w1*w2e*w2e/s;e*=Math.exp(-2*(Math.PI*n*th*Math.sqrt(we2)/lam)**2);return e;}
+function fresnelDb(n1,n2,ar){let r=((n1-n2)/(n1+n2))**2;if(ar)r=Math.min(r,0.0025);return -10*Math.log10(1-r);}
+function juncLoss(wS,wH,strat,off,tilt,gapUm,lam){
+  if(strat==="butt"){return -10*Math.log10(eta(wS,wH,off,tilt,gapUm,JN_AIR,lam))+J_SHAPE+fresnelDb(JN_AIR,JN_SI,false);}
+  if(strat==="tec"){return -10*Math.log10(eta(wH*1.05,wH,off,tilt,gapUm,JN_AIR,lam))+J_SHAPE+fresnelDb(JN_AIR,JN_SI,false);}
+  if(strat==="grin"){return -10*Math.log10(eta(wH,wH,off,tilt,gapUm,JN_AIR,lam))+0.10+J_SHAPE+2*fresnelDb(JN_AIR,JN_SI,true);}
+  return -10*Math.log10(eta(wH*1.03,wH,off,tilt,gapUm,JN_AIR,lam))+J_SHAPE+J_BRIDGE+fresnelDb(JN_AIR,JN_SI,true);}
+function returnLossDb(strat){const r=((JN_SI-JN_AIR)/(JN_SI+JN_AIR))**2;if(strat==="grin"||strat==="taper")return -10*Math.log10(0.0025)+ (strat==="taper"?14:0);return -10*Math.log10(r);}
+function buildJuncUI(){const S=tr('solid'),T=tr('strat');const js=$("jsolid"),jt=$("jstrat");js.innerHTML="";jt.innerHTML="";
+  for(const k in SOLID){const b=document.createElement("button");b.textContent=S[k];b.className=k===jSolid?"on":"";b.onclick=()=>{jSolid=k;buildJuncUI();draw();};js.appendChild(b);}
+  for(const k of STRATS){const b=document.createElement("button");b.textContent=T[k];b.className=k===jStrat?"on":"";b.onclick=()=>{jStrat=k;buildJuncUI();draw();};jt.appendChild(b);}}
+function drawJunction(d){
+  const off=+$("joff").value,tilt=+$("jtilt").value,gapUm=+$("jgap").value;
+  $("vjoff").textContent=off.toFixed(1)+" µm";$("vjtilt").textContent=tilt.toFixed(1)+"°";$("vjgap").textContent=gapUm+" µm";
+  const mfdH=J_MFD_K*d.R, wH=mfdH/2, mfdS=SOLID[jSolid].mfd, wS=mfdS/2, lam=d.lam;
+  const IL={};for(const k of STRATS)IL[k]=juncLoss(wS,wH,k,off,tilt,gapUm,lam);
+  const best=STRATS.reduce((a,b)=>IL[a]<=IL[b]?a:b);const il=IL[jStrat],rl=returnLossDb(jStrat),ratio=Math.max(wH/wS,wS/wH);
+  const R=tr('jres'),T=tr('strat');
+  $("jres").innerHTML=`<div class="on"><b>${il.toFixed(2)}</b><span>${R.il} dB</span></div><div><b>${rl.toFixed(0)}</b><span>${R.rl} dB</span></div><div><b>${ratio.toFixed(2)}×</b><span>${R.mm}</span></div><div><b style="font-size:13px;line-height:1.3">${T[best]}</b><span>${R.best}</span></div>`;
+  const C=tr('jchk');const flags=[['mm',jStrat==="butt"&&ratio>1.5,ratio.toFixed(2)+'×'],['gap',gapUm>20,gapUm+' µm'],['tilt',tilt>1,tilt.toFixed(1)+'°'],['off',off>1,off.toFixed(1)+' µm'],['rl',rl<40,rl.toFixed(0)+' dB']].filter(f=>f[1]);
+  $("jchecks").innerHTML=flags.length?flags.map(f=>`<div class="chk bad"><i>✕</i><span>${C[f[0]]}</span><em>${f[2]}</em></div>`).join(""):`<div class="chk ok"><i>✓</i><span>${tr('jchkOk')}</span></div>`;
+  // spec table
+  const J=tr('js');const tolO=(0.15*Math.sqrt(wS*wS+wH*wH)).toFixed(1), tolT=(0.10*lam/(Math.PI*Math.sqrt(2*wS*wS*wH*wH/(wS*wS+wH*wH)))*180/Math.PI).toFixed(2);
+  const rows=[[J.mfdh,`${mfdH.toFixed(1)} µm  (R ${d.R.toFixed(1)} µm × ${J_MFD_K})`],[J.mfds,`${mfdS.toFixed(1)} µm`],[J.il,`${il.toFixed(2)} dB  (${J.off} ${off} µm · ${J.tilt} ${tilt}° · ${J.gap} ${gapUm} µm)`],[J.all,STRATS.map(k=>IL[k].toFixed(2)).join(" / ")+" dB"],[J.rl,`${rl.toFixed(0)} dB`],[J.ferr,J.ferrV[jStrat]],[J.seal,J.sealV],[J.tol,J.tolV(tolO,tolT)],[J.rec,J.recV(T[best])]];
+  $("jspec").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
+  // diagram
+  const cv=$("jcx"),ctx=cv.getContext("2d"),W=cv.width,H=cv.height,cy=H/2;ctx.clearRect(0,0,W,H);ctx.fillStyle="#0A1B2E";ctx.fillRect(0,0,W,H);
+  const S=6.0; // px per µm
+  const xJ=W*0.52, gapPx=Math.max(4,gapUm*S*0.4);
+  // solid fibre (left): cladding 125 um shown scaled down, core = MFD
+  ctx.fillStyle="#3B4B5E";ctx.fillRect(0,cy-62*S/6,xJ-gapPx/2,124*S/6);
+  ctx.fillStyle="#7FB3E6";ctx.fillRect(0,cy-wS*S,xJ-gapPx/2-(jStrat==="taper"?70:0),2*wS*S);
+  if(jStrat==="tec"){ctx.beginPath();ctx.moveTo(xJ-gapPx/2-160,cy-wS*S);ctx.lineTo(xJ-gapPx/2,cy-wH*S);ctx.lineTo(xJ-gapPx/2,cy+wH*S);ctx.lineTo(xJ-gapPx/2-160,cy+wS*S);ctx.closePath();ctx.fillStyle="#9CC8F0";ctx.fill();}
+  if(jStrat==="taper"){ctx.beginPath();ctx.moveTo(xJ-gapPx/2-70,cy-wS*S);ctx.lineTo(xJ-gapPx/2,cy-wH*S);ctx.lineTo(xJ-gapPx/2,cy+wH*S);ctx.lineTo(xJ-gapPx/2-70,cy+wS*S);ctx.closePath();ctx.fillStyle="#E4B54A";ctx.fill();}
+  if(jStrat==="grin"){ctx.fillStyle="#3E7FC4";ctx.fillRect(xJ-gapPx/2-90,cy-62*S/6,80,124*S/6);ctx.fillStyle="#9CC8F0";ctx.beginPath();ctx.moveTo(xJ-gapPx/2-90,cy-wS*S);ctx.quadraticCurveTo(xJ-gapPx/2-50,cy,xJ-gapPx/2-10,cy-wH*S);ctx.lineTo(xJ-gapPx/2-10,cy+wH*S);ctx.quadraticCurveTo(xJ-gapPx/2-50,cy,xJ-gapPx/2-90,cy+wS*S);ctx.closePath();ctx.fill();}
+  // hollow-core fibre (right): jacket + tubes + air core (mode)
+  ctx.fillStyle="#C9D2DC";ctx.fillRect(xJ+gapPx/2,cy-62*S/6,W-xJ-gapPx/2,124*S/6);
+  ctx.fillStyle="#0A1B2E";ctx.fillRect(xJ+gapPx/2,cy-(d.R+d.dD*2*d.R)*S,W-xJ-gapPx/2,2*(d.R+d.dD*2*d.R)*S);
+  ctx.strokeStyle="#E4B54A";ctx.lineWidth=2;for(const sgn of [-1,1]){const y=cy+sgn*(d.R+d.dD*d.R)*S;ctx.strokeRect(xJ+gapPx/2,y-d.dD*d.R*S,W-xJ-gapPx/2,2*d.dD*d.R*S);}
+  ctx.fillStyle="rgba(228,181,74,0.35)";ctx.fillRect(xJ+gapPx/2,cy-wH*S,W-xJ-gapPx/2,2*wH*S);
+  // faces
+  ctx.strokeStyle="#E06B5A";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xJ-gapPx/2,cy-70*S/6);ctx.lineTo(xJ-gapPx/2,cy+70*S/6);ctx.moveTo(xJ+gapPx/2,cy-70*S/6);ctx.lineTo(xJ+gapPx/2,cy+70*S/6);ctx.stroke();
+  ctx.fillStyle="#8FA0B3";ctx.font="14px IBM Plex Mono, PingFang SC";ctx.fillText(tr('solid')[jSolid],14,26);ctx.fillText(tr('js').hcf,xJ+gapPx/2+14,26);
+  ctx.fillStyle="#E4B54A";ctx.font="bold 15px IBM Plex Mono, PingFang SC";ctx.fillText(`${tr('strat')[jStrat]} · ${il.toFixed(2)} dB`,xJ-90,H-16);
+  ctx.fillStyle="#8FA0B3";ctx.font="12px IBM Plex Mono";ctx.fillText(`MFD ${mfdS.toFixed(1)} µm`,14,H-16);ctx.fillText(`MFD ${mfdH.toFixed(1)} µm`,W-140,H-16);
+}
+["joff","jtilt","jgap"].forEach(id=>$(id).addEventListener("input",draw));
+
 // ——— main draw ———
 function draw(){
   const d=read();
@@ -314,7 +409,7 @@ function draw(){
   $("kwin").textContent=w?`m=${w.m}: ${Math.round(w.lo*1000)}–${w.hi===Infinity?"∞":Math.round(w.hi*1000)} nm`:tr('onRes');
   $("kbend").textContent=bendCR(d).toFixed(1)+" cm"; $("khom").textContent="~"+Math.round(hom(d))+"×";
   $("kcl").textContent=CL(d).toFixed(3); $("kssl").textContent=SSL(d).toFixed(3); $("kgap").textContent=gap(d.dD,d.N,d.R).toFixed(1)+" µm";
-  drawXS(d); drawSpec(d); recipe(d); drawChecks(d);
+  drawXS(d); drawSpec(d); recipe(d); drawChecks(d); drawJunction(d);
 }
 ids.forEach(id=>$(id).addEventListener("input",()=>{document.querySelectorAll("#presets button").forEach(x=>x.classList.remove("on"));draw();}));
 
