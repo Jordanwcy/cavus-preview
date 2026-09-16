@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Cavus Photonics · 为什么需要空芯光纤 · 3D 数字孪生</title>
 <style>
 :root{--navy:#0A1B2E;--gold:#B8891F;--gold2:#E3C070;--ink:#1a2430;--mut:#5a6a7a;--line:#d8dee4;--paper:#F7F5F0;--blue:#1a5276;--red:#c0392b}
@@ -34,13 +34,54 @@
 .et{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}.et th{background:var(--navy);color:#fff;text-align:left;padding:4px 8px;font-weight:500}.et td{border-bottom:1px solid var(--line);padding:4px 8px}
 #nav{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}#nav button{flex:1;border:1px solid var(--line);background:#fff;border-radius:6px;padding:8px;cursor:pointer;font-size:13px;color:var(--ink)}#nav button.p{background:var(--navy);color:#fff;border-color:var(--navy)}
 #foot{padding:8px 18px;font-size:11px;color:var(--mut);border-top:1px solid var(--line)}
-@media (max-width:900px){#app{grid-template-columns:1fr;grid-template-rows:55vh 45vh}#panel{border-left:0;border-top:1px solid var(--line)}#ctl{width:210px}}
+#app{height:100dvh}
+#c3d{touch-action:none}
+.mob{display:none}
+#scrim{display:none;position:fixed;inset:0;background:rgba(10,27,46,.35);z-index:25}
+#ctlX{display:none}
+@media (max-width:860px){
+#app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+#view{height:42dvh;min-height:230px;transition:height .3s}
+#app.full #view{height:74dvh}
+#hud{left:8px;top:8px;right:50px;max-width:none;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
+#hud::-webkit-scrollbar{display:none}
+.m{flex:0 0 auto;min-width:100px;padding:6px 9px}.m b{font-size:16px}.m small{font-size:10px}
+#legend{left:8px;right:164px;bottom:8px;font-size:10.5px;gap:8px;padding:5px 8px;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+#legend::-webkit-scrollbar{display:none}
+.mob{display:flex;align-items:center;justify-content:center;position:absolute;z-index:6;background:rgba(255,255,255,.96);border:1px solid var(--navy);border-radius:999px;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(10,27,46,.12)}
+#mFull{right:8px;top:8px;width:36px;height:36px;font-size:17px;padding:0}
+#mCtl{right:8px;bottom:8px;padding:8px 13px;gap:5px}
+#app.ctl #mCtl{display:none}
+#ctl{position:fixed;left:0;right:0;top:auto;bottom:0;width:auto;border-radius:14px 14px 0 0;border:0;border-top:1px solid var(--line);padding:10px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -6px 24px rgba(10,27,46,.18);z-index:30;transform:translateY(105%);transition:transform .25s;font-size:13px;max-height:80dvh;overflow:auto}
+#app.ctl #ctl{transform:none}
+#app.ctl #scrim{display:block}
+#ctlX{display:flex;justify-content:space-between;align-items:center;margin:0 0 4px;font-size:13px;font-weight:600;color:var(--navy)}
+#ctlX button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--ink)}
+#ctl label{margin:9px 0 3px;font-size:12.5px}
+#ctl input[type=range]{height:30px}
+.tg button{padding:10px 3px;font-size:12.5px}
+#preset{padding:11px;font-size:14px;margin-top:12px}
+#bd{left:8px;right:8px;top:auto;bottom:8px;width:auto;max-width:none;max-height:70%;overflow:auto;font-size:12px;z-index:7}
+#panel{border-left:0;border-top:1px solid var(--line);min-height:0}
+#brand{padding:8px 14px;gap:8px}#brand img{height:22px}#brand .k{font-size:9px;letter-spacing:2px}#brand h1{font-size:13px}
+#tabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}#tabs::-webkit-scrollbar{display:none}
+#tabs button{flex:0 0 auto;padding:9px 13px;font-size:12.5px;white-space:nowrap}
+#body{padding:14px 16px;font-size:14px;line-height:1.7;-webkit-overflow-scrolling:touch}
+#body h2{font-size:15.5px}.q,.ans{font-size:13.5px}
+.eco{grid-template-columns:1fr 1fr;font-size:12.5px}.eco input,#body select{font-size:16px}.eco input{width:82px;padding:4px 6px}
+.et{font-size:12.5px}
+#nav{padding:10px 14px calc(10px + env(safe-area-inset-bottom))}#nav button{padding:11px;font-size:14.5px}
+#foot{display:none}
+}
 </style></head><body>
 <div id="app">
 <div id="view"><canvas id="c3d"></canvas>
 <div id="hud"><div class="m" data-k="step"><small>每步时间 ⓘ</small><b id="hStep">—</b></div><div class="m" data-k="util"><small>GPU 利用率 ⓘ</small><b id="hUtil">—</b></div><div class="m" data-k="gain" style="border-color:#B8891F"><small>有效算力 vs 基准 ⓘ</small><b id="hGain">—</b></div><div class="m" data-k="pow"><small>机房 A 电力 ⓘ</small><b id="hPow">—</b></div><div class="m" id="hSaveBox" data-k="save" style="border-color:#B8891F"><small>相对基准，每年节省 ⓘ</small><b id="hSave">—</b></div></div>
 <div id="bd"><div id="bdh"><b id="bdt"></b><button id="bdx">关闭</button></div><div id="bdb"></div></div>
-<div id="ctl"><label>远端机房距离：<span id="dv">100</span> km</label><input id="dist" type="range" min="10" max="500" step="10" value="100">
+<button id="mFull" class="mob" title="放大 / 缩小 3D 视图" aria-label="放大 3D 视图">⤢</button>
+<button id="mCtl" class="mob">⚙ 调参 · Cavus 方案</button>
+<div id="scrim"></div>
+<div id="ctl"><div id="ctlX"><span>参数 · 拖动滑杆实时计算</span><button id="ctlClose">完成</button></div><label>远端机房距离：<span id="dv">100</span> km</label><input id="dist" type="range" min="10" max="500" step="10" value="100">
 <label>光纤</label><div class="tg"><button id="bG" class="on">玻璃 4.9 µs/km</button><button id="bH">空芯 3.4 µs/km</button></div>
 <label>光模块等级（每端固定时延）</label><div class="tg"><button data-tx="15" class="on">标准相干 15 µs</button><button data-tx="3">低时延 3 µs</button><button data-tx="1">CPO 1 µs</button></div>
 <label>每步跨机房同步轮次：<span id="rv">2</span></label><input id="rounds" type="range" min="1" max="4" step="1" value="2">
@@ -57,6 +98,15 @@
 <div id="foot">数字孪生：蓝色方块 = GPU，金色光点 = 梯度在光纤中传输。时间按真实比例缩放（1 秒 ≈ 250 µs）。数据来源见简报。</div>
 </div></div>
 
+<script>
+(function(){var app=document.getElementById('app'),mc=document.getElementById('mCtl'),mf=document.getElementById('mFull'),cx=document.getElementById('ctlClose'),sc=document.getElementById('scrim');
+function open(v){app.classList.toggle('ctl',v);}
+mc.onclick=function(){open(!app.classList.contains('ctl'));};cx.onclick=function(){open(false);};sc.onclick=function(){open(false);};
+if(window.matchMedia('(pointer:coarse)').matches){var lb=document.querySelector('#ctl label[style]');if(lb)lb.textContent='单指旋转 · 双指缩放 · 基准 = 玻璃 + 标准相干';}
+mf.onclick=function(){var f=app.classList.toggle('full');mf.textContent=f?'⤡':'⤢';};
+document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b)b.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});});
+})();
+</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -147,7 +197,7 @@ let km=100,us=4.9,tx=15,rounds=2,comp=1500,stage=0,phase='c',pt=0;
 const SCALE=250,SWITCH=5,BASE_US=4.9,BASE_TX=15;
 const rtOf=(u,t)=>rounds*(2*km*u+2*t+SWITCH);
 const rt=()=>rtOf(us,tx),rtBase=()=>rtOf(BASE_US,BASE_TX);
-function setStage(s){stage=s;document.querySelectorAll('#tabs button').forEach((b,i)=>b.classList.toggle('on',i===s));const body=document.getElementById('body');body.innerHTML=CH[s];body.scrollTop=0;
+function setStage(s){stage=s;document.querySelectorAll('#tabs button').forEach((b,i)=>b.classList.toggle('on',i===s));const body=document.getElementById('body');body.innerHTML=CH[s];body.scrollTop=0;{const on=document.querySelector('#tabs button.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'});const hud=document.getElementById('hud');if(innerWidth<=860)hud.scrollTo({left:s===0?hud.scrollWidth:0,behavior:'smooth'});}
  B.visible=s>0;solar.visible=s>0;fibre.visible=s>0;twin.visible=s>=2&&s<4;
  if(s===0)targetCam(-48,30,60,-48,3,0);else if(s===1){targetCam(-60,55,120,0,4,0);setFibre(4.9);setTx(15);}else if(s===2){targetCam(0,30,60,0,10,4);setFibre(3.4);}else if(s===3){targetCam(-20,40,100,0,4,0);setFibre(3.4);setTx(3);}else{targetCam(-60,55,120,0,4,0);setFibre(3.4);setTx(3);bindEcon();}
  document.getElementById('prev').disabled=s===0;document.getElementById('next').textContent=s===4?'回到第一步':'下一步';}
@@ -215,7 +265,7 @@ function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta()
  twin.rotation.y+=dt*.6;turb.children[1].rotation.z+=dt*1.5;
  if(camGoal){camera.position.lerp(camGoal.p,.04);ctrl.target.lerp(camGoal.t,.04);if(camera.position.distanceTo(camGoal.p)<.5)camGoal=null;}
  ctrl.update();resize();renderer.render(scene,camera);}
-function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(canvas.width!==Math.floor(w*renderer.getPixelRatio())){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
+function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(canvas.width!==Math.floor(w*renderer.getPixelRatio())){renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w<600?56:42;camera.updateProjectionMatrix();}}
 setStage(Math.min(4,Math.max(0,+(new URLSearchParams(location.search).get('s')||0))));{const q=new URLSearchParams(location.search);const b=q.get('bd');if(b){bdKey=b;document.getElementById('bd').style.display='block';}const c=q.get('case');if(c&&CASES[c]){const sel=document.getElementById('eCase');if(sel)sel.value=c;applyCase(c);}}frame();
 </script>
 </body></html>
