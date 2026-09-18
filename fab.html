@@ -58,6 +58,23 @@
   details ul{padding-left:18px;} details li{margin-bottom:4px;}
   footer{border-top:1.5px solid var(--ink);padding:18px 0 40px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;}
   footer a{color:var(--ink);}
+  #specview{display:none;position:fixed;inset:0;z-index:50;background:rgba(10,27,46,0.5);overflow:auto;padding:30px 14px;}
+  #specview.open{display:block;}
+  .specpaper{background:#fff;max-width:780px;margin:0 auto;padding:34px 30px;font-size:13px;line-height:1.55;box-shadow:0 10px 40px rgba(0,0,0,0.35);color:#1a2430;}
+  .specpaper h1{font-size:21px;margin:2px 0;}
+  .specpaper h2{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--gold);margin:20px 0 6px;text-transform:uppercase;border-bottom:1.5px solid var(--ink);padding-bottom:4px;}
+  .specpaper table{width:100%;border-collapse:collapse;margin:6px 0;font-size:12px;}
+  .specpaper td,.specpaper th{border:0.5px solid var(--hair);padding:6px 8px;text-align:left;vertical-align:top;}
+  .specpaper th{background:#F4F1EA;font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+  .specpaper ol{padding-left:18px;} .specpaper ol li{margin-bottom:5px;}
+  .specbar{max-width:780px;margin:0 auto 10px;display:flex;gap:8px;justify-content:flex-end;}
+  .specbar button{font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:10px 16px;border:none;cursor:pointer;}
+  @media print{
+    body.spec-open>*:not(#specview){display:none;}
+    body.spec-open #specview{display:block;position:static;background:#fff;padding:0;overflow:visible;}
+    body.spec-open .specbar{display:none;}
+    body.spec-open .specpaper{box-shadow:none;max-width:none;padding:0;}
+  }
 </style>
 </head>
 <body>
@@ -87,6 +104,7 @@
       <div class="sl"><label><span data-i="lbend">Bend radius cap</span><b id="vbend">10 cm</b></label><input type="range" id="bend" min="3" max="25" step="0.5" value="10"></div>
       <button class="btn primary" id="opt" data-i="bOpt">🤖 AI OPTIMIZE THIS FIBRE</button>
       <button class="btn gold" id="story" data-i="bStory">▶ PLAY THE STORY — 30 s</button>
+      <button class="btn" id="specdl" data-i="bSpec" style="border:1.5px solid var(--gold);background:#FDF6E4;color:var(--ink);">⬇ FIBRE SPEC + DRAW RECIPE (PDF)</button>
       <p class="note" data-i="ctrlNote">v0.2 = calibrated scaling model (Poletti 2014 laws + ARROW resonance factor + Fokoua 2023 scattering), anchored to the 0.091 dB/km DNANF. v1 = full-vector FEM (in progress). Every assumption is listed under "Model and assumptions" below.</p>
     </div>
 
@@ -163,7 +181,7 @@ const I18N={
 en:{sub:"HOLLOW-CORE FIBRE + JUNCTION DESIGN ENGINE · v0.3",vtag:"DESIGN → RECIPE → DRAW",h1:"Design the fibre. <em>Then make it.</em>",
  lede:"Choose a nested anti-resonant geometry and CavusFab computes where it transmits, how much light it loses, how tightly it bends, the preform you would stack to draw it, and the draw parameters to start from. Then an optimizer searches the design space for a better fibre than the one you drew, and the junction module designs the connector that joins it to the installed solid-fibre world.",
  hPreset:"Start from a published fibre",hGeom:"Geometry",lN:"Outer tubes N",lt:"Membrane thickness t",lR:"Core radius R",ldD:"Tube size d/D",lzR:"Nested ratio z/R",hTarget:"Target",llam:"Wavelength λ",lbend:"Bend radius cap",
- bOpt:"🤖 AI OPTIMIZE THIS FIBRE",bStory:"▶ PLAY THE STORY — 30 s",bStop:"■ STOP",
+ bOpt:"🤖 AI OPTIMIZE THIS FIBRE",bStory:"▶ PLAY THE STORY — 30 s",bStop:"■ STOP",bSpec:"⬇ FIBRE SPEC + DRAW RECIPE (PDF)",
  ctrlNote:"v0.2 = calibrated scaling model (Poletti 2014 laws + ARROW resonance factor + Fokoua 2023 scattering), anchored to the 0.091 dB/km DNANF. v1 = full-vector FEM (in progress). Every assumption is listed under \"Model and assumptions\" below.",
  hXS:"Cross-section — 3D digital twin of the drawn fibre",uLoss:"dB/km predicted total loss @",kWin:"transmission window",kBend:"critical bend radius",kHom:"HOM extinction (LP11)",kCL:"confinement dB/km",kSSL:"surface scatter dB/km",kGap:"inter-tube gap",hChecks:"Manufacturability checks",
  hSpec:"Loss spectrum — where this membrane lets light through",hRecipe:"Preform recipe — what to stack, what to draw",
@@ -208,7 +226,7 @@ en:{sub:"HOLLOW-CORE FIBRE + JUNCTION DESIGN ENGINE · v0.3",vtag:"DESIGN → RE
 zh:{sub:"空芯光纤 + 接头设计引擎 · v0.3",vtag:"设计 → 配方 → 拉丝",h1:"先设计光纤，<em>再把它做出来。</em>",
  lede:"选定一个嵌套反谐振几何结构，CavusFab 即计算它在哪些波段传输、损耗多少、能弯多紧、拉丝所需的预制棒如何叠放、拉丝参数从何起步；再由优化器在设计空间中寻找比你手动设定更好的光纤；接头模块则设计把它接入现有实心光纤世界的连接器。",
  hPreset:"从已发表的光纤开始",hGeom:"几何参数",lN:"外圈管数 N",lt:"膜厚 t",lR:"纤芯半径 R",ldD:"管径比 d/D",lzR:"嵌套比 z/R",hTarget:"目标",llam:"波长 λ",lbend:"弯曲半径上限",
- bOpt:"🤖 AI 优化这根光纤",bStory:"▶ 播放讲解 — 30 秒",bStop:"■ 停止",
+ bOpt:"🤖 AI 优化这根光纤",bStory:"▶ 播放讲解 — 30 秒",bStop:"■ 停止",bSpec:"⬇ 光纤规格 + 拉丝配方 (PDF)",
  ctrlNote:"v0.2 = 经校准的标度模型（Poletti 2014 标度律 + ARROW 谐振因子 + Fokoua 2023 散射），锚定于 0.091 dB/km 的 DNANF。v1 = 全矢量有限元（开发中）。所有假设列于下方「模型与假设」。",
  hXS:"横截面 — 拉出光纤的 3D 数字孪生",uLoss:"dB/km 预测总损耗 @",kWin:"传输窗口",kBend:"临界弯曲半径",kHom:"高阶模抑制 (LP11)",kCL:"限制损耗 dB/km",kSSL:"表面散射 dB/km",kGap:"管间间隙",hChecks:"可制造性检查",
  hSpec:"损耗谱 — 这层膜让哪些波长通过",hRecipe:"预制棒配方 — 叠什么、拉什么",
@@ -456,6 +474,55 @@ $("lEN").onclick=()=>applyLang('en');$("lZH").onclick=()=>applyLang('zh');
 </script>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+
+<div id="specview">
+  <div class="specbar">
+    <button style="background:var(--ink);color:#fff;" onclick="window.print()">PRINT / SAVE AS PDF · 打印 / 存为 PDF</button>
+    <button style="background:#fff;border:1.5px solid var(--ink);" onclick="document.getElementById('specview').classList.remove('open');document.body.classList.remove('spec-open')">CLOSE ✕</button>
+  </div>
+  <div class="specpaper" id="specpaper"></div>
+</div>
+
+<script>
+// ═══════════ FIBRE SPEC SHEET + DRAW RECIPE (download) ═══════════
+(function(){
+  const H={en:{title:"Fibre Specification & Draw Recipe",sub:"FOR DRAW-PARTNER EVALUATION · CONFIDENTIAL",s1:"1 · Design geometry",s2:"2 · Predicted performance",s3:"3 · Manufacturability checks",s4:"4 · Preform recipe and draw parameters",s5:"5 · Junction to the installed solid-fibre plant",s6:"6 · Acceptance for the first draw (measured vs predicted)",s7:"Model basis",
+      g:["Outer tubes N","Membrane thickness t","Core radius R (core Ø)","Tube size d/D","Nested ratio z/R","Design wavelength","Bend radius cap"],
+      perf:["Predicted total loss","Transmission window","Critical bend radius","HOM extinction (LP11)","Confinement loss","Surface-scatter loss","Inter-tube gap"],
+      ok:"no flags at this geometry",solid:"Solid fibre",strat:"Junction strategy",
+      acc:["Cut-back loss at the design wavelength within ±20% of the prediction above (3 lengths, ≥100 m each).","Transmission-window edges within ±20 nm of prediction (broadband source + OSA sweep).","Bend loss at the bend-radius cap ≤ 0.1 dB per turn.","Single-mode operation confirmed by S² or far-field imaging (HOM extinction ≥ 30 dB).","Tube diameter and membrane thickness within ±0.5 µm / ±0.05 µm of recipe on SEM cross-sections at start, middle and end of the draw.","Record all traces against this sheet's reference number; feed measured values back into CavusFab for recalibration."],
+      basis:"CavusFab v0.3 — calibrated scaling model (Poletti 2014 laws + ARROW resonance factor + Fokoua 2023 scattering), anchored to the 0.091 dB/km DNANF (Nature Photonics 2025). Preform arithmetic: 25 mm stack → 3 mm cane → 200 µm fibre. Absolute loss carries ±30–50% uncertainty until the FEM solver (v1) replaces the confinement term. Junction values from CavusSim v0 (Marcuse overlap + Fresnel + mode-shape term), validated against published interconnection anchors. This document is an engineering evaluation aid for partner discussion, not a production release."},
+    zh:{title:"光纤规格与拉丝配方",sub:"供拉丝合作方评估 · 保密",s1:"1 · 设计几何",s2:"2 · 预测性能",s3:"3 · 可制造性检查",s4:"4 · 预制棒配方与拉丝参数",s5:"5 · 与现有实心光纤的接头",s6:"6 · 首次拉丝验收（实测 vs 预测）",s7:"模型依据",
+      g:["外圈管数 N","膜厚 t","纤芯半径 R（纤芯直径）","管径比 d/D","嵌套比 z/R","设计波长","弯曲半径上限"],
+      perf:["预测总损耗","传输窗口","临界弯曲半径","高阶模抑制 (LP11)","限制损耗","表面散射损耗","管间间隙"],
+      ok:"此几何结构无警示",solid:"实心光纤",strat:"接头方案",
+      acc:["设计波长处的截断法损耗与上述预测偏差 ≤ ±20%（3 段，每段 ≥100 m）。","传输窗口边沿与预测偏差 ≤ ±20 nm（宽带光源 + OSA 扫描）。","在弯曲半径上限处每圈弯曲损耗 ≤ 0.1 dB。","S² 或远场成像确认单模工作（高阶模抑制 ≥ 30 dB）。","拉丝起点、中段、末端 SEM 截面：管径 / 膜厚与配方偏差 ≤ ±0.5 µm / ±0.05 µm。","全部测试记录对应本表编号；实测值回填 CavusFab 重新校准。"],
+      basis:"CavusFab v0.3 — 经校准的标度模型（Poletti 2014 标度律 + ARROW 谐振因子 + Fokoua 2023 散射），锚定于 0.091 dB/km 的 DNANF（Nature Photonics 2025）。预制棒换算：25 mm 叠棒 → 3 mm 芯棒 → 200 µm 光纤。在有限元求解器（v1）取代限制损耗项之前，绝对损耗不确定度约 ±30–50%。接头数值来自 CavusSim v0（Marcuse 模场重叠 + 菲涅尔反射 + 模场形状项），已对照已发表接头文献锚点验证。本文件为合作方讨论用的工程评估辅助文件，非量产发布。"}};
+  document.getElementById("specdl").onclick=()=>{
+    const d=read(), T=H[L]||H.en, w=windowFor(d.t,d.lam), tot=TOT(d), p=preform(d), g=gap(d.dD,d.N,d.R);
+    const dt=new Date(), ref=`CF-${dt.getFullYear()}${String(dt.getMonth()+1).padStart(2,"0")}${String(dt.getDate()).padStart(2,"0")}-N${d.N}-t${d.t.toFixed(2)}-R${d.R.toFixed(1)}`;
+    const C=tr('chk'); const rows=checks(d).filter(r=>r[1]);
+    const chk=rows.length?`<ul>${rows.map(r=>`<li>⚠ ${C[r[0]]} — ${r[2]}</li>`).join("")}</ul>`:`<div style="color:#2E6B34;font-weight:600;">✓ ${T.ok}</div>`;
+    const gv=[d.N,`${d.t.toFixed(2)} µm`,`${d.R.toFixed(1)} µm (Ø ${p.D.toFixed(1)} µm)`,d.dD.toFixed(2),d.zR.toFixed(2),`${Math.round(d.lam*1000)} nm`,`${d.bend} cm`];
+    const pv=[`<b>${tot<10?tot.toFixed(3):tot.toFixed(1)} dB/km</b> @ ${Math.round(d.lam*1000)} nm — ${tot<0.14?tr('vBelow'):tot<1?tr('vComp'):tr('vRes')}`,w?`m=${w.m}: ${Math.round(w.lo*1000)}–${w.hi===Infinity?"∞":Math.round(w.hi*1000)} nm`:tr('onRes'),`${bendCR(d).toFixed(1)} cm`,`~${Math.round(hom(d))}×`,`${CL(d).toFixed(3)} dB/km`,`${SSL(d).toFixed(3)} dB/km`,`${g.toFixed(1)} µm`];
+    const jsolid=tr('solid')[jSolid], jstrat=tr('strat')[jStrat], jil=document.getElementById("jbign").textContent;
+    document.getElementById("specpaper").innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #0A1B2E;padding-bottom:12px;"><div><div style="font-size:11px;letter-spacing:3px;color:#B8891F;font-weight:600;">CAVUS PHOTONICS · 空芯光子</div>
+      <h1>${T.title}</h1><div style="font-family:var(--mono);color:#66788A;font-size:12px">${ref} · ${dt.toISOString().slice(0,10)} · CavusFab v0.3</div></div>
+      <div style="text-align:right;font-size:11px;color:#66788A;">${T.sub}</div></div>
+      <h2>${T.s1}</h2><table>${T.g.map((k,i)=>`<tr><th style="width:42%">${k}</th><td>${gv[i]}</td></tr>`).join("")}</table>
+      <h2>${T.s2}</h2><table>${T.perf.map((k,i)=>`<tr><th style="width:42%">${k}</th><td>${pv[i]}</td></tr>`).join("")}</table>
+      <h2>${T.s3}</h2>${chk}
+      <h2>${T.s4}</h2><table>${document.getElementById("recipe").innerHTML}</table>
+      <div style="font-size:11px;color:#66788A;">${tr('recipeNote')}</div>
+      <h2>${T.s5}</h2><table><tr><th style="width:42%">${T.solid}</th><td>${jsolid}</td></tr><tr><th>${T.strat}</th><td>${jstrat} · ${jil} dB</td></tr>${document.getElementById("jspec").innerHTML}</table>
+      <h2>${T.s6}</h2><ol>${T.acc.map(x=>`<li>${x}</li>`).join("")}</ol>
+      <div style="margin-top:26px;border-top:1px solid #D8DEE4;padding-top:10px;font-size:10px;color:#66788A;line-height:1.6;"><b>${T.s7}:</b> ${T.basis}<br>© ${dt.getFullYear()} Cavus Photonics · Hong Kong · jordanwcy.github.io/cavus-preview/fab.html</div>`;
+    document.getElementById("specview").classList.add("open");document.body.classList.add("spec-open");document.getElementById("specview").scrollTop=0;
+  };
+})();
+</script>
+
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
