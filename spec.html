@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CavusSpec — Requirement in, factory-ready cable specification out · 线缆规格引擎</title>
+<meta name="description" content="Cavus Photonics CavusSpec: a network engineer enters a link requirement or pastes a tender clause and gets quantities, a loss and latency budget, the tender specification, the certificate checklist and the OEM build sheet. 中英双语。">
+<link rel="icon" type="image/png" href="assets/cavus-favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0A1B2E;--muted:#66788A;--gold:#B8891F;--flare:#E4B54A;--hair:#D8DEE4;--paper:#FAFAF7;
+    --good:#2E6B34;--warn:#8A6512;--bad:#A93226;--mono:"IBM Plex Mono",ui-monospace,monospace;--sans:"Instrument Sans","PingFang SC","Noto Sans SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1.5px solid var(--ink);gap:12px;flex-wrap:wrap;}
+  .lockup{display:flex;align-items:center;gap:12px;} .lockup img{height:44px;}
+  .lockup .t{font-weight:700;letter-spacing:2px;font-size:15px;} .lockup .s{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:2px;}
+  .hr{display:flex;align-items:center;gap:14px;}
+  .nav{font-family:var(--mono);font-size:11px;display:flex;gap:4px;} .nav a{padding:7px 10px;border:1.5px solid var(--hair);text-decoration:none;color:var(--ink);background:#fff;} .nav a.on{border-color:var(--gold);background:#FDF6E4;font-weight:600;}
+  .lang{display:flex;border:1.5px solid var(--ink);} .lang button{font-family:var(--mono);font-size:12px;padding:7px 12px;border:0;background:#fff;cursor:pointer;color:var(--ink);} .lang button.on{background:var(--ink);color:#fff;}
+  h1{font-size:clamp(26px,4.5vw,40px);font-weight:700;letter-spacing:-0.5px;line-height:1.2;margin:30px 0 8px;} h1 em{font-style:normal;color:var(--gold);}
+  .lede{color:var(--muted);font-size:15px;max-width:820px;}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 0;} @media(max-width:760px){.steps{grid-template-columns:1fr;}}
+  .steps div{border:1px solid var(--hair);background:#fff;padding:10px 14px;font-size:13px;color:var(--muted);} .steps b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:2px;}
+  .panel{display:grid;grid-template-columns:330px 1fr;gap:26px;align-items:start;margin:20px 0 40px;}
+  @media(max-width:860px){.panel{grid-template-columns:1fr;}}
+  .ctrl{border:1px solid var(--hair);background:#fff;padding:18px;}
+  .ctrl h3{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);margin:14px 0 8px;text-transform:uppercase;} .ctrl h3:first-child{margin-top:0;}
+  .preset{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;}
+  .preset button,.btn{font-family:var(--mono);font-size:11px;letter-spacing:0.5px;padding:9px 6px;border:1.5px solid var(--hair);background:#fff;cursor:pointer;color:var(--ink);}
+  .preset button.on{border-color:var(--gold);background:#FDF6E4;font-weight:600;}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);width:100%;padding:13px;font-size:12px;letter-spacing:1.5px;margin-top:6px;}
+  .btn.gold{background:#FDF6E4;border-color:var(--gold);width:100%;padding:12px;font-size:12px;letter-spacing:1.5px;margin-top:8px;}
+  .f{margin-bottom:9px;} .f label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:3px;} .f label b{color:var(--gold);}
+  .f select,.f input[type=number]{width:100%;font-family:var(--mono);font-size:12px;padding:7px 8px;border:1.5px solid var(--hair);background:#fff;color:var(--ink);}
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;}
+  input[type=range]{width:100%;accent-color:#B8891F;}
+  textarea{width:100%;min-height:74px;font-family:var(--mono);font-size:11.5px;padding:8px;border:1.5px solid var(--hair);resize:vertical;color:var(--ink);}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;} .chips span{font-family:var(--mono);font-size:10px;background:#FDF6E4;border:1px solid var(--gold);padding:2px 6px;}
+  .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;}
+  .top{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:700px){.top{grid-template-columns:1fr;}}
+  .xs{border:1px solid var(--hair);background:#0A1B2E;padding:14px;position:relative;} .xs svg{width:100%;display:block;aspect-ratio:1/1;}
+  .xs h4,.chartbox h4{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:#8FA0B3;text-transform:uppercase;margin-bottom:8px;}
+  .chartbox{border:1px solid var(--hair);background:#fff;padding:14px;margin-top:16px;} .chartbox h4{color:var(--muted);}
+  .big{border:1.5px solid var(--ink);background:#fff;padding:16px;text-align:center;}
+  .big .n{font-family:var(--mono);font-size:46px;font-weight:600;letter-spacing:-2px;line-height:1;} .big .u{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px;}
+  .big .v{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;margin-top:8px;}
+  .g .n,.g .v{color:var(--good);} .w .n,.w .v{color:var(--warn);} .b .n,.b .v{color:var(--bad);}
+  .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;} @media(max-width:700px){.kv{grid-template-columns:1fr 1fr;}}
+  .kv div{border:1px solid var(--hair);background:#fff;padding:9px 10px;} .kv b{display:block;font-family:var(--mono);font-size:16px;} .kv span{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+  .checks{margin-top:12px;border:1px solid var(--hair);background:#fff;padding:10px 12px;} .checks h5{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+  .chk{display:flex;gap:8px;font-family:var(--mono);font-size:11.5px;padding:3px 0;border-bottom:0.5px solid var(--hair);} .chk:last-child{border:0;} .chk i{font-style:normal;width:16px;} .chk.ok i{color:var(--good);} .chk.bad i{color:var(--bad);} .chk.bad{color:var(--bad);} .chk.warn{color:var(--warn);} .chk span{flex:1;} .chk em{font-style:normal;color:var(--muted);}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;} td,th{padding:5px 8px;border-bottom:0.5px solid var(--hair);vertical-align:top;text-align:left;} th{font-size:10px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+  .bar{display:flex;height:26px;border:1px solid var(--hair);margin:6px 0 4px;overflow:hidden;position:relative;background:#F4F1EA;} .bar i{display:block;height:100%;} .bar .lim{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--bad);}
+  .lg{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:10.5px;color:var(--muted);} .lg span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;background:var(--c);}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;} .cmp div{border:1px solid var(--hair);padding:10px 12px;} .cmp div.on{border:1.5px solid var(--gold);background:#FDF6E4;} .cmp b{font-family:var(--mono);font-size:20px;display:block;} .cmp span{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;} .cmp p{font-size:12px;color:var(--muted);margin-top:4px;}
+  footer{border-top:1.5px solid var(--ink);padding:18px 0 40px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;} footer a{color:var(--ink);}
+  #specview{display:none;position:fixed;inset:0;z-index:50;background:rgba(10,27,46,0.5);overflow:auto;padding:30px 14px;} #specview.open{display:block;}
+  .specpaper{background:#fff;max-width:800px;margin:0 auto;padding:34px 30px;font-size:13px;line-height:1.55;box-shadow:0 10px 40px rgba(0,0,0,0.35);color:#1a2430;}
+  .specpaper h1{font-size:21px;margin:2px 0;} .specpaper .k{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--gold);}
+  .specpaper h2{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--gold);margin:18px 0 6px;text-transform:uppercase;border-bottom:1.5px solid var(--ink);padding-bottom:4px;}
+  .specpaper table{font-family:var(--sans);font-size:12px;margin:6px 0;} .specpaper td,.specpaper th{border:0.5px solid var(--hair);padding:6px 8px;} .specpaper th{background:#F4F1EA;}
+  .specpaper ol,.specpaper ul{padding-left:18px;} .specpaper li{margin-bottom:4px;}
+  .specpaper .draft{border:1.5px solid var(--bad);color:var(--bad);font-family:var(--mono);font-size:10.5px;padding:6px 10px;margin:10px 0;letter-spacing:.5px;}
+  .specbar{max-width:800px;margin:0 auto 10px;display:flex;gap:8px;justify-content:flex-end;} .specbar button{font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:10px 16px;border:none;cursor:pointer;}
+  @media print{body.spec-open>*:not(#specview){display:none;} body.spec-open #specview{display:block;position:static;background:#fff;padding:0;overflow:visible;} .specbar{display:none;} .specpaper{box-shadow:none;max-width:none;padding:0;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="lockup"><img src="assets/cavus-mark-trans-forlight.svg" alt="Cavus">
+      <div><div class="t">CAVUSSPEC</div><div class="s" data-i="sub">REQUIREMENT → SPECIFICATION → FACTORY BUILD SHEET · v0.1</div></div></div>
+    <div class="hr">
+      <div class="nav"><a class="on" href="spec.html" data-i="nSpec">Spec</a><a href="fab.html" data-i="nFab">Fibre + junction design</a><a href="story.html" data-i="nStory">Data-centre case</a></div>
+      <div class="lang"><button id="lEN" class="on">EN</button><button id="lZH">中文</button></div></div>
+  </header>
+
+  <h1 data-i="h1">Describe the link. <em>Get the spec the factory can build.</em></h1>
+  <p class="lede" data-i="lede">Enter a cabling requirement, or paste the clause from a tender. CavusSpec returns the quantities, the loss and latency budget, the standards and certificates the job must carry, a tender-ready specification and a build sheet an OEM factory can manufacture from. Glass and hollow-core are compared side by side whenever distance makes hollow-core worth it.</p>
+  <div class="steps"><div><b data-i="s1t">1 · Describe</b><span data-i="s1">Pick a starting case, paste a tender clause, or set the fields.</span></div><div><b data-i="s2t">2 · Check</b><span data-i="s2">Quantities, loss budget, latency, flags. Everything updates as you type.</span></div><div><b data-i="s3t">3 · Export</b><span data-i="s3">Tender specification and OEM build sheet, as PDF, with the certificate checklist.</span></div></div>
+
+  <div class="panel">
+    <div class="ctrl">
+      <h3 data-i="hPreset">Start from a typical job</h3>
+      <div class="preset" id="presets"></div>
+      <h3 data-i="hPaste">Or paste a tender clause <span style="color:var(--gold)">beta</span></h3>
+      <textarea id="tender" data-ph="phTender" placeholder="e.g. Supply 24 nos. 48-core OS2 LSZH pre-terminated MPO-12 trunk cables, 85 m each, for 400G-DR4…"></textarea>
+      <button class="btn" id="parse" style="width:100%;margin-top:6px" data-i="bParse">READ THE CLAUSE → FILL THE FIELDS</button>
+      <div class="chips" id="chips"></div>
+
+      <h3 data-i="hLink">The link</h3>
+      <div class="f"><label data-i="lMedia">Cable type</label><select id="media"></select></div>
+      <div class="f2">
+        <div class="f"><label data-i="lRuns">Number of links</label><input type="number" id="runs" min="1" max="5000" value="24"></div>
+        <div class="f"><label data-i="lLen">Route length each (m)</label><input type="number" id="len" min="1" max="200000" value="85"></div>
+      </div>
+      <div class="f2">
+        <div class="f"><label data-i="lSlack">Slack %</label><input type="number" id="slack" min="0" max="30" value="10"></div>
+        <div class="f"><label data-i="lLoop">Service loop per end (m)</label><input type="number" id="loop" min="0" max="30" value="3"></div>
+      </div>
+      <div id="fibreOnly">
+        <div class="f"><label data-i="lCores">Fibres per link</label><select id="cores"></select></div>
+        <div class="f2">
+          <div class="f"><label data-i="lCA">Connector, A end</label><select id="ca"></select></div>
+          <div class="f"><label data-i="lCB">Connector, B end</label><select id="cb"></select></div>
+        </div>
+        <div class="f2">
+          <div class="f"><label data-i="lPairs">Mated pairs in channel</label><input type="number" id="pairs" min="0" max="12" value="2"></div>
+          <div class="f"><label data-i="lSpl">Splices</label><input type="number" id="spl" min="0" max="40" value="0"></div>
+        </div>
+        <div class="f"><label data-i="lGrade">Connector grade</label><select id="grade"></select></div>
+        <div class="f"><label data-i="lApp">Application it must carry</label><select id="app"></select></div>
+      </div>
+      <div id="copperOnly" style="display:none">
+        <div class="f"><label data-i="lShield">Shielding</label><select id="shield"></select></div>
+        <div class="f"><label data-i="lPoe">Power over Ethernet</label><select id="poe"></select></div>
+      </div>
+      <h3 data-i="hSite">The site</h3>
+      <div class="f"><label data-i="lEnv">Environment</label><select id="env"></select></div>
+      <div class="f"><label data-i="lReg">Region, for certificates</label><select id="reg"></select></div>
+
+      <button class="btn primary" id="dlTender" data-i="bTender">⬇ TENDER SPECIFICATION (PDF)</button>
+      <button class="btn gold" id="dlBuild" data-i="bBuild">⬇ OEM BUILD SHEET (PDF)</button>
+      <p class="note" data-i="ctrlNote">v0.1. Loss limits follow TIA-568.3-D and IEEE 802.3 channel budgets; check them against the transceiver datasheet. Every output is a draft for a qualified engineer to review and sign. Listing a certificate on a specification does not grant it: the factory must hold it.</p>
+    </div>
+
+    <div>
+      <div class="top">
+        <div class="xs"><h4 data-i="hDiag">The channel, end to end</h4><div id="diag"></div></div>
+        <div>
+          <div class="big" id="bigbox"><div class="n" id="bign">—</div><div class="u" id="bigu">—</div><div class="v" id="bigv">—</div></div>
+          <div class="kv" id="kv"></div>
+          <div class="checks"><h5 data-i="hChecks">Engineering checks</h5><div id="checks"></div></div>
+        </div>
+      </div>
+
+      <div class="chartbox" id="lossbox"><h4 data-i="hLoss">Loss budget — what the channel loses against what the application allows</h4>
+        <div class="bar" id="lossbar"></div><div class="lg" id="losslg"></div>
+      </div>
+
+      <div class="chartbox" id="cmpbox"><h4 data-i="hCmp">Glass or hollow-core on this route</h4>
+        <div class="cmp" id="cmp"></div><p class="note" id="cmpnote"></p>
+      </div>
+
+      <div class="chartbox"><h4 data-i="hBoq">Bill of quantities</h4><table id="boq"></table></div>
+      <div class="chartbox"><h4 data-i="hCert">Standards and certificates this job must carry</h4><table id="cert"></table>
+        <p class="note" data-i="certNote">The supply route follows the product. Bulk cable and standard patch cords map to catalogue items from an authorised distributor. Custom pre-terminated assemblies and hollow-core links go to the OEM factory with the build sheet.</p></div>
+    </div>
+  </div>
+
+  <footer><span data-i="foot">CAVUSSPEC v0.1 — Cavus Photonics specification engine. One engine, two horizons: standard fibre assemblies today, hollow-core links next.</span> <a href="fab.html">CavusFab</a> · <a href="story.html">Story</a><br>© 2026 Cavus Photonics · 空芯光子 · Hong Kong</footer>
+</div>
+
+<div id="specview"><div class="specbar"><button style="background:var(--ink);color:#fff;" onclick="window.print()">PRINT / SAVE AS PDF · 打印 / 存为 PDF</button><button style="background:#fff;" onclick="closeSpec()">CLOSE · 关闭</button></div><div class="specpaper" id="specpaper"></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let LANG=(new URLSearchParams(location.search).get('lang')||localStorage.getItem('cavusLang')||'en').startsWith('zh')?'zh':'en';
+
+// ——— reference data ———
+const MEDIA={
+ os2:{k:'fibre',sm:true,att:0.40,v:4.9,en:'Single-mode OS2 (G.652.D / G.657.A1)',zh:'单模 OS2（G.652.D / G.657.A1）'},
+ om4:{k:'fibre',sm:false,att:3.0,v:4.9,en:'Multimode OM4 (850 nm)',zh:'多模 OM4（850 nm）'},
+ om5:{k:'fibre',sm:false,att:3.0,v:4.9,en:'Multimode OM5 wideband',zh:'多模 OM5 宽带'},
+ hcf:{k:'fibre',sm:true,att:0.15,v:3.4,en:'Hollow-core fibre link (Cavus)',zh:'空芯光纤链路（Cavus）'},
+ c6a:{k:'copper',en:'Copper Category 6A',zh:'铜缆 六A类（Cat 6A）'},
+ c6:{k:'copper',en:'Copper Category 6',zh:'铜缆 六类（Cat 6）'}};
+const CONN={lc:{n:2,en:'LC duplex',zh:'LC 双工',mpo:false},mpo12:{n:12,en:'MPO-12',zh:'MPO-12',mpo:true},mpo16:{n:16,en:'MPO-16',zh:'MPO-16',mpo:true},mpo24:{n:24,en:'MPO-24',zh:'MPO-24',mpo:true}};
+const GRADE={std:{lc:0.75,mpo:0.75,en:'Standard (TIA maximum 0.75 dB)',zh:'标准（TIA 上限 0.75 dB）'},low:{lc:0.25,mpo:0.35,en:'Low loss (LC 0.25 · MPO 0.35 dB)',zh:'低损耗（LC 0.25 · MPO 0.35 dB）'},ultra:{lc:0.15,mpo:0.25,en:'Ultra low loss (LC 0.15 · MPO 0.25 dB)',zh:'超低损耗（LC 0.15 · MPO 0.25 dB）'}};
+const APPS={
+ 'none':{sm:null,b:null,r:null,en:'Not specified',zh:'未指定'},
+ '10g-lr':{sm:true,b:6.2,r:10000,en:'10GBASE-LR · 6.2 dB · 10 km'},'100g-dr':{sm:true,b:3.0,r:500,en:'100GBASE-DR · 3.0 dB · 500 m'},
+ '400g-dr4':{sm:true,b:3.0,r:500,en:'400GBASE-DR4 · 3.0 dB · 500 m'},'800g-dr8':{sm:true,b:3.0,r:500,en:'800G-DR8 · 3.0 dB · 500 m'},
+ '400g-fr4':{sm:true,b:4.0,r:2000,en:'400GBASE-FR4 · 4.0 dB · 2 km'},'100g-lr4':{sm:true,b:6.3,r:10000,en:'100GBASE-LR4 · 6.3 dB · 10 km'},
+ '400g-lr4':{sm:true,b:6.3,r:10000,en:'400G-LR4-10 · 6.3 dB · 10 km'},'400zr':{sm:true,b:11,r:120000,en:'400ZR coherent · 11 dB unamplified · 120 km amplified'},
+ '10g-sr':{sm:false,b:2.9,r:400,en:'10GBASE-SR · 2.9 dB · 400 m (OM4)'},'100g-sr4':{sm:false,b:1.9,r:100,en:'100GBASE-SR4 · 1.9 dB · 100 m (OM4)'},'400g-sr8':{sm:false,b:1.9,r:100,en:'400GBASE-SR8 · 1.9 dB · 100 m (OM4)'}};
+const ENV={lszh:{en:'Indoor, low smoke zero halogen',zh:'室内 · 低烟无卤 LSZH'},riser:{en:'Indoor riser',zh:'室内 · 垂直竖井'},plenum:{en:'Indoor plenum',zh:'室内 · 通风层 Plenum'},io:{en:'Indoor / outdoor',zh:'室内外通用'},duct:{en:'Outdoor duct',zh:'室外管道'},arm:{en:'Outdoor armoured',zh:'室外铠装'}};
+const REG={hk:{en:'Hong Kong / Macau',zh:'香港 / 澳门'},sg:{en:'Singapore / Malaysia',zh:'新加坡 / 马来西亚'},cn:{en:'Mainland China',zh:'中国内地'},gcc:{en:'Saudi Arabia / GCC',zh:'沙特 / 海湾'},eu:{en:'EU / UK',zh:'欧盟 / 英国'},us:{en:'North America',zh:'北美'}};
+const SHIELD={u:{en:'U/UTP unshielded',zh:'U/UTP 非屏蔽'},f:{en:'F/UTP foil screened',zh:'F/UTP 铝箔屏蔽'},s:{en:'S/FTP fully shielded',zh:'S/FTP 双屏蔽'}};
+const POE={none:{en:'None',zh:'无'},bt3:{en:'IEEE 802.3bt Type 3 · 60 W',zh:'IEEE 802.3bt Type 3 · 60 W'},bt4:{en:'IEEE 802.3bt Type 4 · 90 W',zh:'IEEE 802.3bt Type 4 · 90 W'}};
+const CORES=[2,4,8,12,16,24,48,72,96,144];
+const PRESETS={
+ hall:{en:'Data hall trunks · MPO · 85 m',zh:'机房主干 · MPO · 85 m',v:{media:'os2',runs:24,len:85,slack:10,loop:3,cores:48,ca:'mpo12',cb:'mpo12',pairs:2,spl:0,grade:'low',app:'400g-dr4',env:'lszh',reg:'hk'}},
+ campus:{en:'Campus link · 1.7 km',zh:'园区链路 · 1.7 km',v:{media:'os2',runs:4,len:1700,slack:5,loop:10,cores:96,ca:'lc',cb:'lc',pairs:2,spl:2,grade:'low',app:'400g-fr4',env:'duct',reg:'sg'}},
+ metro:{en:'Two sites · 40 km · latency',zh:'双机房 · 40 km · 低时延',v:{media:'hcf',runs:2,len:40000,slack:2,loop:20,cores:24,ca:'lc',cb:'lc',pairs:2,spl:8,grade:'ultra',app:'400zr',env:'duct',reg:'gcc'}},
+ office:{en:'Office floor · Cat 6A · 220 points',zh:'办公楼层 · Cat 6A · 220 点',v:{media:'c6a',runs:220,len:48,slack:8,loop:2,shield:'u',poe:'bt3',env:'lszh',reg:'hk'}}};
+
+// ——— i18n ———
+const I={en:{
+ sub:"REQUIREMENT → SPECIFICATION → FACTORY BUILD SHEET · v0.1",nSpec:"Spec",nFab:"Fibre + junction design",nStory:"Data-centre case",
+ h1:'Describe the link. <em>Get the spec the factory can build.</em>',
+ lede:"Enter a cabling requirement, or paste the clause from a tender. CavusSpec returns the quantities, the loss and latency budget, the standards and certificates the job must carry, a tender-ready specification and a build sheet an OEM factory can manufacture from. Glass and hollow-core are compared side by side whenever distance makes hollow-core worth it.",
+ s1t:"1 · Describe",s1:"Pick a starting case, paste a tender clause, or set the fields.",s2t:"2 · Check",s2:"Quantities, loss budget, latency, flags. Everything updates as you type.",s3t:"3 · Export",s3:"Tender specification and OEM build sheet, as PDF, with the certificate checklist.",
+ hPreset:"Start from a typical job",hPaste:'Or paste a tender clause <span style="color:var(--gold)">beta</span>',phTender:"e.g. Supply 24 nos. 48-core OS2 LSZH pre-terminated MPO-12 trunk cables, 85 m each, for 400G-DR4…",bParse:"READ THE CLAUSE → FILL THE FIELDS",
+ hLink:"The link",lMedia:"Cable type",lRuns:"Number of links",lLen:"Route length each (m)",lSlack:"Slack %",lLoop:"Service loop per end (m)",lCores:"Fibres per link",lCA:"Connector, A end",lCB:"Connector, B end",lPairs:"Mated pairs in channel",lSpl:"Splices",lGrade:"Connector grade",lApp:"Application it must carry",lShield:"Shielding",lPoe:"Power over Ethernet",
+ hSite:"The site",lEnv:"Environment",lReg:"Region, for certificates",bTender:"⬇ TENDER SPECIFICATION (PDF)",bBuild:"⬇ OEM BUILD SHEET (PDF)",
+ ctrlNote:"v0.1. Loss limits follow TIA-568.3-D and IEEE 802.3 channel budgets; check them against the transceiver datasheet. Every output is a draft for a qualified engineer to review and sign. Listing a certificate on a specification does not grant it: the factory must hold it.",
+ hDiag:"The channel, end to end",hChecks:"Engineering checks",hLoss:"Loss budget — what the channel loses against what the application allows",hCmp:"Glass or hollow-core on this route",hBoq:"Bill of quantities",hCert:"Standards and certificates this job must carry",
+ certNote:"The supply route follows the product. Bulk cable and standard patch cords map to catalogue items from an authorised distributor. Custom pre-terminated assemblies and hollow-core links go to the OEM factory with the build sheet.",
+ foot:"CAVUSSPEC v0.1 — Cavus Photonics specification engine. One engine, two horizons: standard fibre assemblies today, hollow-core links next.",
+ uTotal:"m of cable to order, slack included",vOk:"■ CHANNEL PASSES",vTight:"■ PASSES WITH UNDER 0.5 dB MARGIN",vFail:"■ CHANNEL FAILS · SEE CHECKS",vQty:"■ QUANTITY TAKE-OFF",
+ kCut:"cut length each",kAsm:"assemblies",kConn:"connectors",kLoss:"channel loss",kMargin:"margin to budget",kLat:"one-way latency",kBox:"305 m boxes",kOut:"outlets / jacks",kPanel:"24-port panels",
+ found:"found",nothing:"Nothing recognised. Try naming the cable type, fibre count, length and connector.",
+ segF:"fibre",segC:"connectors",segS:"splices",segJ:"hollow-core junctions",lim:"application limit",noapp:"No application selected, so no limit is drawn.",
+ cGlass:"Glass, single-mode",cHcf:"Hollow-core",cLat:"one-way latency",cSave:"saved each way",
+ cmpShort:"Under 10 km the hollow-core saving is below 15 µs each way. Nobody pays a premium for that. Stay with glass.",cmpLong:"At this distance hollow-core returns the latency shown and extends same-latency reach by 46%. It is worth pricing as an alternative.",cmpMM:"Hollow-core is a single-mode technology. The comparison applies to single-mode routes.",
+ chkOk:"No flags on this requirement."},
+zh:{
+ sub:"需求 → 规格书 → 工厂制造单 · v0.1",nSpec:"规格",nFab:"光纤 + 接头设计",nStory:"数据中心案例",
+ h1:'描述链路，<em>直接得到工厂能照做的规格。</em>',
+ lede:"输入布线需求，或者粘贴标书里的条款。CavusSpec 会给出数量、损耗与时延预算、这项工程必须具备的标准和证书、可直接放进标书的技术规格，以及 OEM 工厂可以照着生产的制造单。距离足够长时，会并排比较玻璃光纤和空芯光纤。",
+ s1t:"1 · 描述",s1:"选一个典型工程、粘贴标书条款，或直接填参数。",s2t:"2 · 核对",s2:"数量、损耗预算、时延、风险提示，随输入即时更新。",s3t:"3 · 导出",s3:"标书技术规格与 OEM 制造单（PDF），附证书清单。",
+ hPreset:"从典型工程开始",hPaste:'或粘贴标书条款 <span style="color:var(--gold)">测试版</span>',phTender:"例如：供应 24 条 48 芯 OS2 低烟无卤预端接 MPO-12 主干光缆，每条 85 米，用于 400G-DR4……",bParse:"读取条款 → 自动填写",
+ hLink:"链路",lMedia:"线缆类型",lRuns:"链路数量",lLen:"每条路由长度（m）",lSlack:"余量 %",lLoop:"每端盘留（m）",lCores:"每条芯数",lCA:"A 端连接器",lCB:"B 端连接器",lPairs:"信道内对接点数",lSpl:"熔接点数",lGrade:"连接器等级",lApp:"需要承载的应用",lShield:"屏蔽方式",lPoe:"以太网供电",
+ hSite:"现场",lEnv:"敷设环境",lReg:"地区（决定证书）",bTender:"⬇ 标书技术规格（PDF）",bBuild:"⬇ OEM 制造单（PDF）",
+ ctrlNote:"v0.1。损耗限值依据 TIA-568.3-D 与 IEEE 802.3 信道预算，请对照光模块数据表核对。所有输出均为草稿，须由合资格工程师审核签署。规格书上列出证书并不等于取得证书：工厂必须真正持有。",
+ hDiag:"端到端信道",hChecks:"工程检查",hLoss:"损耗预算 — 信道实际损耗对比应用允许值",hCmp:"这条路由用玻璃还是空芯",hBoq:"工程量清单",hCert:"这项工程必须具备的标准与证书",
+ certNote:"供货路径取决于产品。散装线缆和标准跳线对应授权分销商的目录型号；定制预端接组件和空芯链路连同制造单交给 OEM 工厂。",
+ foot:"CAVUSSPEC v0.1 — Cavus Photonics 规格引擎。一个引擎，两个阶段：今天做标准光纤组件，下一步做空芯链路。",
+ uTotal:"米，需订购的线缆总长（含余量）",vOk:"■ 信道通过",vTight:"■ 通过，但余量不足 0.5 dB",vFail:"■ 信道不通过 · 见检查项",vQty:"■ 工程量统计",
+ kCut:"单条下料长度",kAsm:"组件数量",kConn:"连接器数量",kLoss:"信道损耗",kMargin:"距预算余量",kLat:"单向时延",kBox:"305 m 箱数",kOut:"信息点 / 模块",kPanel:"24 口配线架",
+ found:"识别到",nothing:"没有识别到内容。请写明线缆类型、芯数、长度和连接器。",
+ segF:"光纤",segC:"连接器",segS:"熔接",segJ:"空芯接头",lim:"应用限值",noapp:"未选择应用，因此不显示限值。",
+ cGlass:"玻璃单模",cHcf:"空芯",cLat:"单向时延",cSave:"每个方向节省",
+ cmpShort:"10 km 以内，空芯每个方向节省不到 15 µs，没有人会为此付溢价。用玻璃光纤即可。",cmpLong:"在这个距离上，空芯可节省图示时延，并在相同时延下把可达距离延长 46%，值得作为备选方案报价。",cmpMM:"空芯是单模技术，此比较只适用于单模路由。",
+ chkOk:"此需求没有风险提示。"}};
+const tr=k=>I[LANG][k]??I.en[k]; const nm=o=>o[LANG]||o.en;
+
+function fillSel(id,obj,keep){const s=$(id),cur=keep??s.value;s.innerHTML='';for(const k in obj){const o=document.createElement('option');o.value=k;o.textContent=nm(obj[k]);s.appendChild(o);}if(cur&&obj[cur])s.value=cur;}
+function applyLang(){document.documentElement.lang=LANG==='zh'?'zh-Hans':'en';
+  document.querySelectorAll('[data-i]').forEach(e=>{e.innerHTML=tr(e.dataset.i);});document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=tr(e.dataset.ph);});
+  $('lEN').className=LANG==='en'?'on':'';$('lZH').className=LANG==='zh'?'on':'';
+  fillSel('media',MEDIA);fillSel('ca',CONN);fillSel('cb',CONN);fillSel('grade',GRADE);fillSel('app',APPS);fillSel('env',ENV);fillSel('reg',REG);fillSel('shield',SHIELD);fillSel('poe',POE);
+  const cs=$('cores'),cc=cs.value;cs.innerHTML=CORES.map(c=>`<option value="${c}">${c}</option>`).join('');if(cc)cs.value=cc;
+  const p=$('presets');p.innerHTML='';for(const k in PRESETS){const b=document.createElement('button');b.textContent=nm(PRESETS[k]);b.className=k===curPreset?'on':'';b.onclick=()=>{curPreset=k;setAll(PRESETS[k].v);applyLang();};p.appendChild(b);}
+  draw();}
+let curPreset='hall';
+function setAll(v){for(const k in v){if($(k))$(k).value=v[k];}}
+function get(){const g=id=>$(id).value,n=id=>Math.max(0,+$(id).value||0);
+  return {media:g('media'),runs:Math.max(1,Math.round(n('runs'))),len:Math.max(1,n('len')),slack:n('slack'),loop:n('loop'),cores:+g('cores'),ca:g('ca'),cb:g('cb'),pairs:Math.round(n('pairs')),spl:Math.round(n('spl')),grade:g('grade'),app:g('app'),env:g('env'),reg:g('reg'),shield:g('shield'),poe:g('poe')};}
+
+// ——— engine ———
+function calc(r){const M=MEDIA[r.media],cu=M.k==='copper';
+  const cut=Math.ceil((r.len*(1+r.slack/100)+2*r.loop)*2)/2, total=cut*r.runs;
+  const o={r,M,cu,cut,total};
+  if(cu){o.boxes=Math.ceil(total/305);o.outlets=r.runs;o.jacks=r.runs*2;o.panels=Math.ceil(r.runs/24);o.flags=[];
+    if(r.len>90)o.flags.push(['bad','cu90',r.len+' m']);else if(cut>90)o.flags.push(['warn','cuSlack',cut+' m']);
+    if(r.media==='c6'&&r.poe==='bt4')o.flags.push(['warn','poe6','']);if(r.poe!=='none'&&r.shield==='u'&&r.runs>96)o.flags.push(['warn','bundle','']);
+    return o;}
+  const A=CONN[r.ca],B=CONN[r.cb],G=GRADE[r.grade],anyMpo=A.mpo||B.mpo,cl=anyMpo?G.mpo:G.lc,app=APPS[r.app];
+  o.connA=Math.ceil(r.cores/A.n);o.connB=Math.ceil(r.cores/B.n);o.conns=(o.connA+o.connB)*r.runs;
+  o.kind=(A.mpo!==B.mpo)?'harness':(A.mpo?'trunk':(r.cores>2?'multi':'patch'));
+  o.lf=M.att*cut/1000;o.lc=r.pairs*cl;o.ls=r.spl*0.1;o.lj=r.media==='hcf'?2*0.3:0;o.loss=o.lf+o.lc+o.ls+o.lj;o.budget=app.b;o.margin=app.b==null?null:app.b-o.loss;
+  o.latG=cut/1000*4.9;o.latH=cut/1000*3.4;o.lat=cut/1000*M.v;
+  const f=o.flags=[];
+  if(app.sm!==null&&app.sm!==M.sm)f.push(['bad','appMedia','']);
+  if(o.margin!==null&&o.margin<0)f.push(['bad','budget',o.margin.toFixed(2)+' dB']);else if(o.margin!==null&&o.margin<0.5)f.push(['warn','tight',o.margin.toFixed(2)+' dB']);
+  if(app.r&&cut>app.r&&r.app!=='400zr')f.push(['bad','reach',cut+' m > '+app.r+' m']);
+  if(r.app==='400zr'&&o.loss>11)f.push(['warn','amp',o.loss.toFixed(1)+' dB']);
+  if(r.cores%A.n||r.cores%B.n)f.push(['warn','dark','']);
+  if(anyMpo&&M.sm&&r.media!=='hcf')f.push(['info','apc','']);
+  if(anyMpo)f.push(['info','pol','']);
+  if(!M.sm&&cut>550)f.push(['bad','mmLong',cut+' m']);
+  if(r.media==='hcf'&&cut<10000)f.push(['warn','hcfShort',(o.latG-o.latH).toFixed(1)+' µs']);
+  if(r.media==='hcf')f.push(['info','hcfStd','']);
+  if((r.env==='duct'||r.env==='arm')&&cut<30)f.push(['warn','outShort','']);
+  return o;}
+const FL={en:{cu90:"Permanent link over 90 m. Category cabling fails.",cuSlack:"With slack the cut length passes 90 m. Re-route or add a consolidation point.",poe6:"Type 4 PoE on Category 6 runs hot in bundles. Use Category 6A.",bundle:"Large unshielded bundles under PoE: limit bundles to 24 cables or derate.",
+ appMedia:"The application and the fibre type do not match.",budget:"Channel loss is above the application limit.",tight:"Margin under 0.5 dB. Use a better connector grade or remove a mated pair.",reach:"Length is beyond the application's rated reach.",amp:"Loss above the unamplified coherent budget. Plan amplification.",
+ dark:"Fibre count does not divide into the connector. Some positions stay dark.",apc:"Single-mode MPO: specify APC 8° end faces.",pol:"State the polarity method. Default here is Method B.",mmLong:"Multimode beyond 550 m. Use single-mode.",hcfShort:"Short route. The hollow-core latency saving is too small to pay for.",hcfStd:"No ITU-T recommendation covers hollow-core yet. Performance is specified by agreed parameters and measured on delivery.",outShort:"Very short outdoor run. Check that an indoor/outdoor cable is not simpler."},
+ zh:{cu90:"永久链路超过 90 m，类别布线不通过。",cuSlack:"加上余量后下料长度超过 90 m，需改路由或增加集合点。",poe6:"Cat 6 承载 Type 4 PoE 时线束发热，应改用 Cat 6A。",bundle:"大量非屏蔽线在 PoE 下成束：每束不超过 24 根，或降额使用。",
+ appMedia:"应用与光纤类型不匹配。",budget:"信道损耗超过应用限值。",tight:"余量不足 0.5 dB，请提高连接器等级或减少一个对接点。",reach:"长度超出该应用的额定距离。",amp:"损耗超过无放大相干预算，需规划光放大。",
+ dark:"芯数不能被连接器芯数整除，部分位置为空芯位。",apc:"单模 MPO：请指定 APC 8° 端面。",pol:"请写明极性方法，此处默认 B 类。",mmLong:"多模超过 550 m，应改用单模。",hcfShort:"路由太短，空芯节省的时延不值得付溢价。",hcfStd:"空芯光纤尚无 ITU-T 建议书，性能按双方约定参数规定并在交付时实测。",outShort:"室外段很短，可考虑直接用室内外通用缆。"}};
+
+// ——— standards and certificates ———
+function certs(o){const r=o.r,c=[];const add=(grp,item,who)=>c.push([grp,item,who]);
+  const P={en:{perf:'Performance',fire:'Fire and smoke',env:'Environmental',fac:'Factory and test',mkt:'Market access'},zh:{perf:'性能标准',fire:'防火与烟毒',env:'环保',fac:'工厂与测试',mkt:'市场准入'}}[LANG];
+  const W={en:{prod:'product',fac:'factory',rep:'test report',sub:'submittal'},zh:{prod:'产品',fac:'工厂',rep:'测试报告',sub:'送审文件'}}[LANG];
+  if(o.cu){add(P.perf,'ANSI/TIA-568.2-D · ISO/IEC 11801-1 '+(r.media==='c6a'?'Class EA':'Class E')+' · IEC 61156-5',W.prod);add(P.perf,LANG==='zh'?'第三方性能验证（ETL / Delta / GHMT）':'Third-party performance verification (ETL / Delta / GHMT)',W.rep);if(r.poe!=='none')add(P.perf,'IEEE 802.3bt · TIA TSB-184-A',W.prod);add(P.fac,LANG==='zh'?'现场测试 TIA-1152-A / IEC 61935-1，100% 永久链路':'Field test to TIA-1152-A / IEC 61935-1, 100% of permanent links',W.rep);}
+  else{if(r.media==='hcf'){add(P.perf,LANG==='zh'?'空芯光纤：按约定参数（衰减、模场、截止、弯曲）+ IEC 60793-1 测试方法':'Hollow-core fibre: agreed parameters (attenuation, mode field, cut-off, bend) with IEC 60793-1 test methods',W.rep);add(P.perf,LANG==='zh'?'Cavus 接头规格（插损 ≤ 0.3 dB，回损 ≥ 40 dB），见 CavusFab':'Cavus junction specification (IL ≤ 0.3 dB, RL ≥ 40 dB), see CavusFab',W.rep);}
+    else if(o.M.sm)add(P.perf,'ITU-T G.652.D / G.657.A1 · IEC 60793-2-50 B-652.D',W.prod);else add(P.perf,'IEC 60793-2-10 '+(r.media==='om5'?'A1-OM5':'A1-OM4')+' · TIA-492AAAD/E',W.prod);
+    add(P.perf,'ANSI/TIA-568.3-D · ISO/IEC 11801-1 · IEC 60794-'+((r.env==='duct'||r.env==='arm')?'3 (outdoor)':'2 (indoor)'),W.prod);
+    add(P.perf,'IEC 61754-20 (LC) / IEC 61754-7 (MPO) · IEC 61753-1 · IEC 61300-3-35 '+(LANG==='zh'?'端面检查':'end-face inspection'),W.prod);
+    add(P.fac,LANG==='zh'?'100% 出厂插损 IEC 61300-3-4、回损 IEC 61300-3-6，逐条附报告':'100% factory insertion loss to IEC 61300-3-4 and return loss to IEC 61300-3-6, report per assembly',W.rep);
+    if(CONN[r.ca].mpo||CONN[r.cb].mpo)add(P.fac,LANG==='zh'?'MPO 端面几何 IEC 61300-3-30（干涉仪）':'MPO end-face geometry to IEC 61300-3-30 (interferometer)',W.rep);
+    add(P.fac,LANG==='zh'?'现场验收：OLTS 一级测试 IEC 61280-4-1/-2；长距离加 OTDR':'Site acceptance: Tier 1 OLTS to IEC 61280-4-1/-2; add OTDR on long routes',W.rep);}
+  const indoor=['lszh','riser','plenum','io'].includes(r.env);
+  if(indoor){const cuT=o.cu;
+    if(r.reg==='us')add(P.fire,cuT?(r.env==='plenum'?'UL 444 · CMP (NFPA 262)':'UL 444 · CMR (UL 1666)'):(r.env==='plenum'?'UL 1651 · OFNP (NFPA 262)':'UL 1651 · OFNR (UL 1666)'),W.prod);
+    else if(r.reg==='eu')add(P.fire,'CPR EN 50575 · Euroclass '+(r.env==='lszh'||r.env==='plenum'?'B2ca-s1a,d1,a1':'Cca-s1b,d1,a1')+' · DoP + CE/UKCA',W.prod);
+    else if(r.reg==='cn')add(P.fire,'GB 31247 '+(LANG==='zh'?'燃烧性能 B1 级':'burning class B1')+' · GB/T 19666 · IEC 60332-3-24',W.prod);
+    else add(P.fire,'LSZH: IEC 60332-1-2 · IEC 60332-3-24 · IEC 60754-1/-2 · IEC 61034-2',W.prod);}
+  else add(P.fire,LANG==='zh'?'室外护套：PE，抗紫外；入楼 15 m 内须转接室内等级缆':'Outdoor sheath: UV-stable PE; transition to an indoor-rated cable within 15 m of building entry',W.prod);
+  if(r.env==='duct'||r.env==='arm'||r.env==='io')add(P.perf,LANG==='zh'?'阻水 IEC 60794-1-22 F5B；'+(r.env==='arm'?'皱纹钢带铠装，防鼠':'全干式阻水'):'Water penetration IEC 60794-1-22 F5B; '+(r.env==='arm'?'corrugated steel tape armour, rodent protection':'dry water-blocking'),W.prod);
+  add(P.env,'RoHS 2011/65/EU + 2015/863 · REACH SVHC',W.sub);
+  add(P.fac,'ISO 9001 · ISO 14001',W.fac);
+  if(r.reg==='gcc')add(P.mkt,LANG==='zh'?'SASO / SABER 产品符合性证书（PCoC + SCoC）':'SASO / SABER product and shipment certificates of conformity',W.sub);
+  if(r.reg==='hk')add(P.mkt,LANG==='zh'?'符合 OFCA / EMSD 楼宇布线及低烟无卤惯例；政府工程按 ArchSD 通用规格':'OFCA / EMSD in-building practice and LSZH convention; ArchSD General Specification on government works',W.sub);
+  if(r.reg==='cn')add(P.mkt,LANG==='zh'?'泰尔认证 / 入网许可（如适用）· YD/T 系列行业标准':'TLC certification where applicable · YD/T industry standards',W.sub);
+  if(r.reg==='sg')add(P.mkt,'IMDA COPIF · SS 636 / ISO/IEC 11801',W.sub);
+  return c;}
+
+// ——— construction rules ———
+function construct(o){const r=o.r,z=LANG==='zh';if(o.cu)return z?`4 对 23 AWG 实心裸铜，${nm(SHIELD[r.shield])}，${r.media==='c6a'?'500':'250'} MHz，外径约 ${r.media==='c6a'?'7.2':'6.2'} mm`:`4-pair 23 AWG solid bare copper, ${nm(SHIELD[r.shield])}, ${r.media==='c6a'?'500':'250'} MHz, nominal OD ${r.media==='c6a'?'7.2':'6.2'} mm`;
+  const out=r.env==='duct'||r.env==='arm';let s;
+  if(r.media==='hcf')s=z?`嵌套反谐振空芯光纤 ${r.cores} 芯，松套管全干式，端部气密封装，两端过渡至 G.657.A1 尾纤`:`Nested anti-resonant hollow-core fibre, ${r.cores} fibres, dry loose tube, hermetically sealed ends, transition to G.657.A1 pigtails at both ends`;
+  else if(out)s=z?`松套层绞式，${r.cores} 芯，每管 12 芯，全干式阻水，中心 FRP 加强${r.env==='arm'?'，皱纹钢带铠装':''}`:`Stranded loose tube, ${r.cores} fibres, 12 per tube, dry water-blocked, central FRP strength member${r.env==='arm'?', corrugated steel tape armour':''}`;
+  else if(r.cores<=24)s=z?`圆形微型分布缆，${r.cores} 芯，芳纶加强，外径约 ${r.cores<=12?'3.0':'3.8'} mm`:`Round micro-distribution cable, ${r.cores} fibres, aramid strength members, nominal OD ${r.cores<=12?'3.0':'3.8'} mm`;
+  else s=z?`多子单元主干缆，${r.cores} 芯，每子单元 12 芯，芳纶加强，两端分支段 ≥ 0.6 m 并错位`:`Multi-subunit trunk cable, ${r.cores} fibres, 12 per subunit, aramid strength members, staggered breakout legs ≥ 0.6 m each end`;
+  return s+(z?`；护套 ${nm(ENV[r.env])}；安装弯曲半径 ≥ 10 倍外径`:`; sheath ${nm(ENV[r.env])}; installed bend radius ≥ 10 × OD`);}
+function route(o){const z=LANG==='zh';if(o.cu)return z?'授权分销商目录型号（散装线缆，不走 OEM）':'Authorised distributor catalogue item (bulk cable, no OEM build)';
+  if(o.r.media==='hcf')return z?'OEM 工厂 + Cavus 接头（空芯链路）':'OEM factory with Cavus junctions (hollow-core link)';
+  if(o.kind==='patch')return z?'授权分销商目录型号（标准跳线）':'Authorised distributor catalogue item (standard patch cord)';
+  return z?'OEM 工厂（定制预端接组件）':'OEM factory (custom pre-terminated assembly)';}
+const KIND={en:{trunk:'MPO trunk',harness:'MPO to LC breakout harness',multi:'Multi-fibre LC assembly',patch:'Duplex patch cord'},zh:{trunk:'MPO 主干组件',harness:'MPO 转 LC 分支组件',multi:'多芯 LC 预端接组件',patch:'双工跳线'}};
+function refNo(o){const d=new Date(),p=n=>String(n).padStart(2,'0');return `CS-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${o.r.media.toUpperCase()}-${o.r.runs}x${Math.round(o.cut)}`;}
+
+// ——— render ———
+function draw(){const r=get(),o=calc(r),cu=o.cu;
+  $('fibreOnly').style.display=cu?'none':'';$('copperOnly').style.display=cu?'':'none';$('lossbox').style.display=cu?'none':'';$('cmpbox').style.display=cu?'none':'';
+  $('bign').textContent=o.total.toLocaleString('en',{maximumFractionDigits:0});$('bigu').textContent=tr('uTotal');
+  const bad=o.flags.some(f=>f[0]==='bad'),tight=o.flags.some(f=>f[1]==='tight');
+  $('bigbox').className='big '+(bad?'b':tight?'w':'g');$('bigv').textContent=cu&&!bad?tr('vQty'):bad?tr('vFail'):tight?tr('vTight'):tr('vOk');
+  const kv=cu?[[o.cut+' m',tr('kCut')],[o.boxes,tr('kBox')],[o.jacks,tr('kOut')],[o.panels,tr('kPanel')],[nm(SHIELD[r.shield]).split(' ')[0],tr('lShield')],[nm(POE[r.poe]).replace('IEEE 802.3bt ',''),tr('lPoe')]]
+   :[[o.cut+' m',tr('kCut')],[r.runs,tr('kAsm')],[o.conns,tr('kConn')],[o.loss.toFixed(2)+' dB',tr('kLoss')],[o.margin==null?'—':(o.margin>=0?'+':'')+o.margin.toFixed(2)+' dB',tr('kMargin')],[o.lat<1000?o.lat.toFixed(1)+' µs':(o.lat/1000).toFixed(3)+' ms',tr('kLat')]];
+  $('kv').innerHTML=kv.map(k=>`<div><b>${k[0]}</b><span>${k[1]}</span></div>`).join('');
+  const F=FL[LANG];$('checks').innerHTML=o.flags.length?o.flags.map(f=>`<div class="chk ${f[0]==='bad'?'bad':f[0]==='warn'?'warn':'ok'}"><i>${f[0]==='bad'?'✕':f[0]==='warn'?'!':'i'}</i><span>${F[f[1]]}</span><em>${f[2]}</em></div>`).join(''):`<div class="chk ok"><i>✓</i><span>${tr('chkOk')}</span></div>`;
+  diagram(o);
+  if(!cu){const max=Math.max(o.loss,o.budget||0)*1.15||1,seg=[[o.lf,'#0A1B2E',tr('segF')],[o.lc,'#B8891F',tr('segC')],[o.ls,'#66788A',tr('segS')],[o.lj,'#E4B54A',tr('segJ')]].filter(s=>s[0]>0);
+    $('lossbar').innerHTML=seg.map(s=>`<i style="width:${s[0]/max*100}%;background:${s[1]}"></i>`).join('')+(o.budget?`<span class="lim" style="left:${o.budget/max*100}%"></span>`:'');
+    $('losslg').innerHTML=seg.map(s=>`<span style="--c:${s[1]}">${s[2]} ${s[0].toFixed(2)} dB</span>`).join('')+(o.budget?`<span style="--c:#A93226">${tr('lim')} ${o.budget.toFixed(1)} dB</span>`:`<span style="--c:transparent">${tr('noapp')}</span>`);
+    const save=o.latG-o.latH,fmt=v=>v<1000?v.toFixed(1)+' µs':(v/1000).toFixed(3)+' ms';
+    $('cmp').innerHTML=`<div class="${r.media!=='hcf'?'on':''}"><span>${tr('cGlass')}</span><b>${fmt(o.latG)}</b><p>${tr('cLat')} · 4.9 µs/km</p></div><div class="${r.media==='hcf'?'on':''}"><span>${tr('cHcf')}</span><b>${fmt(o.latH)}</b><p>${tr('cLat')} · 3.4 µs/km · ${fmt(save)} ${tr('cSave')}</p></div>`;
+    $('cmpnote').textContent=!o.M.sm?tr('cmpMM'):o.cut<10000?tr('cmpShort'):tr('cmpLong');}
+  // BoQ
+  const z=LANG==='zh',H=z?['项目','规格','数量','供货路径']:['Item','Specification','Qty','Supply route'];let rows=[];
+  if(cu){rows=[[nm(o.M),construct(o),o.total.toLocaleString()+' m · '+o.boxes+(z?' 箱':' boxes'),route(o)],[z?'信息模块 RJ45':'RJ45 jacks',(r.media==='c6a'?'Cat 6A':'Cat 6')+' · '+nm(SHIELD[r.shield]).split(' ')[0],o.jacks,route(o)],[z?'24 口配线架':'24-port patch panels','1U',o.panels,route(o)],[z?'设备跳线':'Equipment patch cords','2 m / 3 m',o.jacks,route(o)]];}
+  else{rows=[[KIND[LANG][o.kind]+' · '+nm(o.M),construct(o),r.runs+' × '+o.cut+' m',route(o)],[nm(CONN[r.ca])+(o.M.sm&&CONN[r.ca].mpo?' APC':'')+' · A',nm(GRADE[r.grade]),o.connA*r.runs,'—'],[nm(CONN[r.cb])+(o.M.sm&&CONN[r.cb].mpo?' APC':'')+' · B',nm(GRADE[r.grade]),o.connB*r.runs,'—']];
+    if(r.media==='hcf')rows.push([z?'Cavus 空芯↔实心接头':'Cavus hollow-core to solid junction','IL ≤ 0.3 dB · RL ≥ 40 dB',2*r.cores*r.runs,z?'Cavus':'Cavus']);
+    if(r.spl)rows.push([z?'熔接保护与接头盒':'Splice protection and closures','0.1 dB max '+(z?'每点':'each'),r.spl*r.runs,'—']);}
+  $('boq').innerHTML='<tr>'+H.map(h=>`<th>${h}</th>`).join('')+'</tr>'+rows.map(x=>'<tr>'+x.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('');
+  const C=certs(o),CH=z?['类别','要求','由谁提供']:['Group','Requirement','Evidence from'];
+  $('cert').innerHTML='<tr>'+CH.map(h=>`<th>${h}</th>`).join('')+'</tr>'+C.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join('');
+  window._o=o;}
+function diagram(o){const r=o.r,z=LANG==='zh',gold='#E4B54A',grey='#8FA0B3',line=r.media==='hcf'?gold:(o.cu?'#C98A5A':'#7FB2E5');
+  const a=o.cu?'RJ45':nm(CONN[r.ca]),b=o.cu?'RJ45':nm(CONN[r.cb]);const n=o.cu?0:Math.min(r.pairs,6);let mids='';
+  for(let i=0;i<n;i++){const x=70+(260/(n+1))*(i+1);mids+=`<rect x="${x-4}" y="182" width="8" height="36" fill="${gold}"/>`;}
+  const lat=o.cu?'':(o.lat<1000?o.lat.toFixed(1)+' µs':(o.lat/1000).toFixed(2)+' ms');
+  $('diag').innerHTML=`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono,monospace">
+   <rect x="20" y="150" width="50" height="100" fill="none" stroke="${grey}" stroke-width="1.5"/><rect x="330" y="150" width="50" height="100" fill="none" stroke="${grey}" stroke-width="1.5"/>
+   ${[0,1,2,3].map(i=>`<line x1="26" x2="64" y1="${168+i*22}" y2="${168+i*22}" stroke="${grey}" stroke-width="1"/><line x1="336" x2="374" y1="${168+i*22}" y2="${168+i*22}" stroke="${grey}" stroke-width="1"/>`).join('')}
+   <line x1="70" x2="330" y1="200" y2="200" stroke="${line}" stroke-width="${o.cu?4:Math.min(10,2+Math.log2(r.cores||2))}" stroke-linecap="round"/>${mids}
+   <text x="45" y="140" fill="${grey}" font-size="11" text-anchor="middle">A</text><text x="355" y="140" fill="${grey}" font-size="11" text-anchor="middle">B</text>
+   <text x="45" y="270" fill="#fff" font-size="10" text-anchor="middle">${a}</text><text x="355" y="270" fill="#fff" font-size="10" text-anchor="middle">${b}</text>
+   <text x="200" y="172" fill="#fff" font-size="13" text-anchor="middle" font-weight="600">${o.cut.toLocaleString()} m</text>
+   <text x="200" y="240" fill="${grey}" font-size="10" text-anchor="middle">${o.cu?'':r.cores+(z?' 芯 · ':' fibres · ')}${r.runs} × ${z?'条':'links'}</text>
+   <text x="200" y="60" fill="${gold}" font-size="12" text-anchor="middle" font-weight="600">${nm(o.M)}</text>
+   <text x="200" y="80" fill="${grey}" font-size="10" text-anchor="middle">${nm(ENV[r.env])} · ${nm(REG[r.reg])}</text>
+   ${o.cu?'':`<text x="200" y="330" fill="#fff" font-size="11" text-anchor="middle">${o.loss.toFixed(2)} dB${o.budget?' / '+o.budget.toFixed(1)+' dB':''} · ${lat}</text><text x="200" y="348" fill="${grey}" font-size="9.5" text-anchor="middle">${n?r.pairs+(z?' 个对接点':' mated pairs'):''}${r.spl?' · '+r.spl+(z?' 个熔接点':' splices'):''}</text>`}
+  </svg>`;}
+
+// ——— tender clause reader (keyword based) ———
+function parseTender(){const t=$('tender').value,v={},hit=[];const m=(re)=>t.match(re);
+  if(m(/hollow[- ]?core|\bHCF\b|空芯/i)){v.media='hcf';hit.push('hollow-core');}else if(m(/\bOM5\b/i)){v.media='om5';hit.push('OM5');}else if(m(/\bOM4\b|multi[- ]?mode|多模/i)){v.media='om4';hit.push('OM4');}
+  else if(m(/\bOS2\b|single[- ]?mode|G\.?\s?65[27]|单模/i)){v.media='os2';hit.push('OS2');}else if(m(/cat(?:egory)?\.?\s*6\s*A|六A类/i)){v.media='c6a';hit.push('Cat 6A');}else if(m(/cat(?:egory)?\.?\s*6\b|六类/i)){v.media='c6';hit.push('Cat 6');}
+  let x=m(/(\d{1,3})\s*[- ]?(?:cores?|fibres?|fibers?|F\b|芯)/i);if(x){const c=CORES.reduce((a,b)=>Math.abs(b-+x[1])<Math.abs(a-+x[1])?b:a);v.cores=c;hit.push(c+' fibres');}
+  x=m(/(\d+(?:\.\d+)?)\s*(km|公里|千米)/i);if(x){v.len=Math.round(+x[1]*1000);hit.push(x[1]+' km');}else{x=m(/(\d+(?:\.\d+)?)\s*(?:m\b|metres?|meters?|米)/i);if(x){v.len=+x[1];hit.push(x[1]+' m');}}
+  x=m(/(\d{1,4})\s*(?:nos?\.?|numbers?|links?|runs?|trunks?|cables?|outlets?|points?|条|根|个点|点)/i);if(x){v.runs=+x[1];hit.push(x[1]+' ×');}
+  const mp=[...t.matchAll(/MPO[- ]?(12|16|24)|MTP[- ]?(12|16|24)/gi)].map(y=>'mpo'+(y[1]||y[2]));const lc=/\bLC\b/i.test(t);
+  if(mp.length){v.ca=mp[0];v.cb=mp[1]||(lc?'lc':mp[0]);hit.push(v.ca.toUpperCase()+(v.cb!==v.ca?' → '+v.cb.toUpperCase():''));}else if(lc){v.ca='lc';v.cb='lc';hit.push('LC');}
+  if(m(/LSZH|LS0H|LSOH|low smoke|低烟无卤/i)){v.env='lszh';hit.push('LSZH');}else if(m(/plenum|OFNP|\bCMP\b/i)){v.env='plenum';hit.push('plenum');}else if(m(/riser|OFNR|\bCMR\b|竖井/i)){v.env='riser';hit.push('riser');}
+  if(m(/armou?r|铠装/i)){v.env='arm';hit.push('armoured');}else if(m(/outdoor|duct|室外|管道/i)){v.env='duct';hit.push('outdoor');}
+  const ap=[['800g-dr8',/800G.?DR8/i],['400g-dr4',/400G\w*.?DR4/i],['400g-fr4',/400G\w*.?FR4/i],['400g-lr4',/400G\w*.?LR4/i],['400g-sr8',/400G\w*.?SR8/i],['400zr',/400\s?ZR/i],['100g-dr',/100G\w*.?DR\b/i],['100g-lr4',/100G\w*.?LR4/i],['100g-sr4',/100G\w*.?SR4/i],['10g-lr',/10G\w*.?LR\b/i],['10g-sr',/10G\w*.?SR\b/i]];
+  for(const [k,re] of ap){if(re.test(t)){v.app=k;hit.push(k.toUpperCase());break;}}
+  if(m(/ultra[- ]low/i)){v.grade='ultra';hit.push('ultra low loss');}else if(m(/low[- ]loss|低损耗/i)){v.grade='low';hit.push('low loss');}
+  if(m(/hong\s?kong|香港|EMSD|ArchSD/i)){v.reg='hk';}else if(m(/saudi|riyadh|SASO|沙特/i)){v.reg='gcc';}else if(m(/singapore|IMDA|新加坡/i)){v.reg='sg';}else if(m(/Euroclass|\bCPR\b/i)){v.reg='eu';}else if(m(/GB\/?T|\bYD\/?T|内地/i)){v.reg='cn';}
+  if(v.reg)hit.push(nm(REG[v.reg]));
+  setAll(v);curPreset=null;applyLang();
+  $('chips').innerHTML=hit.length?`<span style="border:0;background:none;color:var(--muted)">${tr('found')}:</span>`+hit.map(h=>`<span>${h}</span>`).join(''):`<span style="border-color:var(--bad);background:#fff;color:var(--bad)">${tr('nothing')}</span>`;}
+
+// ——— documents ———
+function docHead(o,title,sub){const r=o.r;return `<div class="k">CAVUS PHOTONICS · 空芯光子 — CAVUSSPEC</div><h1>${title}</h1><div style="font-family:var(--mono);font-size:11px;color:#66788A">${sub} · Ref ${refNo(o)} · ${new Date().toISOString().slice(0,10)}</div>
+ <div class="draft">DRAFT FOR ENGINEER REVIEW · 草稿，须经合资格工程师审核 — generated from stated inputs; limits follow TIA-568.3-D / IEEE 802.3; verify against transceiver datasheets, site conditions and the authority having jurisdiction before issue.</div>`;}
+function tbl(rows,head){return '<table>'+(head?'<tr>'+head.map(h=>`<th>${h}</th>`).join('')+'</tr>':'')+rows.map(x=>'<tr>'+x.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+'</table>';}
+function tenderDoc(o){const keep=LANG;LANG='en';const r=o.r,C=certs(o),cu=o.cu;let h=docHead(o,'Technical Specification — '+(cu?nm(o.M)+' Horizontal Cabling':KIND.en[o.kind]+', '+nm(o.M)),'For insertion into tender documents');
+  h+=`<h2>1 · Scope</h2><p>Supply, ${cu?'install, terminate, label and test':'deliver, label and test'} ${r.runs} ${cu?'permanent links':'factory pre-terminated assemblies'} as scheduled below, complete with all accessories needed for a working channel${!cu&&APPS[r.app].b?' carrying '+APPS[r.app].en.split(' · ')[0]:''}.</p>`;
+  h+='<h2>2 · Schedule of quantities</h2>'+tbl(cu?[['Cable',o.total.toLocaleString()+' m ('+o.boxes+' × 305 m)'],['Permanent links',r.runs+' × '+o.cut+' m including slack'],['RJ45 jacks',o.jacks],['24-port panels',o.panels]]:[['Assemblies',r.runs+' × '+o.cut+' m ('+o.total.toLocaleString()+' m total)'],['Fibres per assembly',r.cores],['End A',o.connA+' × '+nm(CONN[r.ca])+' per assembly'],['End B',o.connB+' × '+nm(CONN[r.cb])+' per assembly'],['Route length / slack / service loops',r.len+' m / '+r.slack+'% / '+r.loop+' m each end']]);
+  h+='<h2>3 · Cable construction</h2><p>'+construct(o)+'.</p>';
+  if(!cu){h+='<h2>4 · Optical performance</h2>'+tbl([['Fibre attenuation, maximum',o.M.att.toFixed(2)+' dB/km'],['Mated connector pair, maximum',(CONN[r.ca].mpo||CONN[r.cb].mpo?GRADE[r.grade].mpo:GRADE[r.grade].lc).toFixed(2)+' dB ('+GRADE[r.grade].en.split(' (')[0]+')'],['Return loss, minimum',o.M.sm?((CONN[r.ca].mpo||CONN[r.cb].mpo)?'60 dB (APC)':'50 dB (UPC)'):'20 dB'],['Calculated channel insertion loss',o.loss.toFixed(2)+' dB'+(o.budget?' against '+o.budget.toFixed(1)+' dB allowed':'')],['One-way propagation delay',(o.lat<1000?o.lat.toFixed(1)+' µs':(o.lat/1000).toFixed(3)+' ms')],['Polarity',(CONN[r.ca].mpo||CONN[r.cb].mpo)?'Method B to TIA-568.3-D, key-up to key-up':'A-to-B duplex']]);}
+  else h+='<h2>4 · Transmission performance</h2><p>Permanent link and channel to '+(r.media==='c6a'?'Category 6A / Class EA, 500 MHz':'Category 6 / Class E, 250 MHz')+'. Maximum permanent link 90 m. '+(r.poe!=='none'?'Support '+POE[r.poe].en+' with bundles limited to 24 cables.':'')+'</p>';
+  h+='<h2>5 · Standards, certificates and submittals</h2>'+tbl(C,['Group','Requirement','Evidence from']);
+  h+='<h2>6 · Testing and acceptance</h2><ol>'+(cu?'<li>Test 100% of permanent links with a Level IIIe or better field tester to TIA-1152-A.</li><li>Submit results in native tester format and PDF.</li>':'<li>Factory: 100% insertion loss and return loss per fibre, report shipped with each assembly and traceable to its serial number.</li><li>Site: Tier 1 test of every fibre with a light source and power meter, one-jumper reference.</li><li>'+(o.cut>500?'Bidirectional OTDR trace of every fibre.':'OTDR trace on request for fault location.')+'</li>')+'<li>Any link outside the limits in clause 4 is replaced at the supplier\'s cost.</li></ol>';
+  h+='<h2>7 · Labelling, packing and warranty</h2><ol><li>Label both ends with assembly number, length, fibre count and serial number to TIA-606-C.</li><li>'+(cu?'Boxes or reels marked with batch and length.':'Pulling eye on one end for assemblies over 24 fibres; dust caps on every connector; individual reel or bag.')+'</li><li>System warranty of not less than 25 years from a manufacturer-certified installer, where a branded system is specified.</li></ol>';
+  if(o.flags.length)h+='<h2>8 · Notes to the engineer</h2><ul>'+o.flags.map(f=>`<li>${FL.en[f[1]]} ${f[2]}</li>`).join('')+'</ul>';
+  LANG=keep;return h;}
+function buildDoc(o){const keep=LANG;LANG='en';const r=o.r,C=certs(o);let h=docHead(o,'OEM Build Sheet — '+(o.cu?nm(o.M):KIND.en[o.kind]),'Manufacturing instruction · 制造单');
+  if(o.cu||o.kind==='patch'){h+='<h2>Supply route</h2><p><b>No OEM build.</b> '+route(o)+'. Order against the schedule in the tender specification. 此项目为目录产品，不需工厂定制。</p>'+tbl([['Cable',construct(o)],['Quantity',o.total.toLocaleString()+' m']]);LANG=keep;return h;}
+  const A=CONN[r.ca],B=CONN[r.cb],apc=o.M.sm&&(A.mpo||B.mpo),il=(A.mpo||B.mpo?GRADE[r.grade].mpo:GRADE[r.grade].lc);
+  h+='<h2>1 · What to build · 产品</h2>'+tbl([['Product · 产品',KIND.en[o.kind]+' / '+KIND.zh[o.kind]],['Quantity · 数量',r.runs+' pcs'],['Finished length, connector tip to tip · 成品长度',o.cut+' m, tolerance +2% / −0'],['Fibres · 芯数',r.cores],['Customer ref',refNo(o)]]);
+  h+='<h2>2 · Bill of materials per assembly · 单件物料</h2>'+tbl([['Cable · 光缆',construct(o),o.cut+' m'],['Connector A · A 端',nm(A)+(apc&&A.mpo?' APC 8°':o.M.sm?' UPC':' PC')+(A.mpo?', '+(r.cores>=A.n?'female (no pins)':'female'):''),o.connA],['Connector B · B 端',nm(B)+(apc&&B.mpo?' APC 8°':o.M.sm?' UPC':' PC'),o.connB],['Ferrule grade · 插芯等级',GRADE[r.grade].en,'—'],['Boots, furcation tubing 2.0 mm, heat-shrink · 尾套 / 分支管','colour-coded to TIA-598-D',(o.connA+o.connB)],['Pulling eye · 牵引头',r.cores>24?'one end, rated ≥ 450 N':'not required',r.cores>24?1:0],...(r.media==='hcf'?[['Cavus hollow-core junction · 空芯接头','per CavusFab junction spec; hermetic seal, no index gel',2*r.cores]]:[])],['Item','Specification','Qty']);
+  h+='<h2>3 · Process · 工艺流程</h2><ol><li>Incoming inspection: cable batch certificate, fibre attenuation, sheath marking. 来料检验。</li><li>Cut to length plus termination allowance. Strip sheath, '+(r.cores>24?'separate subunits, stagger breakout legs by 25 mm, ':'')+'fit furcation. 下料、开剥、分支。</li>'+(r.media==='hcf'?'<li>Hollow-core ends: cleave under clean, dry nitrogen; seal immediately; fusion-splice the Cavus junction to the G.657.A1 pigtail; no liquids near an open end. 空芯端面在洁净干燥氮气下切割并立即密封。</li>':'')+'<li>Terminate: epoxy, cure to the adhesive data sheet, '+(apc?'polish APC 8°':'polish')+'. 端接、固化、研磨。</li><li>Inspect 100% of end faces to IEC 61300-3-35. 端面 100% 检查。</li>'+((A.mpo||B.mpo)?'<li>Measure MPO end-face geometry to IEC 61300-3-30 on every ferrule. MPO 端面几何逐个测量。</li>':'')+'<li>Test 100%: insertion loss and return loss per fibre at '+(o.M.sm?'1310 and 1550 nm':'850 and 1300 nm')+'. 插损、回损 100% 测试。</li><li>Verify polarity ('+((A.mpo||B.mpo)?'Method B':'A-to-B')+') and continuity on every position. 极性与通断。</li><li>Label, cap, coil above minimum bend radius, pack with the test report. 标签、防尘帽、盘绕、装箱并附报告。</li></ol>';
+  h+='<h2>4 · Pass limits · 合格判据</h2>'+tbl([['Insertion loss per mated connector, maximum · 单点插损',il.toFixed(2)+' dB'],['Return loss, minimum · 回损',o.M.sm?(apc?'60 dB':'50 dB'):'20 dB'],['Assembly insertion loss, maximum · 组件总插损',(o.M.att*o.cut/1000+2*il+o.lj).toFixed(2)+' dB'],['End face · 端面','IEC 61300-3-35, zero defects in core zone'],...(r.media==='hcf'?[['Junction · 接头','IL ≤ 0.30 dB, RL ≥ 40 dB, sealed']]:[])]);
+  h+='<h2>5 · Certificates the factory must hold or supply · 工厂须持有或提供的证书</h2>'+tbl(C,['Group','Requirement','Evidence from']);
+  h+='<h2>6 · Ship with every assembly · 随货文件</h2><ul><li>Serialised test report: IL and RL per fibre, both wavelengths. 逐条序列号测试报告。</li><li>Cable batch certificate and fire-performance certificate. 光缆批次证书与阻燃证书。</li><li>RoHS and REACH declaration. 环保声明。</li><li>Certificate of conformity referencing '+refNo(o)+'. 合格证。</li></ul>';
+  LANG=keep;return h;}
+function openSpec(html){$('specpaper').innerHTML=html;$('specview').classList.add('open');document.body.classList.add('spec-open');$('specview').scrollTop=0;}
+function closeSpec(){$('specview').classList.remove('open');document.body.classList.remove('spec-open');}
+
+// ——— wire up ———
+$('lEN').onclick=()=>{LANG='en';localStorage.setItem('cavusLang','en');applyLang();};$('lZH').onclick=()=>{LANG='zh';localStorage.setItem('cavusLang','zh');applyLang();};
+$('parse').onclick=parseTender;$('dlTender').onclick=()=>openSpec(tenderDoc(window._o));$('dlBuild').onclick=()=>openSpec(buildDoc(window._o));
+document.querySelectorAll('.ctrl select,.ctrl input').forEach(e=>e.addEventListener('input',()=>{curPreset=null;document.querySelectorAll('#presets button').forEach(b=>b.className='');draw();}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSpec();});
+applyLang();setAll(PRESETS.hall.v);draw();
+</script>
+</body>
+</html>
